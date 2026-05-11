@@ -5,7 +5,7 @@
 1. Make a local copy of the repository
     `git clone https://github.com/dfensgmbh/biz.dfch.IncoseIso25010Refiner.git`
 1. Create environment and install dependencies
-    `uv sync -python 3.13 --extra dev --extra build`
+    `uv sync --python 3.13 --extra dev --extra build`
 
 ## Start the programme
 1. Add API key to local terminal session
