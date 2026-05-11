@@ -19,6 +19,7 @@
 1. When there is no Python environment active, activate the Python environment
 
     Windows: `.\.venv\Scripts\Activate.ps1`
+    
     Linux: `source ./.venv\bin/activate`
 1. Start the programme
 
