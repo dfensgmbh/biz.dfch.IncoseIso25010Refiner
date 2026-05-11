@@ -76,7 +76,7 @@ class Args:
         )
 
         dictionary_parser = subparsers.add_parser(
-            "dictionary", parents=[common], help="Queries the dictionary."
+            "default", parents=[common], help="The default command."
         )
 
         dictionary_parser.add_argument(

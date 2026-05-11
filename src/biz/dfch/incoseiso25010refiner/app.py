@@ -58,8 +58,8 @@ class App:  # pylint: disable=R0903
         self._parser = parser
         self._args = parser.parse_args()
 
-    def on_dictionary(self) -> None:
-        """This method processes the `dictionary` argument."""
+    def on_default(self) -> None:
+        """This method processes the `default` argument."""
         ...
 
     def invoke(self) -> None:
@@ -71,6 +71,8 @@ class App:  # pylint: disable=R0903
         log_level = Args.get_effective_log_level_name(self._args)
         import logging  # pylint: disable=C0415
 
+        # Ignore the error message that follows:
+        # `logging.getLogger()` exists.
         for handler in logging.getLogger().handlers:
             handler.setLevel(log_level)
 
@@ -80,11 +82,11 @@ class App:  # pylint: disable=R0903
         log.debug(self._parser.epilog)
         print(self._parser.epilog)
 
-        if self._args.command == "dictionary":
+        if self._args.command == "default":
 
-            self.on_dictionary(
+            self.on_default(
             )
             return
 
-        self.on_dictionary(
+        self.on_default(
         )
