@@ -26,6 +26,7 @@ from biz.dfch.version import Version
 
 from .constant import Constant
 from .chat_config import ChatConfig
+from .chat_client import ChatClient
 
 
 class App:  # pylint: disable=R0903
@@ -69,6 +70,7 @@ class App:  # pylint: disable=R0903
         assert isinstance(cfg, ChatConfig)
 
         from rich.console import Console
+        from rich.markdown import Markdown
         from rich.table import Table
 
         console = Console()
@@ -103,6 +105,14 @@ class App:  # pylint: disable=R0903
         )
 
         console.print(table)
+
+        console.print("\n[bold cyan]Querying LLM...[/bold cyan]")
+
+        client = ChatClient(cfg)
+        response = client.query()
+
+        console.print("\n[bold cyan]Response:[/bold cyan]")
+        console.print(Markdown(response))
 
     def invoke(self) -> None:
         """Main entry point for this class."""
