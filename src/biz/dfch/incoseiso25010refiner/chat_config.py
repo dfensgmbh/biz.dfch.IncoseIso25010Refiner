@@ -7,20 +7,22 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 """
 ChatConfig
 """
 
 from __future__ import annotations
+
 import argparse
 import os
 from dataclasses import dataclass
+from pathlib import Path
 
 import dacite
 
@@ -35,9 +37,11 @@ class ChatConfig:
     prompt: str
     temperature: float | None = None
     max_tokens: int | None = None
+    template: str | None = None
+    template_content: str | None = None
 
     @staticmethod
-    def from_dict(data: dict) -> ChatConfig:
+    def from_dict(data: dict) -> "ChatConfig":
         """Converts CLI arguments to data structure."""
         return dacite.from_dict(
             data_class=ChatConfig,
@@ -49,15 +53,33 @@ class ChatConfig:
     def from_args_and_env(args: argparse.Namespace) -> "ChatConfig":
         """
         Build ChatConfig from parsed CLI args.
+
         Falls back to CHAT_API_TOKEN env var if --api-token not provided.
         """
         api_token = getattr(args, "api_token", None) or os.environ.get(
             "CHAT_API_TOKEN"
         )
+
         if not api_token:
             raise ValueError(
                 "API token must be provided via --api-token or CHAT_API_TOKEN env var."
             )
+
+        template = getattr(args, "template", None)
+        template_content = None
+
+        if template:
+            template_path = Path(template).expanduser()
+
+            if not template_path.exists():
+                raise FileNotFoundError(
+                    f"Template file does not exist: {template}"
+                )
+
+            if not template_path.is_file():
+                raise ValueError(f"Template path is not a file: {template}")
+
+            template_content = template_path.read_text(encoding="utf-8")
 
         data = {
             "api_token": api_token,
@@ -68,6 +90,8 @@ class ChatConfig:
             "prompt": args.prompt,
             "temperature": getattr(args, "temperature", None),
             "max_tokens": getattr(args, "max_tokens", None),
+            "template": template,
+            "template_content": template_content,
         }
 
         return ChatConfig.from_dict(data)

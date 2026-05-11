@@ -84,7 +84,7 @@ class App:  # pylint: disable=R0903
         table.add_column("Value")
 
         table.add_row("prompt", cfg.prompt)
-        table.add_row("api_token", "***")
+        table.add_row("api_token", str(0 != len(cfg.api_token)))
         table.add_row("base_url", cfg.base_url)
         table.add_row("model", cfg.model)
         table.add_row(

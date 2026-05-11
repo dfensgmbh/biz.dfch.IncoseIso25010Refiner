@@ -136,6 +136,14 @@ class Args:
             help="The prompt text to send to the LLM.",
         )
         query_parser.add_argument(
+            "-t",
+            "--template",
+            dest="template",
+            default=None,
+            metavar="PATH",
+            help="Path to a local template file to load and send with the prompt.",
+        )
+        query_parser.add_argument(
             "--api-token",
             dest="api_token",
             default=None,
@@ -162,7 +170,6 @@ class Args:
             help=f"LLM model to use (default: {self._DEFAULT_MODEL}).",
         )
         query_parser.add_argument(
-            "-t",
             "--temperature",
             dest="temperature",
             type=float,

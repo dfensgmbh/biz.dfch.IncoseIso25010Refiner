@@ -62,6 +62,7 @@ class ChatClient:
             headers={
                 "Authorization": f"Bearer {self._cfg.api_token}",
                 "Content-Type": "application/json",
+                "User-Agent": "Mozilla/5.0 (compatible; IncoseIso25010Refiner/1.0)",
             },
             method="POST",
         )
