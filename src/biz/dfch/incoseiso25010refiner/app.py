@@ -103,6 +103,7 @@ class App:  # pylint: disable=R0903
                 else "(default)"
             ),
         )
+        table.add_row("template", cfg.template)
 
         console.print(table)
 

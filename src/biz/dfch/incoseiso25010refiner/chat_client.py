@@ -40,12 +40,19 @@ class ChatClient:
         """Send the prompt to the API and return the assistant response text."""
         url = f"{self._cfg.base_url}/chat/completions"
 
+        if self._cfg.template_content is None:
+            template = ""
+        else:
+            template = self._cfg.template_content
+        content = (
+            template + "<PHRASE>\n" + self._cfg.prompt + "</PHRASE>\n"
+        )
         payload: dict = {
             "model": self._cfg.model,
             "messages": [
                 {
                     "role": "user",
-                    "content": self._cfg.prompt,
+                    "content": content,
                 }
             ],
         }
