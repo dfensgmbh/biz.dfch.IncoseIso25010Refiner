@@ -41,6 +41,7 @@
         "NOSONAR",
         "nword",
         "nwords",
+        "Ollama",
         "onefile",
         "pathspec",
         "pefile",

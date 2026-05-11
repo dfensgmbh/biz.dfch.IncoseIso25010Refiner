@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Ronald Rink, http://d-fens.ch
+# Copyright (c) 2026 Ronald Rink, http://d-fens.ch
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,12 +23,19 @@ def main():
     # important that we create the I18n instance before any imports to log.
     # Maybe we find a better solution for this in some time.
     from biz.dfch.i18n import I18n  # pylint: disable=C0415, E0401
+
     I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
-    from biz.dfch.incoseiso25010refiner.args import Args  # pylint: disable=C0415, E0401 # noqa: E501
+    from biz.dfch.incoseiso25010refiner.args import (
+        Args,
+    )  # pylint: disable=C0415, E0401 # noqa: E501
+
     parser = Args().invoke()
 
-    from biz.dfch.incoseiso25010refiner.app import App  # pylint: disable=C0415, E0401 # noqa: E501
+    from biz.dfch.incoseiso25010refiner.app import (
+        App,
+    )  # pylint: disable=C0415, E0401 # noqa: E501
+
     App(parser).invoke()
 
 

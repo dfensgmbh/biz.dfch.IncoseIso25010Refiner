@@ -20,17 +20,28 @@ ChatConfig
 from __future__ import annotations
 
 import argparse
-import os
 from dataclasses import dataclass
+import os
 from pathlib import Path
+from typing import ClassVar
 
 import dacite
+
+from .abacus_chat_config import AbacusChatConfig
+from .default_chat_config import DefaultChatConfig
+from .ollama_chat_config import OllamaChatConfig
+from .providers import Providers
 
 
 @dataclass(frozen=True)
 class ChatConfig:
     """Chat client configuration."""
 
+    _default_values: ClassVar[dict[Providers, DefaultChatConfig]] = {
+        Providers.ABACUS: AbacusChatConfig(),
+        Providers.OLLAMA: OllamaChatConfig(),
+    }
+    provider: Providers
     api_token: str
     base_url: str
     model: str
@@ -46,23 +57,31 @@ class ChatConfig:
         return dacite.from_dict(
             data_class=ChatConfig,
             data=data,
-            config=dacite.Config(strict=True),
+            config=dacite.Config(
+                strict=True,
+                cast=[Providers],
+            ),
         )
 
     @staticmethod
-    def from_args_and_env(args: argparse.Namespace) -> "ChatConfig":
+    def from_args_and_env(args: argparse.Namespace) -> ChatConfig:
         """
         Build ChatConfig from parsed CLI args.
 
         Falls back to CHAT_API_TOKEN env var if --api-token not provided.
         """
-        api_token = getattr(args, "api_token", None) or os.environ.get(
+
+        provider = getattr(args, "provider", Providers.DEFAULT)
+        if provider not in Providers:
+            raise ValueError(f"Incorrect chat provider: '{provider}'.")
+
+        api_token = getattr(args, "api_token", "") or os.environ.get(
             "CHAT_API_TOKEN"
         )
-
-        if not api_token:
+        if not api_token and Providers.OLLAMA == provider:
             raise ValueError(
-                "API token must be provided via --api-token or CHAT_API_TOKEN env var."
+                "API token must be provided via --api-token or "
+                "CHAT_API_TOKEN environment variable."
             )
 
         template = getattr(args, "template", None)
@@ -81,12 +100,23 @@ class ChatConfig:
 
             template_content = template_path.read_text(encoding="utf-8")
 
+        base_url = getattr(
+            args, "base_url", ChatConfig._default_values[provider].base_url
+        )
+        if not base_url.strip():
+            base_url = ChatConfig._default_values[provider].base_url
+
+        model = getattr(
+            args, "model", ChatConfig._default_values[provider].model
+        )
+        if not model.strip():
+            model = ChatConfig._default_values[provider].model
+
         data = {
+            "provider": provider,
             "api_token": api_token,
-            "base_url": getattr(
-                args, "base_url", "https://routellm.abacus.ai/v1"
-            ),
-            "model": getattr(args, "model", "route-llm"),
+            "base_url": base_url,
+            "model": model,
             "prompt": args.prompt,
             "temperature": getattr(args, "temperature", None),
             "max_tokens": getattr(args, "max_tokens", None),

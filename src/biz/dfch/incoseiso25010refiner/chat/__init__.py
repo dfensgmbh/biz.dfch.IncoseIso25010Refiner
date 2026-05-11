@@ -13,13 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-"""incoseiso25010refiner package."""
+"""chat package."""
 
-from biz.dfch.i18n import LanguageCode
-
-from .app import App
+from .abacus_chat_client import AbacusChatClient
+from .ollama_chat_client import OllamaChatClient
+from .openai_chat_client import OpenAiChatClient
 
 __all__ = [
-    "App",
-    "LanguageCode",
+    "AbacusChatClient",
+    "OllamaChatClient",
+    "OpenAiChatClient",
 ]

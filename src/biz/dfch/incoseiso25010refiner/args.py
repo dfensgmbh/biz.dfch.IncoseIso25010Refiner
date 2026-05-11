@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Ronald Rink, http://d-fens.ch
+# Copyright (c) 2026 Ronald Rink, http://d-fens.ch
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 
+from .chat.chat_config import Providers
 from .constant import Constant
 
 
@@ -42,7 +43,6 @@ class Args:
     _DEFAULT_LOG_LEVEL = "ERROR"
 
     _DEFAULT_BASE_URL = "https://routellm.abacus.ai/v1"
-    _DEFAULT_MODEL = "route-llm"
 
     def __init__(self):
 
@@ -78,54 +78,17 @@ class Args:
             dest="command", help="Available commands."
         )
 
-        dictionary_parser = subparsers.add_parser(
-            "default", parents=[common], help="The default command."
-        )
-
-        dictionary_parser.add_argument(
-            "-i",
-            "--input",
-            nargs="+",
-            metavar="PATH",
-            default=[],
-            required=False,
-            help="A list of dictionary files to read entries from (full path).",
-        )
-
-        dictionary_parser.add_argument(
-            "--ste100",
-            dest="use_ste100",
-            action=argparse.BooleanOptionalAction,
-            default=True,
-            help="Load built-in STE-100 words.",
-        )
-
-        dictionary_parser.add_argument(
-            "--tn",
-            dest="use_technical_nouns",
-            action=argparse.BooleanOptionalAction,
-            default=True,
-            help="Load built-in Technical Nouns (TN).",
-        )
-
-        dictionary_parser.add_argument(
-            "--tv",
-            dest="use_technical_verbs",
-            action=argparse.BooleanOptionalAction,
-            default=True,
-            help="Load built-in Technical Verbs (TV).",
-        )
-
-        dictionary_parser.add_argument(
-            "--no-random-word",
-            action="store_true",
-            help="Prevent display of random word at startup.",
-        )
-
         query_parser = subparsers.add_parser(
             "query",
             parents=[common],
-            help="Query the Abacus ChatLLM API.",
+            help="Operate an LLM API.",
+        )
+        query_parser.add_argument(
+            "--provider",
+            dest="provider",
+            choices=Providers,
+            default=Providers.DEFAULT,
+            help=f"The chat provider to use (default: {Providers.DEFAULT}).",
         )
         query_parser.add_argument(
             "-p",
@@ -141,41 +104,44 @@ class Args:
             dest="template",
             default=None,
             metavar="PATH",
-            help="Path to a local template file to load and send with the prompt.",
+            help=(
+                "Path to a local template file to load and send with the "
+                "prompt."
+            ),
         )
         query_parser.add_argument(
             "--api-token",
             dest="api_token",
-            default=None,
+            default="",
             metavar="TOKEN",
             help=(
-                "Abacus API bearer token. "
-                "Falls back to ABACUS_API_TOKEN environment variable."
+                "API bearer token. "
+                "If not specified, use CHAT_API_TOKEN environment variable."
             ),
         )
         query_parser.add_argument(
             "-uri",
             "--base-url",
             dest="base_url",
-            default=self._DEFAULT_BASE_URL,
+            default="",
             metavar="URL",
-            help=f"API base URL (default: {self._DEFAULT_BASE_URL}).",
+            help="API base URL (default depends on specified provider).",
         )
         query_parser.add_argument(
             "-m",
             "--model",
             dest="model",
-            default=self._DEFAULT_MODEL,
+            default="",
             metavar="MODEL",
-            help=f"LLM model to use (default: {self._DEFAULT_MODEL}).",
+            help="LLM model to use (default depends on specified provider).",
         )
         query_parser.add_argument(
             "--temperature",
             dest="temperature",
             type=float,
-            default=0.7,
+            default=0.5,
             metavar="FLOAT",
-            help="Sampling temperature (e.g. 0.7). Optional.",
+            help="Sampling temperature (0..1). Optional.",
         )
         query_parser.add_argument(
             "--max-tokens",

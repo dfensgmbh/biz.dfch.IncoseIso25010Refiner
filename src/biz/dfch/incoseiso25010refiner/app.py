@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Ronald Rink, http://d-fens.ch
+# Copyright (c) 2026 Ronald Rink, http://d-fens.ch
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,22 +18,22 @@
 from __future__ import annotations
 
 import argparse
+import json
 
 from rich.theme import Theme
 
 from biz.dfch.logging import log
 from biz.dfch.version import Version
 
-from .constant import Constant
-from .chat_config import ChatConfig
-from .chat_client import ChatClient
+from .chat.chat_config import ChatConfig
+from .chat.chat_client_factory import ChatClientFactory
 
 
 class App:  # pylint: disable=R0903
     """The application."""
 
     _VERSION_REQUIRED_MAJOR = 3
-    _VERSION_REQUIRED_MINOR = 11
+    _VERSION_REQUIRED_MINOR = 13
 
     _rule_theme = Theme(
         {
@@ -72,6 +72,7 @@ class App:  # pylint: disable=R0903
         from rich.console import Console
         from rich.markdown import Markdown
         from rich.table import Table
+        from rich.json import JSON
 
         console = Console()
         table = Table(
@@ -84,9 +85,11 @@ class App:  # pylint: disable=R0903
         table.add_column("Value")
 
         table.add_row("prompt", cfg.prompt)
-        table.add_row("api_token", str(0 != len(cfg.api_token)))
+        table.add_row("template", cfg.template)
+        table.add_row("provider", cfg.provider)
         table.add_row("base_url", cfg.base_url)
         table.add_row("model", cfg.model)
+        table.add_row("api_token", str(0 != len(cfg.api_token)))
         table.add_row(
             "temperature",
             (
@@ -103,17 +106,20 @@ class App:  # pylint: disable=R0903
                 else "(default)"
             ),
         )
-        table.add_row("template", cfg.template)
 
         console.print(table)
 
         console.print("\n[bold cyan]Querying LLM...[/bold cyan]")
 
-        client = ChatClient(cfg)
+        client = ChatClientFactory.create(cfg)
         response = client.query()
 
         console.print("\n[bold cyan]Response:[/bold cyan]")
-        console.print(Markdown(response))
+        try:
+            console.print(JSON(response, indent=2))
+        except (json.JSONDecodeError, TypeError):
+            data = response
+            console.print(Markdown(data))
 
     def invoke(self) -> None:
         """Main entry point for this class."""
@@ -134,11 +140,6 @@ class App:  # pylint: disable=R0903
         print(self._parser.description)
         log.debug(self._parser.epilog)
         print(self._parser.epilog)
-
-        if self._args.command == "default":
-
-            self.on_default()
-            return
 
         if self._args.command == "query":
 
