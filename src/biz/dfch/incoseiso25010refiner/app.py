@@ -62,6 +62,10 @@ class App:  # pylint: disable=R0903
         """This method processes the `default` argument."""
         ...
 
+    def on_query(self) -> None:
+        """This method processes the `query` argument."""
+        ...
+
     def invoke(self) -> None:
         """Main entry point for this class."""
 
@@ -88,5 +92,11 @@ class App:  # pylint: disable=R0903
             )
             return
 
-        self.on_default(
+        if self._args.command == "query":
+
+            self.on_query(
+            )
+            return
+
+        self.on_query(
         )

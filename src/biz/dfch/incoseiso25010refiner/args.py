@@ -41,6 +41,9 @@ class Args:
     ]
     _DEFAULT_LOG_LEVEL = "ERROR"
 
+    _DEFAULT_BASE_URL = "https://routellm.abacus.ai/v1"
+    _DEFAULT_MODEL = "route-llm"
+
     def __init__(self):
 
         common = argparse.ArgumentParser(add_help=False)
@@ -117,6 +120,63 @@ class Args:
             "--no-random-word",
             action="store_true",
             help="Prevent display of random word at startup.",
+        )
+
+        query_parser = subparsers.add_parser(
+            "query",
+            parents=[common],
+            help="Query the Abacus ChatLLM API.",
+        )
+        query_parser.add_argument(
+            "-p",
+            "--prompt",
+            dest="prompt",
+            required=True,
+            metavar="TEXT",
+            help="The prompt text to send to the LLM.",
+        )
+        query_parser.add_argument(
+            "--api-token",
+            dest="api_token",
+            default=None,
+            metavar="TOKEN",
+            help=(
+                "Abacus API bearer token. "
+                "Falls back to ABACUS_API_TOKEN environment variable."
+            ),
+        )
+        query_parser.add_argument(
+            "-uri",
+            "--base-url",
+            dest="base_url",
+            default=self._DEFAULT_BASE_URL,
+            metavar="URL",
+            help=f"API base URL (default: {self._DEFAULT_BASE_URL}).",
+        )
+        query_parser.add_argument(
+            "-m",
+            "--model",
+            dest="model",
+            default=self._DEFAULT_MODEL,
+            metavar="MODEL",
+            help=f"LLM model to use (default: {self._DEFAULT_MODEL}).",
+        )
+        query_parser.add_argument(
+            "-t",
+            "--temperature",
+            dest="temperature",
+            type=float,
+            default=0.7,
+            metavar="FLOAT",
+            help="Sampling temperature (e.g. 0.7). Optional.",
+        )
+        query_parser.add_argument(
+            "--max-tokens",
+            dest="max_tokens",
+            type=int,
+            default=None,
+            metavar="INT",
+            help="Maximum number of tokens in the response. Optional.",
         )
 
     @staticmethod
