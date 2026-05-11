@@ -68,7 +68,7 @@ class Args:
             "An INCOSE and ISO25010 requirements refiner.",
             formatter_class=argparse.RawDescriptionHelpFormatter,
             prog=Constant.PROG_NAME,
-            epilog="Copyright 2025 Ronald Rink, "
+            epilog="Copyright 2025-2026 d-fens GmbH, Ronald Rink, "
             "https://github.com/dfensgmbh/biz.dfch.IncoseIso25010Refiner"
             ". "
             "Licensed under AGPLv3.",
