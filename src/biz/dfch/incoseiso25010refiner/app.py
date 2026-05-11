@@ -117,7 +117,7 @@ class App:  # pylint: disable=R0903
         console.print("\n[bold cyan]Response:[/bold cyan]")
         try:
             console.print(JSON(response, indent=2))
-        except (json.JSONDecodeError, TypeError):
+        except Exception:  # pylint: disable=W0718  # type:ignore
             data = response
             console.print(Markdown(data))
 
