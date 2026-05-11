@@ -25,6 +25,7 @@ from biz.dfch.logging import log
 from biz.dfch.version import Version
 
 from .constant import Constant
+from .chat_config import ChatConfig
 
 
 class App:  # pylint: disable=R0903
@@ -62,9 +63,46 @@ class App:  # pylint: disable=R0903
         """This method processes the `default` argument."""
         ...
 
-    def on_query(self) -> None:
+    def on_query(self, cfg: ChatConfig) -> None:
         """This method processes the `query` argument."""
-        ...
+
+        assert isinstance(cfg, ChatConfig)
+
+        from rich.console import Console
+        from rich.table import Table
+
+        console = Console()
+        table = Table(
+            title="Chat Configuration",
+            show_header=True,
+            header_style="bold cyan",
+        )
+
+        table.add_column("Setting", style="bold")
+        table.add_column("Value")
+
+        table.add_row("prompt", cfg.prompt)
+        table.add_row("api_token", "***")
+        table.add_row("base_url", cfg.base_url)
+        table.add_row("model", cfg.model)
+        table.add_row(
+            "temperature",
+            (
+                str(cfg.temperature)
+                if cfg.temperature is not None
+                else "(default)"
+            ),
+        )
+        table.add_row(
+            "max_tokens",
+            (
+                str(cfg.max_tokens)
+                if cfg.max_tokens is not None
+                else "(default)"
+            ),
+        )
+
+        console.print(table)
 
     def invoke(self) -> None:
         """Main entry point for this class."""
@@ -88,15 +126,14 @@ class App:  # pylint: disable=R0903
 
         if self._args.command == "default":
 
-            self.on_default(
-            )
+            self.on_default()
             return
 
         if self._args.command == "query":
 
-            self.on_query(
-            )
+            config = ChatConfig.from_args_and_env(self._args)
+            self.on_query(config)
             return
 
-        self.on_query(
-        )
+        config = ChatConfig.from_args_and_env(self._args)
+        self.on_query(config)

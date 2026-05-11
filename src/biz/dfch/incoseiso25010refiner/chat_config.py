@@ -18,6 +18,7 @@ ChatConfig
 """
 
 from __future__ import annotations
+import argparse
 import os
 from dataclasses import dataclass
 
@@ -45,12 +46,14 @@ class ChatConfig:
         )
 
     @staticmethod
-    def from_args_and_env(args: dict) -> "ChatConfig":
+    def from_args_and_env(args: argparse.Namespace) -> "ChatConfig":
         """
-        Build AppConfig from parsed CLI args dict.
+        Build ChatConfig from parsed CLI args.
         Falls back to CHAT_API_TOKEN env var if --api-token not provided.
         """
-        api_token = args.get("api_token") or os.environ.get("CHAT_API_TOKEN")
+        api_token = getattr(args, "api_token", None) or os.environ.get(
+            "CHAT_API_TOKEN"
+        )
         if not api_token:
             raise ValueError(
                 "API token must be provided via --api-token or CHAT_API_TOKEN env var."
@@ -58,11 +61,13 @@ class ChatConfig:
 
         data = {
             "api_token": api_token,
-            "base_url": args.get("base_url", "https://routellm.abacus.ai/v1"),
-            "model": args.get("model", "route-llm"),
-            "prompt": args["prompt"],
-            "temperature": args.get("temperature", 0.7),
-            "max_tokens": args.get("max_tokens"),
+            "base_url": getattr(
+                args, "base_url", "https://routellm.abacus.ai/v1"
+            ),
+            "model": getattr(args, "model", "route-llm"),
+            "prompt": args.prompt,
+            "temperature": getattr(args, "temperature", None),
+            "max_tokens": getattr(args, "max_tokens", None),
         }
 
         return ChatConfig.from_dict(data)
