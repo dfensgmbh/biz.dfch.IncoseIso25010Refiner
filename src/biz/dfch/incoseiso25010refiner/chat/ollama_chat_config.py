@@ -29,4 +29,4 @@ class OllamaChatConfig(DefaultChatConfig):
     """Ollama chat configuration default values."""
 
     base_url: str = "http://localhost:11434"
-    model: str = "llama3.1"
+    model: str = "gpt-oss:20b"
