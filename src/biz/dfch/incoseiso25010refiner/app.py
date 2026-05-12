@@ -26,6 +26,7 @@ import re
 from rich.console import Console
 from rich.json import JSON
 from rich.markdown import Markdown
+from rich.progress_bar import ProgressBar
 from rich.table import Table
 from rich.theme import Theme
 
@@ -111,7 +112,7 @@ class App:  # pylint: disable=R0903
         table.add_column("Setting", style="bold")
         table.add_column("Value")
 
-        table.add_row("prompt", cfg.prompt)
+        table.add_row("prompt", Markdown(cfg.prompt))
         table.add_row("template", cfg.template)
         table.add_row(
             "request_size", str(len(cfg.prompt) + len(cfg.template_content))
@@ -141,6 +142,83 @@ class App:  # pylint: disable=R0903
 
         return table
 
+    def on_init(self, cfg: ChatConfig) -> None:
+        """This method processes the `init` argument."""
+
+        assert isinstance(cfg, ChatConfig)
+
+        console = Console()
+        table = App._make_config_table(cfg)
+        console.print(table)
+
+        console.print("\n[bold cyan]Querying LLM...[/bold cyan]")
+
+        client = ChatClientFactory.create(cfg)
+        response = client.query()
+
+        timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
+        text = App._remove_md_json(response)
+        is_json = App._is_json(text)
+
+        console.print("\n[bold cyan]Response:[/bold cyan]")
+        try:
+            console.print(JSON(text, indent=2))
+        except Exception:  # pylint: disable=W0718  # type:ignore
+            console.print(Markdown(text))
+
+        assert is_json
+        extension = ".json"
+        file_path = Path(cfg.output_path) / f"{cfg.session_id}{extension}"
+        file_path.write_text(text, encoding="utf-8")
+        file_path = (
+            Path(cfg.output_path) / f"{cfg.session_id}---{timestamp}{extension}"
+        )
+        file_path.write_text(text, encoding="utf-8")
+
+        from .parse import IsoResponse, parse_iso_response
+
+        iso25010_response = parse_iso_response(text)
+        for score in iso25010_response.summary.scores:
+            print(f"{score.characteristic} [{score.score}]: {score.rationale}")
+
+        App.display_iso25010_chart(iso25010_response.summary.scores, console)
+
+    @staticmethod
+    def _bar_style(score: float) -> str:
+        if score >= 0.7:
+            return "green"
+
+        if score >= 0.5:
+            return "yellow"
+
+        return "red"
+
+    @staticmethod
+    def display_iso25010_chart(scores: list, console: Console) -> None:
+        """Display ISO 25010 scores as a horizontal bar chart."""
+        table = Table(
+            title="ISO/IEC 25010 Quality Characteristics",
+            box=None,
+            show_header=True,
+        )
+        table.add_column("Characteristic", style="cyan", width=28)
+        table.add_column("Score", width=40)
+        table.add_column("Value", justify="right", width=6)
+
+        for score in scores:
+            progress_bar = ProgressBar(
+                total=1.0,
+                completed=score.score,
+                width=40,
+                style="grey35",
+                complete_style=App._bar_style(score.score),
+            )
+            table.add_row(
+                score.characteristic, progress_bar, f"{score.score:.2f}"
+            )
+
+        console.print(table)
+
     def on_query(self, cfg: ChatConfig) -> None:
         """This method processes the `query` argument."""
 
@@ -169,8 +247,7 @@ class App:  # pylint: disable=R0903
         try:
             console.print(JSON(text, indent=2))
         except Exception:  # pylint: disable=W0718  # type:ignore
-            data = text
-            console.print(Markdown(data))
+            console.print(Markdown(text))
 
     def invoke(self) -> None:
         """Main entry point for this class."""
@@ -191,6 +268,12 @@ class App:  # pylint: disable=R0903
         print(self._parser.description)
         log.debug(self._parser.epilog)
         print(self._parser.epilog)
+
+        if self._args.command == "init":
+
+            config = ChatConfig.from_args_and_env(self._args)
+            self.on_init(config)
+            return
 
         if self._args.command == "query":
 
