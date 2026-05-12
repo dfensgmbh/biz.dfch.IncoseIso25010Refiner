@@ -18,7 +18,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 
 from rich.theme import Theme
 

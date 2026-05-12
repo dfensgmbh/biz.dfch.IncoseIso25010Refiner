@@ -49,7 +49,7 @@ class ChatConfig:
     temperature: float | None = None
     max_tokens: int | None = None
     template: str | None = None
-    template_content: str | None = None
+    template_content: str = ""
 
     @staticmethod
     def from_dict(data: dict) -> "ChatConfig":
@@ -85,20 +85,13 @@ class ChatConfig:
             )
 
         template = getattr(args, "template", None)
-        template_content = None
+        template_text = ""
 
         if template:
-            template_path = Path(template).expanduser()
+            template_file = Path(template)
+            assert template_file.is_file(), template_file
 
-            if not template_path.exists():
-                raise FileNotFoundError(
-                    f"Template file does not exist: {template}"
-                )
-
-            if not template_path.is_file():
-                raise ValueError(f"Template path is not a file: {template}")
-
-            template_content = template_path.read_text(encoding="utf-8")
+            template_text = Path(template_file).read_text(encoding="utf-8")
 
         base_url = getattr(
             args, "base_url", ChatConfig._default_values[provider].base_url
@@ -121,7 +114,7 @@ class ChatConfig:
             "temperature": getattr(args, "temperature", None),
             "max_tokens": getattr(args, "max_tokens", None),
             "template": template,
-            "template_content": template_content,
+            "template_content": template_text,
         }
 
         return ChatConfig.from_dict(data)

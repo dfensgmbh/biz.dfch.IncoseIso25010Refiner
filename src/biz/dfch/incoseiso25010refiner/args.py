@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 
 from .chat.chat_config import Providers
 from .constant import Constant
@@ -90,13 +91,23 @@ class Args:
             default=Providers.DEFAULT,
             help=f"The chat provider to use (default: {Providers.DEFAULT}).",
         )
-        query_parser.add_argument(
+        prompt_group = query_parser.add_mutually_exclusive_group(required=True)
+        prompt_group.add_argument(
             "-p",
             "--prompt",
+            "--prompt-text",
             dest="prompt",
-            required=True,
             metavar="TEXT",
             help="The prompt text to send to the LLM.",
+        )
+        prompt_group.add_argument(
+            "-pf",
+            "--file",
+            "--prompt-file",
+            dest="prompt",
+            metavar="PATH",
+            type=lambda e: Args._get_file_content(query_parser, e),
+            help="The prompt file to send to the LLM.",
         )
         query_parser.add_argument(
             "-t",
@@ -104,6 +115,7 @@ class Args:
             dest="template",
             default=None,
             metavar="PATH",
+            type=lambda e: Args._validate_file(query_parser, e),
             help=(
                 "Path to a local template file to load and send with the "
                 "prompt."
@@ -153,8 +165,38 @@ class Args:
         )
 
     @staticmethod
+    def _get_file_content(parser, path) -> str:
+        """Examine if the argument is a valid file name."""
+
+        assert isinstance(parser, argparse.ArgumentParser), type(parser)
+        assert isinstance(path, str), type(path)
+
+        full_name = Path(path).expanduser()
+        if not full_name.exists():
+            parser.error(f"File '{full_name}' does not exist.")
+        if not full_name.is_file():
+            parser.error(f"File '{full_name}' is not a file.")
+
+        return full_name.read_text(encoding="utf-8")
+
+    @staticmethod
+    def _validate_file(parser, path) -> str:
+        """Examine if the argument is a valid file name."""
+
+        assert isinstance(parser, argparse.ArgumentParser), type(parser)
+        assert isinstance(path, str), type(path)
+
+        full_name = Path(path).expanduser()
+        if not full_name.exists():
+            parser.error(f"File '{full_name}' does not exist.")
+        if not full_name.is_file():
+            parser.error(f"File '{full_name}' is not a file.")
+
+        return str(full_name.resolve())
+
+    @staticmethod
     def get_effective_log_level_name(args) -> str:
-        """Returns the effective log level name."""
+        """Return the effective log level name."""
 
         result = Args._DEFAULT_LOG_LEVEL
 
