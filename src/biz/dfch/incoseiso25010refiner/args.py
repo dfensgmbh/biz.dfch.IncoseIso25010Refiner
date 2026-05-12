@@ -44,14 +44,6 @@ class Args:
     ]
     _DEFAULT_LOG_LEVEL = "ERROR"
 
-    _DEFAULT_BASE_URL = "https://routellm.abacus.ai/v1"
-
-    @staticmethod
-    def _ensure_non_empty_string(value: str) -> str:
-        if not value or not value.strip():
-            raise argparse.ArgumentTypeError("Value cannot be null or empty.")
-        return value
-
     def __init__(self):
 
         common = argparse.ArgumentParser(add_help=False)
@@ -67,24 +59,6 @@ class Args:
             action="count",
             default=0,
             help="Increase verbosity (-v = WARNING, -vv = INFO, -vvv = DEBUG).",
-        )
-        common.add_argument(
-            "-id",
-            "--session-id",
-            dest="session",
-            type=self._ensure_non_empty_string,
-            default=str(uuid.uuid4()),
-            metavar="ID",
-            help="Session id (default: pseudo-random generated GUID).",
-        )
-        common.add_argument(
-            "-o",
-            "--output-dir",
-            dest="output",
-            type=lambda path: Args._validate_dir(common, path),
-            default=".",
-            metavar="PATH",
-            help="Output directory (default: current working directory).",
         )
 
         self._parser = argparse.ArgumentParser(
@@ -104,19 +78,30 @@ class Args:
             dest="command", help="Available commands."
         )
 
-        query_parser = subparsers.add_parser(
-            "query",
-            parents=[common],
-            help="Operate an LLM API.",
+        chat_config_parser = argparse.ArgumentParser(add_help=False)
+
+        chat_config_parser.add_argument(
+            "-id",
+            "--session-id",
+            dest="session",
+            type=self._ensure_non_empty_string,
+            default=str(uuid.uuid4()),
+            metavar="ID",
+            help="Session id (default: pseudo-random generated GUID).",
         )
-        query_parser.add_argument(
-            "--provider",
-            dest="provider",
-            choices=Providers,
-            default=Providers.DEFAULT,
-            help=f"The chat provider to use (default: {Providers.DEFAULT}).",
+        chat_config_parser.add_argument(
+            "-o",
+            "--output-dir",
+            dest="output",
+            type=lambda path: Args._validate_dir(chat_config_parser, path),
+            default=".",
+            metavar="PATH",
+            help="Output directory (default: current working directory).",
         )
-        prompt_group = query_parser.add_mutually_exclusive_group(required=True)
+
+        prompt_group = chat_config_parser.add_mutually_exclusive_group(
+            required=True
+        )
         prompt_group.add_argument(
             "-p",
             "--prompt",
@@ -130,22 +115,37 @@ class Args:
             "--prompt-file",
             dest="prompt",
             metavar="FILE",
-            type=lambda e: Args._get_file_content(query_parser, e),
+            type=lambda e: Args._get_file_content(chat_config_parser, e),
             help="The prompt file to send to the LLM.",
         )
-        query_parser.add_argument(
+        chat_config_parser.add_argument(
             "-t",
             "--template",
             dest="template",
             default=None,
             metavar="FILE",
-            type=lambda e: Args._validate_file(query_parser, e),
+            type=lambda e: Args._validate_file(chat_config_parser, e),
             help=(
                 "Path to a local template file to load and send with the "
                 "prompt."
             ),
         )
-        query_parser.add_argument(
+        chat_config_parser.add_argument(
+            "--provider",
+            dest="provider",
+            choices=Providers,
+            default=Providers.DEFAULT,
+            help=f"The chat provider to use (default: {Providers.DEFAULT}).",
+        )
+        chat_config_parser.add_argument(
+            "-uri",
+            "--base-url",
+            dest="base_url",
+            default="",
+            metavar="URL",
+            help="API base URL (default depends on specified provider).",
+        )
+        chat_config_parser.add_argument(
             "--api-token",
             dest="api_token",
             default="",
@@ -155,15 +155,7 @@ class Args:
                 "If not specified, use CHAT_API_TOKEN environment variable."
             ),
         )
-        query_parser.add_argument(
-            "-uri",
-            "--base-url",
-            dest="base_url",
-            default="",
-            metavar="URL",
-            help="API base URL (default depends on specified provider).",
-        )
-        query_parser.add_argument(
+        chat_config_parser.add_argument(
             "-m",
             "--model",
             dest="model",
@@ -171,14 +163,14 @@ class Args:
             metavar="MODEL",
             help="LLM model to use (default depends on specified provider).",
         )
-        query_parser.add_argument(
+        chat_config_parser.add_argument(
             "--temperature",
             dest="temperature",
             type=float,
             metavar="FLOAT",
             help="Sampling temperature (0..1). Optional.",
         )
-        query_parser.add_argument(
+        chat_config_parser.add_argument(
             "--max-tokens",
             dest="max_tokens",
             type=int,
@@ -186,6 +178,29 @@ class Args:
             metavar="INT",
             help="Maximum number of tokens in the response. Optional.",
         )
+
+        query_parser = subparsers.add_parser(
+            "query",
+            parents=[common, chat_config_parser],
+            help="Operate an LLM API.",
+        )
+        _ = query_parser
+
+        init_parser = subparsers.add_parser(
+            "init",
+            parents=[common, chat_config_parser],
+            help=(
+                "Makes the initial request for requirements refinement to an "
+                "LLM API."
+            ),
+        )
+        _ = init_parser
+
+    @staticmethod
+    def _ensure_non_empty_string(value: str) -> str:
+        if not value or not value.strip():
+            raise argparse.ArgumentTypeError("Value cannot be null or empty.")
+        return value
 
     @staticmethod
     def _get_file_content(parser, path) -> str:
