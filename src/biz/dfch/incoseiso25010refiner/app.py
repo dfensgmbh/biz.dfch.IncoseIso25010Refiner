@@ -18,6 +18,8 @@
 from __future__ import annotations
 
 import argparse
+from datetime import datetime
+from pathlib import Path
 
 from rich.theme import Theme
 
@@ -75,7 +77,7 @@ class App:  # pylint: disable=R0903
 
         console = Console()
         table = Table(
-            title="Chat Configuration",
+            title="Configuration",
             show_header=True,
             header_style="bold cyan",
         )
@@ -114,6 +116,10 @@ class App:  # pylint: disable=R0903
 
         client = ChatClientFactory.create(cfg)
         response = client.query()
+
+        timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
+        file_path = Path(cfg.output_path) / f"{cfg.session_id}-{timestamp}.txt"
+        file_path.write_text(response, encoding="utf-8")
 
         console.print("\n[bold cyan]Response:[/bold cyan]")
         try:
