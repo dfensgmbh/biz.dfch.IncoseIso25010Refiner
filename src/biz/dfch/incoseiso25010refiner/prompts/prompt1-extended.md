@@ -17,6 +17,8 @@ I present you with a written phrase at the end of this text that is the basis of
 
 You must give a score between 0.0 and 1.0 that shows how much the text includes information of these characteristics. This score must also make sure, Then, you must write questions for each characteristic that help to get more information about these characteristic. A score of 0.0 shows that the phrase does not address a characteristic at all. A score of 1.0 shows that the phrase does address a characteristic fully. If the phrase addresses a characteristic partially, examine how much the phrase addresses the characteristic and find a value between 0.0 and 1.0. Be conservative with your judgement.
 
+Your questions must be in German language.
+
 Your response must be in JSON in the format that follows. You must not give any other output.
 
 {
