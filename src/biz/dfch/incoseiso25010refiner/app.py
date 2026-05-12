@@ -68,10 +68,10 @@ class App:  # pylint: disable=R0903
 
         assert isinstance(cfg, ChatConfig)
 
-        from rich.console import Console
-        from rich.markdown import Markdown
-        from rich.table import Table
-        from rich.json import JSON
+        from rich.console import Console  # pylint: disable=C0415
+        from rich.markdown import Markdown  # pylint: disable=C0415
+        from rich.table import Table  # pylint: disable=C0415
+        from rich.json import JSON  # pylint: disable=C0415
 
         console = Console()
         table = Table(
@@ -132,8 +132,8 @@ class App:  # pylint: disable=R0903
         import logging  # pylint: disable=C0415
 
         # Ignore the error message that follows:
-        # `logging.getLogger()` exists.
-        for handler in logging.getLogger().handlers:
+        # `logging.getLogger()` does exist.
+        for handler in logging.getLogger().handlers:  # type: ignore[attr-defined]  # pylint: disable=E1101  # noqa: E501
             handler.setLevel(log_level)
 
         # Print program information.
