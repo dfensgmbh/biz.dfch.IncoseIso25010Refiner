@@ -1,0 +1,114 @@
+{
+  "phrase": "<​the original input text>",
+  "analysis": [
+    {
+      "sentence_id": "<integer, starting at 0>",
+      "line_number": "<integer, starting at 1>",
+      "sentence": "<​exact sentence text>",
+      "classifications": [
+        {
+          "characteristic": "<​main characteristic name>",
+          "confidence": "<0.00 .. 1.00>",
+          "rationale": "<​one sentence explaining why this characteristic applies>"
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+        "characteristic": "Functional Suitability",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Performance Efficiency",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Compatibility",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Interaction Capability",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Reliability",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Security",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Maintainability",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Flexibility",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    },
+    {
+        "characteristic": "Safety",
+        "rationale": "<one sentence that explains why a question is necessary>",
+        "question": "<a question which answer will improve the quality or coverage of the characteristic>"
+    }
+  ],
+  "summary": {
+    "rationale": "<one sentence that gives an overall assessment of the input phrase in regards to coverage of the characteristics (this include non-ambiguity, and completeness)>",
+    "scores": [
+        {
+            "characteristic": "Functional Suitability",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Performance Efficiency",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Compatibility",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Interaction Capability",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Reliability",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Security",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Maintainability",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Flexibility",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        },
+        {
+            "characteristic": "Safety",
+            "score": "<0.00 .. 1.00, lower numbers indicate lower coverage of the characteristic>",
+            "rationale": "<one sentence that justifies the score for this characteristic>"
+        }
+    ]
+  }
+}
