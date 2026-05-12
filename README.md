@@ -10,6 +10,13 @@
 
     `uv sync --python 3.13 --extra dev --extra build`
 
+If `uv` is not available you can install it with these commands:
+
+Windows: `winget install --id=astral-sh.uv -e`
+Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `wget -qO- https://astral.sh/uv/install.sh | sh`
+
+Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\roaming\Python...\Scripts\...` directory.
+
 ## Start the programme
 
 1. Add API key to local terminal session
@@ -26,6 +33,18 @@
 
     Linux: `source ./.venv\bin/activate`
 
-1. Start the programme
+1. Start the programme with prompt text
 
     `python -m biz query -t ./prompt1.md -p "The user interface must be intuitive to use."`
+
+    Here, `-p` contains the *prompt text*. When you also specify `-t` (as in the example above), *prompt text* adds to the text from the specified template.
+
+    Note: `-p` and `-pf` are mutually exclusive.
+ 
+1. Start the programme with prompt file
+
+    `python -m biz query -t ./prompt1.md -pf ~/some-text-file-with-prompt.txt`
+
+    Here, `-pf` contains the path to a file with *prompt text*. When you also specify `-t` (as in the example above), *prompt text* adds to the text from the specified template.
+
+    Note: `-p` and `-pf` are mutually exclusive.
