@@ -1,0 +1,13 @@
+The software must have a login screen where a user can login with a permitted credit card. 
+
+A permitted credit card is one of these cards: VISA, MasterCard, American Express. 
+
+The screen must show a message to the user within 0.2 seconds if the card is permitted. 
+
+# Safety
+
+The system complies to NIST 123-97 that include logging and monitoring. This ensures safety (How will the system ensure safety during integration with other components, especially those handling sensitive financial data?).
+
+# Compatibility
+
+There are no compatibility requirements needed for this phrase.
