@@ -19,8 +19,14 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime
+import json
 from pathlib import Path
+import re
 
+from rich.console import Console
+from rich.json import JSON
+from rich.markdown import Markdown
+from rich.table import Table
 from rich.theme import Theme
 
 from biz.dfch.logging import log
@@ -65,17 +71,37 @@ class App:  # pylint: disable=R0903
         """This method processes the `default` argument."""
         ...
 
-    def on_query(self, cfg: ChatConfig) -> None:
-        """This method processes the `query` argument."""
+    @staticmethod
+    def _remove_md_json(response: str) -> str:
+        """Removes markdown JSON formatting from specified text."""
+
+        # Use regex to find content between ```json and ``` or just ``` and ```
+        # The [^`]*? is a non-greedy match for everything that isn't a backtick
+        pattern = r"```(?:json)?\s*(.*?)\s*```"
+        match = re.search(pattern, response, re.DOTALL)
+
+        if match:
+            result = match.group(1).strip()
+        else:
+            # Fallback: model might have returned naked JSON or failed the block
+            result = response.strip()
+
+        return result
+
+    @staticmethod
+    def _is_json(text: str) -> bool:
+        """Examine if the given text is valid JSON."""
+        try:
+            json.loads(text)
+            return True
+        except (json.JSONDecodeError, TypeError, UnicodeDecodeError):
+            return False
+
+    @staticmethod
+    def _make_config_table(cfg: ChatConfig) -> Table:
 
         assert isinstance(cfg, ChatConfig)
 
-        from rich.console import Console  # pylint: disable=C0415
-        from rich.markdown import Markdown  # pylint: disable=C0415
-        from rich.table import Table  # pylint: disable=C0415
-        from rich.json import JSON  # pylint: disable=C0415
-
-        console = Console()
         table = Table(
             title="Configuration",
             show_header=True,
@@ -87,6 +113,9 @@ class App:  # pylint: disable=R0903
 
         table.add_row("prompt", cfg.prompt)
         table.add_row("template", cfg.template)
+        table.add_row(
+            "request_size", str(len(cfg.prompt) + len(cfg.template_content))
+        )
         table.add_row("session", cfg.session_id)
         table.add_row("output", cfg.output_path)
         table.add_row("provider", cfg.provider)
@@ -110,6 +139,15 @@ class App:  # pylint: disable=R0903
             ),
         )
 
+        return table
+
+    def on_query(self, cfg: ChatConfig) -> None:
+        """This method processes the `query` argument."""
+
+        assert isinstance(cfg, ChatConfig)
+
+        console = Console()
+        table = App._make_config_table(cfg)
         console.print(table)
 
         console.print("\n[bold cyan]Querying LLM...[/bold cyan]")
@@ -118,14 +156,20 @@ class App:  # pylint: disable=R0903
         response = client.query()
 
         timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
-        file_path = Path(cfg.output_path) / f"{cfg.session_id}-{timestamp}.txt"
-        file_path.write_text(response, encoding="utf-8")
+        text = App._remove_md_json(response)
+        extension = ".json" if App._is_json(text) else ".md"
+        file_path = Path(cfg.output_path) / f"{cfg.session_id}{extension}"
+        file_path.write_text(text, encoding="utf-8")
+        file_path = (
+            Path(cfg.output_path) / f"{cfg.session_id}---{timestamp}{extension}"
+        )
+        file_path.write_text(text, encoding="utf-8")
 
         console.print("\n[bold cyan]Response:[/bold cyan]")
         try:
-            console.print(JSON(response, indent=2))
+            console.print(JSON(text, indent=2))
         except Exception:  # pylint: disable=W0718  # type:ignore
-            data = response
+            data = text
             console.print(Markdown(data))
 
     def invoke(self) -> None:
