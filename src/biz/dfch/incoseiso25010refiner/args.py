@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import uuid
 
 from .chat.chat_config import Providers
 from .constant import Constant
@@ -45,12 +46,18 @@ class Args:
 
     _DEFAULT_BASE_URL = "https://routellm.abacus.ai/v1"
 
+    @staticmethod
+    def _ensure_non_empty_string(value: str) -> str:
+        if not value or not value.strip():
+            raise argparse.ArgumentTypeError("Value cannot be null or empty.")
+        return value
+
     def __init__(self):
 
         common = argparse.ArgumentParser(add_help=False)
         common.add_argument(
-            "--log-level",
             "-l",
+            "--log-level",
             dest="log_level",
             choices=self.LOG_LEVEL_CHOICES,
             help=f"Logging level (default: {self._DEFAULT_LOG_LEVEL}).",
@@ -60,6 +67,24 @@ class Args:
             action="count",
             default=0,
             help="Increase verbosity (-v = WARNING, -vv = INFO, -vvv = DEBUG).",
+        )
+        common.add_argument(
+            "-id",
+            "--session-id",
+            dest="session",
+            type=self._ensure_non_empty_string,
+            default=str(uuid.uuid4()),
+            metavar="ID",
+            help="Session id (default: pseudo-random generated GUID).",
+        )
+        common.add_argument(
+            "-o",
+            "--output-dir",
+            dest="output",
+            type=lambda path: Args._validate_dir(common, path),
+            default=".",
+            metavar="PATH",
+            help="Output directory (default: current working directory).",
         )
 
         self._parser = argparse.ArgumentParser(
@@ -191,6 +216,21 @@ class Args:
             parser.error(f"File '{full_name}' does not exist.")
         if not full_name.is_file():
             parser.error(f"File '{full_name}' is not a file.")
+
+        return str(full_name.resolve())
+
+    @staticmethod
+    def _validate_dir(parser, path) -> str:
+        """Examine if the argument is a valid directory path."""
+
+        assert isinstance(parser, argparse.ArgumentParser), type(parser)
+        assert isinstance(path, str), type(path)
+
+        full_name = Path(path).expanduser()
+        if not full_name.exists():
+            parser.error(f"Directory '{full_name}' does not exist.")
+        if not full_name.is_dir():
+            parser.error(f"Path '{full_name}' is not a directory.")
 
         return str(full_name.resolve())
 

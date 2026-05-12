@@ -46,6 +46,8 @@ class ChatConfig:
     base_url: str
     model: str
     prompt: str
+    session_id: str
+    output_path: str
     temperature: float | None = None
     max_tokens: int | None = None
     template: str | None = None
@@ -111,6 +113,8 @@ class ChatConfig:
             "base_url": base_url,
             "model": model,
             "prompt": args.prompt,
+            "session_id": args.session,
+            "output_path": args.output,
             "temperature": getattr(args, "temperature", None),
             "max_tokens": getattr(args, "max_tokens", None),
             "template": template,

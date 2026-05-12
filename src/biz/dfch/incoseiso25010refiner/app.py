@@ -85,6 +85,8 @@ class App:  # pylint: disable=R0903
 
         table.add_row("prompt", cfg.prompt)
         table.add_row("template", cfg.template)
+        table.add_row("session", cfg.session_id)
+        table.add_row("output", cfg.output_path)
         table.add_row("provider", cfg.provider)
         table.add_row("base_url", cfg.base_url)
         table.add_row("model", cfg.model)
