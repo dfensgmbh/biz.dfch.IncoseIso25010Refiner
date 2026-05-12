@@ -126,11 +126,10 @@ class Args:
             help="The prompt text to send to the LLM.",
         )
         prompt_group.add_argument(
-            "-pf",
-            "--file",
+            "-i",
             "--prompt-file",
             dest="prompt",
-            metavar="PATH",
+            metavar="FILE",
             type=lambda e: Args._get_file_content(query_parser, e),
             help="The prompt file to send to the LLM.",
         )
@@ -139,7 +138,7 @@ class Args:
             "--template",
             dest="template",
             default=None,
-            metavar="PATH",
+            metavar="FILE",
             type=lambda e: Args._validate_file(query_parser, e),
             help=(
                 "Path to a local template file to load and send with the "
@@ -176,7 +175,6 @@ class Args:
             "--temperature",
             dest="temperature",
             type=float,
-            default=0.5,
             metavar="FLOAT",
             help="Sampling temperature (0..1). Optional.",
         )
