@@ -27,7 +27,7 @@ class Iso25010(StrEnum):
     """ISO25010 main characteristics."""
 
     FUNCTIONALITY = "Functional Suitability"
-    PERFORMANCE = "Performance	Efficiency"
+    PERFORMANCE = "Performance Efficiency"
     COMPATIBILITY = "Compatibility"
     INTERACTION = "Interaction Capability"
     RELIABILITY = "Reliability"
