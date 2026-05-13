@@ -204,6 +204,10 @@ class App:  # pylint: disable=R0903
             text = f"""// This is the initial draft for the requirement set '{cfg.session_id}'.
 // Title: '<TITLE OF REQUIREMENT SET>'
 
+# General
+
+{cfg.prompt}
+
 # {Iso25010.FUNCTIONALITY}
 
 # {Iso25010.PERFORMANCE}
@@ -258,7 +262,7 @@ class App:  # pylint: disable=R0903
                         for q in questions
                         if q.characteristic == characteristic
                     ]:
-                        new_lines.append(f"// {characteristic}")
+                        # new_lines.append(f"// {characteristic}")
                         new_lines.append(f"> {q}")
                         new_lines.append("")
 
