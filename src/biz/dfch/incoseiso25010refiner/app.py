@@ -44,6 +44,8 @@ from .parse import (
     Summary,
 )
 
+from .iso25010 import Iso25010
+
 
 class App:  # pylint: disable=R0903
     """The application."""
@@ -175,12 +177,10 @@ class App:  # pylint: disable=R0903
             console.print(Markdown(text))
 
         extension = ".json" if is_json else ".txt"
-        file_path = Path(cfg.output_path) / f"{cfg.session_id}{extension}"
-        file_path.write_text(text, encoding="utf-8")
-        file_path = (
+        backup_file_path = (
             Path(cfg.output_path) / f"{cfg.session_id}---{timestamp}{extension}"
         )
-        file_path.write_text(text, encoding="utf-8")
+        backup_file_path.write_text(text, encoding="utf-8")
 
         assert is_json, "Try operation one more time."
         iso25010_response = parse_iso_response(text)
@@ -196,11 +196,80 @@ class App:  # pylint: disable=R0903
         result = App._create_questions_table(iso25010_response.questions)
         console.print(result)
 
+        extension = ".md"
+        session_file_path = (
+            Path(cfg.output_path) / f"{cfg.session_id}{extension}"
+        )
+        if not session_file_path.exists():
+            text = f"""// This is the initial draft for the requirement set '{cfg.session_id}'.
+// Title: '<TITLE OF REQUIREMENT SET>'
+
+# {Iso25010.FUNCTIONALITY}
+
+# {Iso25010.PERFORMANCE}
+
+# {Iso25010.COMPATIBILITY}
+
+# {Iso25010.INTERACTION}
+
+# {Iso25010.RELIABILITY}
+
+# {Iso25010.SECURITY}
+
+# {Iso25010.MAINTAINABILITY}
+
+# {Iso25010.FLEXIBILITY}
+
+# {Iso25010.SAFETY}
+
+
+"""
+            session_file_path.write_text(text, encoding="utf-8")
+
+        updated = App._update_file(
+            session_file_path, iso25010_response.questions
+        )
+        session_file_path.write_text(updated, encoding="utf-8")
+
         result = App._create_scores_table(iso25010_response.summary.scores)
         console.print(result)
 
         result = App._create_iso25010_chart(iso25010_response.summary.scores)
         console.print(result)
+
+    @staticmethod
+    def _update_file(file: Path, questions: list[Question]) -> str:
+        assert isinstance(file, Path), type(file)
+        assert file.exists(), file
+        assert file.is_file(), file
+        assert isinstance(questions, list), type(questions)
+
+        lines = file.read_text(encoding="utf-8").splitlines()
+
+        # Move from end to start.
+        for i in range(len(lines) - 1, -1, -1):
+            line = lines[i]
+
+            for characteristic in Iso25010:
+                if line.startswith(f"# {characteristic}"):
+                    new_lines = [""]
+                    for q in [
+                        q.question
+                        for q in questions
+                        if q.characteristic == characteristic
+                    ]:
+                        new_lines.append(f"// {characteristic}")
+                        new_lines.append(f"> {q}")
+                        new_lines.append("")
+
+                    for j, new_line in enumerate(new_lines):
+                        lines.insert(i + 1 + j, new_line)
+                    break
+
+        lines.append("")
+        result: str = "\n".join(lines)
+
+        return result
 
     @staticmethod
     def _create_analysis_table(analysis: list[SentenceAnalysis]) -> Table:
