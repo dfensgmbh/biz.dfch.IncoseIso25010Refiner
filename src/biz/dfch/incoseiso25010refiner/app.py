@@ -23,6 +23,7 @@ import json
 from pathlib import Path
 import re
 
+from rich import box
 from rich.console import Console
 from rich.json import JSON
 from rich.markdown import Markdown
@@ -35,7 +36,13 @@ from biz.dfch.version import Version
 
 from .chat.chat_config import ChatConfig
 from .chat.chat_client_factory import ChatClientFactory
-from .parse import parse_iso_response
+from .parse import (
+    parse_iso_response,
+    ScoreSummary,
+    SentenceAnalysis,
+    Question,
+    Summary,
+)
 
 
 class App:  # pylint: disable=R0903
@@ -177,10 +184,99 @@ class App:  # pylint: disable=R0903
 
         assert is_json, "Try operation one more time."
         iso25010_response = parse_iso_response(text)
-        # for score in iso25010_response.summary.scores:
-        #     print(f"{score.characteristic} [{score.score}]: {score.rationale}")
 
-        App.display_iso25010_chart(iso25010_response.summary.scores, console)
+        # for question in iso25010_response.questions:
+        #     characteristic: str
+        #     rationale: str
+        #     question: str
+
+        result = App._create_analysis_table(iso25010_response.analysis)
+        console.print(result)
+
+        result = App._create_questions_table(iso25010_response.questions)
+        console.print(result)
+
+        result = App._create_scores_table(iso25010_response.summary.scores)
+        console.print(result)
+
+        result = App._create_iso25010_chart(iso25010_response.summary.scores)
+        console.print(result)
+
+    @staticmethod
+    def _create_analysis_table(analysis: list[SentenceAnalysis]) -> Table:
+        table = Table(
+            title="Sentence Analysis",
+            box=box.ROUNDED,
+            show_header=True,
+            header_style="bold cyan",
+            expand=True,
+        )
+
+        table.add_column("#", style="bold white", justify="center", min_width=4)
+        table.add_column(
+            "Id", style="bold white", justify="center", min_width=4
+        )
+        table.add_column("Classifications", style="bold yellow", min_width=22)
+        table.add_column("Text", style="white", ratio=1)
+
+        for item in analysis:
+            table.add_row(
+                str(item.line_number),
+                str(item.sentence_id),
+                "\n".join([c.characteristic for c in item.classifications]),
+                item.sentence,
+            )
+            table.add_section()
+
+        return table
+
+    @staticmethod
+    def _create_questions_table(questions: list[Question]) -> Table:
+        table = Table(
+            title="ISO 25010 Questions",
+            box=box.ROUNDED,
+            show_header=False,
+            expand=True,
+        )
+
+        table.add_column("Content", ratio=1)
+
+        for i, question in enumerate(questions):
+            table.add_row(
+                f"[bold yellow]{question.characteristic}:[/bold yellow] [dim]{question.rationale}[/dim]"
+            )
+            table.add_row(f"[white]{question.question}[/white]")
+
+            if i < len(questions) - 1:
+                table.add_section()  # adds a divider between question groups
+
+        return table
+
+    @staticmethod
+    def _create_scores_table(scores: list) -> Table:
+
+        table = Table(
+            title="Characteristic Scores",
+            box=None,
+            show_header=True,
+            header_style="bold cyan",
+            expand=True,
+        )
+
+        # table.add_column(
+        #     "Score", style="bold yellow", justify="center", min_width=8
+        # )
+        table.add_column("Characteristic", style="bold cyan", min_width=20)
+        table.add_column("Rationale", style="white", ratio=1)
+
+        for score in scores:
+            table.add_row(
+                # str(score.score),
+                score.characteristic,
+                score.rationale,
+            )
+
+        return table
 
     @staticmethod
     def _bar_style(score: float) -> str:
@@ -193,7 +289,7 @@ class App:  # pylint: disable=R0903
         return "red"
 
     @staticmethod
-    def display_iso25010_chart(scores: list, console: Console) -> None:
+    def _create_iso25010_chart(scores: list) -> Table:
         """Display ISO 25010 scores as a horizontal bar chart."""
         table = Table(
             title="ISO/IEC 25010 Quality Characteristics Coverage",
@@ -216,7 +312,7 @@ class App:  # pylint: disable=R0903
                 score.characteristic, progress_bar, f"{score.score:.2f}"
             )
 
-        console.print(table)
+        return table
 
     def on_query(self, cfg: ChatConfig) -> None:
         """This method processes the `query` argument."""
