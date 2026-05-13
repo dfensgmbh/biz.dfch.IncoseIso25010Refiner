@@ -26,15 +26,15 @@ from dataclasses import dataclass
 class Iso25010(StrEnum):
     """ISO25010 main characteristics."""
 
-    FUNCTIONALITY = "functional suitability"
-    PERFORMANCE = "performance	efficiency"
-    COMPATIBILITY = "compatibility"
-    INTERACTION = "interaction capability"
-    RELIABILITY = "reliability"
-    SECURITY = "security"
-    MAINTAINABILITY = "maintainability"
-    FLEXIBILITY = "flexibility"
-    SAFETY = "safety"
+    FUNCTIONALITY = "Functional Suitability"
+    PERFORMANCE = "Performance	Efficiency"
+    COMPATIBILITY = "Compatibility"
+    INTERACTION = "Interaction Capability"
+    RELIABILITY = "Reliability"
+    SECURITY = "Security"
+    MAINTAINABILITY = "Maintainability"
+    FLEXIBILITY = "Flexibility"
+    SAFETY = "Safety"
 
 
 class Iso25010Functionality(StrEnum):
