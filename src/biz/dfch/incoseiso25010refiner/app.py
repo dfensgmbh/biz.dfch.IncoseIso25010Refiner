@@ -35,6 +35,7 @@ from biz.dfch.version import Version
 
 from .chat.chat_config import ChatConfig
 from .chat.chat_client_factory import ChatClientFactory
+from .parse import parse_iso_response
 
 
 class App:  # pylint: disable=R0903
@@ -166,8 +167,7 @@ class App:  # pylint: disable=R0903
         except Exception:  # pylint: disable=W0718  # type:ignore
             console.print(Markdown(text))
 
-        assert is_json
-        extension = ".json"
+        extension = ".json" if is_json else ".txt"
         file_path = Path(cfg.output_path) / f"{cfg.session_id}{extension}"
         file_path.write_text(text, encoding="utf-8")
         file_path = (
@@ -175,11 +175,10 @@ class App:  # pylint: disable=R0903
         )
         file_path.write_text(text, encoding="utf-8")
 
-        from .parse import IsoResponse, parse_iso_response
-
+        assert is_json, "Try operation one more time."
         iso25010_response = parse_iso_response(text)
-        for score in iso25010_response.summary.scores:
-            print(f"{score.characteristic} [{score.score}]: {score.rationale}")
+        # for score in iso25010_response.summary.scores:
+        #     print(f"{score.characteristic} [{score.score}]: {score.rationale}")
 
         App.display_iso25010_chart(iso25010_response.summary.scores, console)
 
@@ -197,7 +196,7 @@ class App:  # pylint: disable=R0903
     def display_iso25010_chart(scores: list, console: Console) -> None:
         """Display ISO 25010 scores as a horizontal bar chart."""
         table = Table(
-            title="ISO/IEC 25010 Quality Characteristics",
+            title="ISO/IEC 25010 Quality Characteristics Coverage",
             box=None,
             show_header=True,
         )
