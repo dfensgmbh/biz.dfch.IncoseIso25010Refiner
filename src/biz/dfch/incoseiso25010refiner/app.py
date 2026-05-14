@@ -22,6 +22,7 @@ from datetime import datetime
 import json
 from pathlib import Path
 import re
+import time
 
 from rich import box
 from rich.console import Console
@@ -161,10 +162,26 @@ class App:  # pylint: disable=R0903
         table = App._make_config_table(cfg)
         console.print(table)
 
-        console.print("\n[bold cyan]Querying LLM...[/bold cyan]")
-
+        timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
+        console.print(f"\n[bold cyan]{timestamp}: Querying LLM ...[/bold cyan]")
         client = ChatClientFactory.create(cfg)
-        response = client.query()
+
+        start = time.perf_counter()
+        try:
+            response = client.query()
+        except TimeoutError:
+            elapsed = time.perf_counter() - start
+            console.print(
+                f"\n[dim red]{timestamp}: Querying LLM FAIL. TotalSeconds: "
+                f"{elapsed:.3f}.[/dim red]"
+            )
+            raise
+
+        elapsed = time.perf_counter() - start
+        console.print(
+            f"\n[dim white]{timestamp}: Querying LLM OK. TotalSeconds: "
+            f"{elapsed:.3f}.[/dim white]"
+        )
 
         timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
         text = App._remove_md_json(response)
