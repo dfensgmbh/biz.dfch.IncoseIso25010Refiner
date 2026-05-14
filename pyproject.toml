@@ -47,6 +47,7 @@ classifiers = [
 
 dependencies = [
     "dacite>=1.9.2",
+    "rich>=15.0.0",
 ]
 
 # Install with `uv`:
@@ -69,9 +70,12 @@ dev = [
     "pip>=26.1.1",
 ]
 
+interactive = [
+    "ipykernel",
+]
+
 build = [
     "pyinstaller>=6.16.0",
-    "rich",
 ]
 
 [project.urls]
