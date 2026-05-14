@@ -29,6 +29,8 @@ from .chat_client_base import ChatClientBase
 class OllamaChatClient(ChatClientBase):
     """Sends prompts to a local Ollama API and returns the response."""
 
+    REQUEST_TIMEOUT: int = 3600
+
     def query(self) -> str:
         """Send the prompt to Ollama and return the assistant response text."""
         url = f"{self._config.base_url.rstrip('/')}/v1/chat/completions"
@@ -60,7 +62,9 @@ class OllamaChatClient(ChatClientBase):
         )
 
         try:
-            with urllib.request.urlopen(request, timeout=120) as response:
+            with urllib.request.urlopen(
+                request, timeout=REQUEST_TIMEOUT
+            ) as response:
                 data = json.loads(response.read().decode(self._encoding))
         except urllib.error.HTTPError as e:
             body = e.read().decode(self._encoding, errors="replace")
