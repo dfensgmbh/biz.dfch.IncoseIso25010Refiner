@@ -13,6 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# pylint: disable=C0415
+# pylint: disable=E0401
+# noqa: E501
+
 """Application entry point."""
 
 
@@ -28,13 +32,13 @@ def main():
 
     from biz.dfch.incoseiso25010refiner.args import (
         Args,
-    )  # pylint: disable=C0415, E0401 # noqa: E501
+    )
 
     parser = Args().invoke()
 
     from biz.dfch.incoseiso25010refiner.app import (
         App,
-    )  # pylint: disable=C0415, E0401 # noqa: E501
+    )
 
     App(parser).invoke()
 
