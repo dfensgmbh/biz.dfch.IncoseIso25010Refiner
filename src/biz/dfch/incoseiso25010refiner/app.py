@@ -316,7 +316,8 @@ class App:  # pylint: disable=R0903
 
         for i, question in enumerate(questions):
             table.add_row(
-                f"[bold yellow]{question.characteristic}:[/bold yellow] [dim]{question.rationale}[/dim]"
+                f"[bold yellow]{question.characteristic}:[/bold yellow] "
+                f"[dim]{question.rationale}[/dim]"
             )
             table.add_row(f"[white]{question.question}[/white]")
 
