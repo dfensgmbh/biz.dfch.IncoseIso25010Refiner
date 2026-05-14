@@ -21,7 +21,11 @@ Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\
 
 1. Add API key to local terminal session
 
-    `$ENV:CHAT_API_TOKEN="..."`
+    Windows (PowerShell): `$ENV:CHAT_API_TOKEN="..."`
+
+    Windows (Command Prompt): `set CHAT_API_TOKEN=...`
+
+    Linux: `export CHAT_API_TOKEN="..."
 
 1. Change to `src` directory
 
@@ -39,12 +43,12 @@ Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\
 
     Here, `-p` contains the *prompt text*. When you also specify `-t` (as in the example above), *prompt text* adds to the text from the specified template.
 
-    Note: `-p` and `-pf` are mutually exclusive.
+    Note: `-p` and `-i` are mutually exclusive.
  
 1. Start the programme with prompt file
 
-    `python -m biz query -t ./prompt1.md -pf ~/some-text-file-with-prompt.txt`
+    `python -m biz query -t ./prompt1.md -i ~/some-text-file-with-prompt.txt`
 
-    Here, `-pf` contains the path to a file with *prompt text*. When you also specify `-t` (as in the example above), *prompt text* adds to the text from the specified template.
+    Here, `-i` contains the path to a file with *prompt text*. When you also specify `-t` (as in the example above), *prompt text* adds to the text from the specified template.
 
-    Note: `-p` and `-pf` are mutually exclusive.
+    Note: `-p` and `-i` are mutually exclusive.
