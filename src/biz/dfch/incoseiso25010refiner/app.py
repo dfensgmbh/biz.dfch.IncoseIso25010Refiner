@@ -23,6 +23,7 @@ import json
 from pathlib import Path
 import re
 import time
+import unicodedata
 
 from rich import box
 from rich.console import Console
@@ -39,10 +40,8 @@ from .chat.chat_config import ChatConfig
 from .chat.chat_client_factory import ChatClientFactory
 from .parse import (
     parse_iso_response,
-    ScoreSummary,
     SentenceAnalysis,
     Question,
-    Summary,
 )
 
 from .iso25010 import Iso25010
@@ -99,6 +98,18 @@ class App:  # pylint: disable=R0903
             result = response.strip()
 
         return result
+
+    @staticmethod
+    def _clean_text(s: str) -> str:
+        """Cleans special characters from specified text."""
+
+        _invisible_chars = re.compile(r"[\u200B-\u200D\u2060\uFEFF]")
+
+        s = unicodedata.normalize("NFC", s)
+        s = _invisible_chars.sub("", s)
+        s = "".join(ch for ch in s if ch in "\t\n\r" or ord(ch) >= 0x20)
+
+        return s.strip()
 
     @staticmethod
     def _is_json(text: str) -> bool:
@@ -185,6 +196,9 @@ class App:  # pylint: disable=R0903
 
         timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
         text = App._remove_md_json(response)
+        is_json = App._is_json(text)
+        if not is_json:
+            text = App._clean_text(text)
         is_json = App._is_json(text)
 
         console.print("\n[bold cyan]Response:[/bold cyan]")
