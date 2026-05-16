@@ -29,7 +29,7 @@ from .chat_client_base import ChatClientBase
 class OllamaChatClient(ChatClientBase):
     """Sends prompts to a local Ollama API and returns the response."""
 
-    REQUEST_TIMEOUT: int = 3600
+    REQUEST_TIMEOUT: int = 7000
 
     def query(self) -> str:
         """Send the prompt to Ollama and return the assistant response text."""
@@ -63,7 +63,7 @@ class OllamaChatClient(ChatClientBase):
 
         try:
             with urllib.request.urlopen(
-                request, timeout=REQUEST_TIMEOUT
+                request, timeout=self.REQUEST_TIMEOUT
             ) as response:
                 data = json.loads(response.read().decode(self._encoding))
         except urllib.error.HTTPError as e:
