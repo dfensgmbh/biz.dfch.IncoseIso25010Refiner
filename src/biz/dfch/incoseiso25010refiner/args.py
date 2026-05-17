@@ -186,6 +186,22 @@ class Args:
         )
         _ = query_parser
 
+        validate_parser = subparsers.add_parser(
+            "validate",
+            parents=[common],
+            help=(
+                "Makes the initial request for requirements refinement to an "
+                "LLM API."
+            ),
+        )
+        validate_parser.add_argument(
+            "--json",
+            dest="json",
+            metavar="FILE",
+            type=lambda e: Args._get_file_content(chat_config_parser, e),
+            help="The JSON file to validate.",
+        )
+
         init_parser = subparsers.add_parser(
             "init",
             parents=[common, chat_config_parser],

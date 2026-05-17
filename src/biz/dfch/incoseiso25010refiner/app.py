@@ -164,6 +164,44 @@ class App:  # pylint: disable=R0903
 
         return table
 
+    @staticmethod
+    def _clean_pseudo_json(text: str) -> str:
+
+        assert isinstance(text, str), type(str)
+
+        # Allowed starting characters/sequences for valid JSON lines
+        # (after stripping whitespace).
+        allowed_pattern = re.compile(r'^[0-9\-\{\}\[\]\,"tf n]')
+
+        cleaned_lines = []
+
+        for line in text.splitlines():
+            stripped_line = line.strip()
+
+            if not stripped_line:
+                continue
+
+            # Check if the line starts with an allowed JSON character
+            if allowed_pattern.match(stripped_line):
+                cleaned_lines.append(line)
+
+        return "\n".join(cleaned_lines)
+
+    def on_validate(self, file: str) -> None:
+        """This method processes the `validate` argument."""
+
+        # assert isinstance(file, Path), type(file)
+        assert isinstance(file, str), type(file)
+
+        # text = file.read_text(encoding="utf8")
+        text = file
+
+        is_json = App._is_json(text)
+        console = Console()
+        console.print(is_json)
+
+        _ = json.loads(text)
+
     def on_init(self, cfg: ChatConfig) -> None:
         """This method processes the `init` argument."""
 
@@ -173,29 +211,31 @@ class App:  # pylint: disable=R0903
         table = App._make_config_table(cfg)
         console.print(table)
 
-        timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
-        console.print(f"\n[bold cyan]{timestamp}: Querying LLM ...[/bold cyan]")
+        start_time = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
+        console.print(f"\n[bold cyan]{start_time}: Querying LLM ...[/bold cyan]")
         client = ChatClientFactory.create(cfg)
 
-        start = time.perf_counter()
+        timestamp = time.perf_counter()
         try:
             response = client.query()
         except TimeoutError:
-            elapsed = time.perf_counter() - start
+            elapsed = time.perf_counter() - timestamp
             console.print(
-                f"\n[dim red]{timestamp}: Querying LLM FAIL. TotalSeconds: "
+                f"\n[dim red]{start_time}: Querying LLM FAIL. TotalSeconds: "
                 f"{elapsed:.3f}.[/dim red]"
             )
             raise
 
-        elapsed = time.perf_counter() - start
+        stop_time = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
+        elapsed = time.perf_counter() - timestamp
         console.print(
-            f"\n[dim white]{timestamp}: Querying LLM OK. TotalSeconds: "
+            f"\n[dim white]{stop_time}: Querying LLM OK. TotalSeconds: "
             f"{elapsed:.3f}.[/dim white]"
         )
 
-        timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
+        start_time = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
         text = App._remove_md_json(response)
+        text = App._clean_pseudo_json(text)
         is_json = App._is_json(text)
         if not is_json:
             text = App._clean_text(text)
@@ -209,7 +249,7 @@ class App:  # pylint: disable=R0903
 
         extension = ".json" if is_json else ".txt"
         backup_file_path = (
-            Path(cfg.output_path) / f"{cfg.session_id}---{timestamp}{extension}"
+            Path(cfg.output_path) / f"{cfg.session_id}---{start_time}{extension}"
         )
         backup_file_path.write_text(text, encoding="utf-8")
 
@@ -468,6 +508,15 @@ class App:  # pylint: disable=R0903
         print(self._parser.description)
         log.debug(self._parser.epilog)
         print(self._parser.epilog)
+
+        if self._args.command == "validate":
+
+            json_text = getattr(self._args, "json", None)
+            assert json_text is not None
+            # file = Path(json_text)
+
+            self.on_validate(json_text)
+            return
 
         if self._args.command == "init":
 
