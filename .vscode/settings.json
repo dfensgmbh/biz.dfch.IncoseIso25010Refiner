@@ -22,6 +22,7 @@
     "cSpell.words": [
         "altgraph",
         "analysability",
+        "asctime",
         "asdste",
         "behaviour",
         "colorama",
@@ -38,6 +39,7 @@
         "Internationalisation",
         "ipykernel",
         "isort",
+        "levelname",
         "macholib",
         "mccabe",
         "mdurl",
@@ -68,6 +70,7 @@
         "sdist",
         "setuptools",
         "tomlkit",
+        "typer",
         "ufeff",
         "utilised",
         "venv",

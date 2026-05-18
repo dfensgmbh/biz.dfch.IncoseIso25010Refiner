@@ -47,7 +47,9 @@ classifiers = [
 
 dependencies = [
     "dacite>=1.9.2",
+    "requests>=2.34.2",
     "rich>=15.0.0",
+    "typer>=0.25.1",
 ]
 
 # Install with `uv`:
@@ -81,6 +83,9 @@ build = [
 [project.urls]
 Homepage = "https://github.com/dfensgmbh/biz.dfch.IncoseIso25010Refiner"
 Issues = "https://github.com/dfensgmbh/biz.dfch.IncoseIso25010Refiner/issues"
+
+[project.scripts]  
+req = "main:app"
 
 [tool.black]
 line-length = 80

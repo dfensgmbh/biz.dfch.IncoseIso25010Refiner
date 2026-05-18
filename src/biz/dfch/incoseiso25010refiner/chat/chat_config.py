@@ -37,7 +37,7 @@ from .providers import Providers
 class ChatConfig:
     """Chat client configuration."""
 
-    _default_values: ClassVar[dict[Providers, DefaultChatConfig]] = {
+    default_values: ClassVar[dict[Providers, DefaultChatConfig]] = {
         Providers.ABACUS: AbacusChatConfig(),
         Providers.OLLAMA: OllamaChatConfig(),
     }
@@ -60,7 +60,7 @@ class ChatConfig:
             data_class=ChatConfig,
             data=data,
             config=dacite.Config(
-                strict=True,
+                strict=False,
                 cast=[Providers],
             ),
         )
@@ -96,16 +96,16 @@ class ChatConfig:
             template_text = Path(template_file).read_text(encoding="utf-8")
 
         base_url = getattr(
-            args, "base_url", ChatConfig._default_values[provider].base_url
+            args, "base_url", ChatConfig.default_values[provider].base_url
         )
         if not base_url.strip():
-            base_url = ChatConfig._default_values[provider].base_url
+            base_url = ChatConfig.default_values[provider].base_url
 
         model = getattr(
-            args, "model", ChatConfig._default_values[provider].model
+            args, "model", ChatConfig.default_values[provider].model
         )
         if not model.strip():
-            model = ChatConfig._default_values[provider].model
+            model = ChatConfig.default_values[provider].model
 
         data = {
             "provider": provider,

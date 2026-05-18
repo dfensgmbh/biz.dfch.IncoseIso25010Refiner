@@ -1,17 +1,17 @@
-# Copyright (c) 2026 Ronald Rink, http://d-fens.ch
+# Copyright (C) 2026 Ronald Rink, d-fens GmbH, http://d-fens.ch
 #
 # This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
+# it under the terms of the GNU Affero General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU Affero General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+# You should have received a copy of the GNU Affero General Public License
+# along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 """Main app module."""
 
@@ -21,15 +21,11 @@ import argparse
 from datetime import datetime
 import json
 from pathlib import Path
-import re
 import time
-import unicodedata
 
-from rich import box
 from rich.console import Console
 from rich.json import JSON
 from rich.markdown import Markdown
-from rich.progress_bar import ProgressBar
 from rich.table import Table
 from rich.theme import Theme
 
@@ -40,10 +36,12 @@ from .chat.chat_config import ChatConfig
 from .chat.chat_client_factory import ChatClientFactory
 from .parse import (
     parse_iso_response,
-    SentenceAnalysis,
     Question,
 )
 
+from .ui.rich_utils import RichUtils
+from .text.text_utils import TextUtils
+from .text.file_utils import FileUtils
 from .iso25010 import Iso25010
 
 
@@ -67,58 +65,6 @@ class App:  # pylint: disable=R0903
 
     _parser: argparse.ArgumentParser
     _args: argparse.Namespace
-
-    def __init__(self, parser: argparse.ArgumentParser):
-
-        Version().ensure_minimum_version(
-            self._VERSION_REQUIRED_MAJOR, self._VERSION_REQUIRED_MINOR
-        )
-
-        assert isinstance(parser, argparse.ArgumentParser)
-        self._parser = parser
-        self._args = parser.parse_args()
-
-    def on_default(self) -> None:
-        """This method processes the `default` argument."""
-        ...
-
-    @staticmethod
-    def _remove_md_json(response: str) -> str:
-        """Removes markdown JSON formatting from specified text."""
-
-        # Use regex to find content between ```json and ``` or just ``` and ```
-        # The [^`]*? is a non-greedy match for everything that isn't a backtick
-        pattern = r"```(?:json)?\s*(.*?)\s*```"
-        match = re.search(pattern, response, re.DOTALL)
-
-        if match:
-            result = match.group(1).strip()
-        else:
-            # Fallback: model might have returned naked JSON or failed the block
-            result = response.strip()
-
-        return result
-
-    @staticmethod
-    def _clean_text(s: str) -> str:
-        """Cleans special characters from specified text."""
-
-        _invisible_chars = re.compile(r"[\u200B-\u200D\u2060\uFEFF]")
-
-        s = unicodedata.normalize("NFC", s)
-        s = _invisible_chars.sub("", s)
-        s = "".join(ch for ch in s if ch in "\t\n\r" or ord(ch) >= 0x20)
-
-        return s.strip()
-
-    @staticmethod
-    def _is_json(text: str) -> bool:
-        """Examine if the given text is valid JSON."""
-        try:
-            json.loads(text)
-            return True
-        except (json.JSONDecodeError, TypeError, UnicodeDecodeError):
-            return False
 
     @staticmethod
     def _make_config_table(cfg: ChatConfig) -> Table:
@@ -164,28 +110,19 @@ class App:  # pylint: disable=R0903
 
         return table
 
-    @staticmethod
-    def _clean_pseudo_json(text: str) -> str:
+    def __init__(self, parser: argparse.ArgumentParser):
 
-        assert isinstance(text, str), type(str)
+        Version().ensure_minimum_version(
+            self._VERSION_REQUIRED_MAJOR, self._VERSION_REQUIRED_MINOR
+        )
 
-        # Allowed starting characters/sequences for valid JSON lines
-        # (after stripping whitespace).
-        allowed_pattern = re.compile(r'^[0-9\-\{\}\[\]\,"tf n]')
+        assert isinstance(parser, argparse.ArgumentParser)
+        self._parser = parser
+        self._args = parser.parse_args()
 
-        cleaned_lines = []
-
-        for line in text.splitlines():
-            stripped_line = line.strip()
-
-            if not stripped_line:
-                continue
-
-            # Check if the line starts with an allowed JSON character
-            if allowed_pattern.match(stripped_line):
-                cleaned_lines.append(line)
-
-        return "\n".join(cleaned_lines)
+    def on_default(self) -> None:
+        """This method processes the `default` argument."""
+        ...
 
     def on_validate(self, file: str) -> None:
         """This method processes the `validate` argument."""
@@ -196,7 +133,7 @@ class App:  # pylint: disable=R0903
         # text = file.read_text(encoding="utf8")
         text = file
 
-        is_json = App._is_json(text)
+        is_json = TextUtils.is_json(text)
         console = Console()
         console.print(is_json)
 
@@ -212,7 +149,9 @@ class App:  # pylint: disable=R0903
         console.print(table)
 
         start_time = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
-        console.print(f"\n[bold cyan]{start_time}: Querying LLM ...[/bold cyan]")
+        console.print(
+            f"\n[bold cyan]{start_time}: Querying LLM ...[/bold cyan]"
+        )
         client = ChatClientFactory.create(cfg)
 
         timestamp = time.perf_counter()
@@ -234,12 +173,12 @@ class App:  # pylint: disable=R0903
         )
 
         start_time = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
-        text = App._remove_md_json(response)
-        text = App._clean_pseudo_json(text)
-        is_json = App._is_json(text)
+        text = TextUtils.remove_md_json(response)
+        text = TextUtils.clean_pseudo_json(text)
+        is_json = TextUtils.is_json(text)
         if not is_json:
-            text = App._clean_text(text)
-        is_json = App._is_json(text)
+            text = TextUtils.clean_text(text)
+        is_json = TextUtils.is_json(text)
 
         console.print("\n[bold cyan]Response:[/bold cyan]")
         try:
@@ -249,7 +188,8 @@ class App:  # pylint: disable=R0903
 
         extension = ".json" if is_json else ".txt"
         backup_file_path = (
-            Path(cfg.output_path) / f"{cfg.session_id}---{start_time}{extension}"
+            Path(cfg.output_path)
+            / f"{cfg.session_id}---{start_time}{extension}"
         )
         backup_file_path.write_text(text, encoding="utf-8")
 
@@ -261,10 +201,10 @@ class App:  # pylint: disable=R0903
         #     rationale: str
         #     question: str
 
-        result = App._create_analysis_table(iso25010_response.analysis)
+        result = RichUtils.create_analysis_table(iso25010_response.analysis)
         console.print(result)
 
-        result = App._create_questions_table(iso25010_response.questions)
+        result = RichUtils.create_questions_table(iso25010_response.questions)
         console.print(result)
 
         extension = ".md"
@@ -301,163 +241,18 @@ class App:  # pylint: disable=R0903
 """
             session_file_path.write_text(text, encoding="utf-8")
 
-        updated = App._update_file(
+        updated = FileUtils.update_source_doc(
             session_file_path, iso25010_response.questions
         )
         session_file_path.write_text(updated, encoding="utf-8")
 
-        result = App._create_scores_table(iso25010_response.summary.scores)
+        result = RichUtils.create_scores_table(iso25010_response.summary.scores)
         console.print(result)
 
-        result = App._create_iso25010_chart(iso25010_response.summary.scores)
+        result = RichUtils.create_iso25010_chart(
+            iso25010_response.summary.scores
+        )
         console.print(result)
-
-    @staticmethod
-    def _update_file(file: Path, questions: list[Question]) -> str:
-        assert isinstance(file, Path), type(file)
-        assert file.exists(), file
-        assert file.is_file(), file
-        assert isinstance(questions, list), type(questions)
-
-        lines = file.read_text(encoding="utf-8").splitlines()
-
-        # Move from end to start.
-        for i in range(len(lines) - 1, -1, -1):
-            line = lines[i]
-
-            for characteristic in Iso25010:
-                if line.startswith(f"# {characteristic}"):
-                    new_lines = [""]
-                    for q in [
-                        q.question
-                        for q in questions
-                        if q.characteristic == characteristic
-                    ]:
-                        # new_lines.append(f"// {characteristic}")
-                        new_lines.append(f"> {q}")
-                        new_lines.append("")
-
-                    for j, new_line in enumerate(new_lines):
-                        lines.insert(i + 1 + j, new_line)
-                    break
-
-        lines.append("")
-        result: str = "\n".join(lines)
-
-        return result
-
-    @staticmethod
-    def _create_analysis_table(analysis: list[SentenceAnalysis]) -> Table:
-        table = Table(
-            title="Sentence Analysis",
-            box=box.ROUNDED,
-            show_header=True,
-            header_style="bold cyan",
-            expand=True,
-        )
-
-        table.add_column("#", style="bold white", justify="center", min_width=4)
-        table.add_column(
-            "Id", style="bold white", justify="center", min_width=4
-        )
-        table.add_column("Classifications", style="bold yellow", min_width=22)
-        table.add_column("Text", style="white", ratio=1)
-
-        for item in analysis:
-            table.add_row(
-                str(item.line_number),
-                str(item.sentence_id),
-                "\n".join([c.characteristic for c in item.classifications]),
-                item.sentence,
-            )
-            table.add_section()
-
-        return table
-
-    @staticmethod
-    def _create_questions_table(questions: list[Question]) -> Table:
-        table = Table(
-            title="ISO 25010 Questions",
-            box=box.ROUNDED,
-            show_header=False,
-            expand=True,
-        )
-
-        table.add_column("Content", ratio=1)
-
-        for i, question in enumerate(questions):
-            table.add_row(
-                f"[bold yellow]{question.characteristic}:[/bold yellow] "
-                f"[dim]{question.rationale}[/dim]"
-            )
-            table.add_row(f"[white]{question.question}[/white]")
-
-            if i < len(questions) - 1:
-                table.add_section()  # adds a divider between question groups
-
-        return table
-
-    @staticmethod
-    def _create_scores_table(scores: list) -> Table:
-
-        table = Table(
-            title="Characteristic Scores",
-            box=None,
-            show_header=True,
-            header_style="bold cyan",
-            expand=True,
-        )
-
-        # table.add_column(
-        #     "Score", style="bold yellow", justify="center", min_width=8
-        # )
-        table.add_column("Characteristic", style="bold cyan", min_width=20)
-        table.add_column("Rationale", style="white", ratio=1)
-
-        for score in scores:
-            table.add_row(
-                # str(score.score),
-                score.characteristic,
-                score.rationale,
-            )
-
-        return table
-
-    @staticmethod
-    def _bar_style(score: float) -> str:
-        if score >= 0.7:
-            return "green"
-
-        if score >= 0.5:
-            return "yellow"
-
-        return "red"
-
-    @staticmethod
-    def _create_iso25010_chart(scores: list) -> Table:
-        """Display ISO 25010 scores as a horizontal bar chart."""
-        table = Table(
-            title="ISO/IEC 25010 Quality Characteristics Coverage",
-            box=None,
-            show_header=True,
-        )
-        table.add_column("Characteristic", style="cyan", width=28)
-        table.add_column("Score", width=40)
-        table.add_column("Value", justify="right", width=6)
-
-        for score in scores:
-            progress_bar = ProgressBar(
-                total=1.0,
-                completed=score.score,
-                width=40,
-                style="grey35",
-                complete_style=App._bar_style(score.score),
-            )
-            table.add_row(
-                score.characteristic, progress_bar, f"{score.score:.2f}"
-            )
-
-        return table
 
     def on_query(self, cfg: ChatConfig) -> None:
         """This method processes the `query` argument."""
@@ -474,8 +269,8 @@ class App:  # pylint: disable=R0903
         response = client.query()
 
         timestamp = datetime.now().strftime("%Y-%m-%d---%H-%M-%S")
-        text = App._remove_md_json(response)
-        extension = ".json" if App._is_json(text) else ".md"
+        text = TextUtils.remove_md_json(response)
+        extension = ".json" if TextUtils.is_json(text) else ".md"
         file_path = Path(cfg.output_path) / f"{cfg.session_id}{extension}"
         file_path.write_text(text, encoding="utf-8")
         file_path = (

@@ -15,7 +15,10 @@
 
 """Constant class."""
 
+from __future__ import annotations
 from dataclasses import dataclass
+
+from .text.file_utils import FileUtils
 
 
 @dataclass
@@ -26,3 +29,11 @@ class Constant:
     # Note: also operate `uv lock`.
     _VERSION = "0.1.0"
     PROG_NAME = "IncoseIso25010Refiner"
+
+    SOURCE_DOCUMENT = "source.md"
+
+    PROJECT_ROOT = FileUtils.find_project_root().resolve()
+    SRC_DIR = (FileUtils.find_project_root() / "src").resolve()
+    PROMPTS_DIR = (FileUtils.find_project_root() / "src" / "prompts").resolve()
+
+    PROMPT_REFINE = "prompt-refine.md"

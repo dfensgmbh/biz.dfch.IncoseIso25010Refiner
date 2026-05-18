@@ -13,35 +13,30 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-# pylint: disable=C0415
-# pylint: disable=E0401
-# noqa: E501
+"""Shared command options."""
 
-"""Application entry point."""
+from .args import Annotated
+from .args import ApiTokenOpt
+from .args import BaseUriOpt
+from .args import ModelOpt
+from .args import SessionIdOpt
+from .args import WorkspaceOpt
+from .args import FileOpt
 
+from .init import init
+from .refine import refine
+from .validate import validate
 
-def main():
-    """main"""
+__all__ = [
+    "Annotated",
+    "ApiTokenOpt",
+    "BaseUriOpt",
+    "FileOpt",
+    "ModelOpt",
+    "SessionIdOpt",
+    "WorkspaceOpt",
 
-    # DFTODO: Currently, we define the relative part hard coded. It is
-    # important that we create the I18n instance before any imports to log.
-    # Maybe we find a better solution for this in some time.
-    from biz.dfch.i18n import I18n  # pylint: disable=C0415, E0401
-
-    I18n.Factory.create("biz/dfch/incoseiso25010refiner")
-
-    from biz.dfch.incoseiso25010refiner.args import (
-        Args,
-    )
-
-    parser = Args().invoke()
-
-    from biz.dfch.incoseiso25010refiner.app import (
-        App,
-    )
-
-    App(parser).invoke()
-
-
-if __name__ == "__main__":
-    main()
+    "init",
+    "refine",
+    "validate",
+]

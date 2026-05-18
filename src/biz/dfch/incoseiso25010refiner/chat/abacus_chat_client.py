@@ -67,7 +67,7 @@ class AbacusChatClient(ChatClientBase):
         )
 
         try:
-            with urllib.request.urlopen(request, timeout=60) as response:
+            with urllib.request.urlopen(request, timeout=900) as response:
                 data = json.loads(response.read().decode(self._encoding))
         except urllib.error.HTTPError as e:
             body = e.read().decode(self._encoding, errors="replace")

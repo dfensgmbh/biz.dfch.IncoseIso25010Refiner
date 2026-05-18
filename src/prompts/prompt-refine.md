@@ -227,9 +227,9 @@ Use this exact structure:
 }
 
 ## Rules
-- Use ONLY the characteristic and sub-characteristic names exactly as listed above.
+- Use ONLY the characteristic and not the sub-characteristic names exactly as listed above.
 - Every sentence must have at least one category.
 - If a sentence is ambiguous, assign the most likely characteristic and set confidence to "0.00".
 - Do not merge or paraphrase sentences — use the exact original text.
 
-## Input {{PHRASE}}
+## Input (PHRASE)

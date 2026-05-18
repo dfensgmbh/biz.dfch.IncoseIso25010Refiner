@@ -13,35 +13,29 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-# pylint: disable=C0415
-# pylint: disable=E0401
-# noqa: E501
+"""main program with typer"""
 
-"""Application entry point."""
+# pylint: disable=C0413
+# flake8: noqa: E402
 
+import typer
 
-def main():
-    """main"""
+from biz.dfch.i18n import I18n
 
-    # DFTODO: Currently, we define the relative part hard coded. It is
-    # important that we create the I18n instance before any imports to log.
-    # Maybe we find a better solution for this in some time.
-    from biz.dfch.i18n import I18n  # pylint: disable=C0415, E0401
+I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
-    I18n.Factory.create("biz/dfch/incoseiso25010refiner")
+from biz.dfch.incoseiso25010refiner.commands import init
+from biz.dfch.incoseiso25010refiner.commands import refine
+from biz.dfch.incoseiso25010refiner.commands import validate
 
-    from biz.dfch.incoseiso25010refiner.args import (
-        Args,
-    )
+app = typer.Typer(no_args_is_help=True)
+@app.callback()
+def _callback():
+    pass
 
-    parser = Args().invoke()
-
-    from biz.dfch.incoseiso25010refiner.app import (
-        App,
-    )
-
-    App(parser).invoke()
-
+app.command()(init)
+app.command()(refine)
+app.command()(validate)
 
 if __name__ == "__main__":
-    main()
+    app()
