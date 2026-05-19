@@ -17,7 +17,7 @@ Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `wget -qO- https://a
 
 Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\roaming\Python...\Scripts\...` directory.
 
-## Start the programme
+## Start the programme with `Python`
 
 1. Add API key to local terminal session
 
@@ -37,18 +37,46 @@ Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\
 
     Linux: `source ./.venv\bin/activate`
 
+    Note: when you use `uv`
+
 1. Start the programme with prompt text
 
-    `python -m biz query -t ./prompt1.md -p "The user interface must be intuitive to use."`
+    ```
+    python -m biz query -i "The user interface must be intuitive to use."
+    ```
 
-    Here, `-p` contains the *prompt text*. When you also specify `-t` (as in the example above), *prompt text* adds to the text from the specified template.
-
-    Note: `-p` and `-i` are mutually exclusive.
- 
 1. Start the programme with prompt file
 
-    `python -m biz query -t ./prompt1.md -i ~/some-text-file-with-prompt.txt`
+    ```
+    python -m biz query -i ~/some-text-file-with-prompt.txt
+    ```
 
-    Here, `-i` contains the path to a file with *prompt text*. When you also specify `-t` (as in the example above), *prompt text* adds to the text from the specified template.
+## Start the programme with `uv`
 
-    Note: `-p` and `-i` are mutually exclusive.
+With `uv` you can start the programme directly in the root folder of the git repository. `uv` will also make the virtual environment active.
+
+1. Start with `uv` and get help
+
+    ```
+    uv run req --help
+    ```
+
+1. Start specific command with `uv` and get help for this command
+
+    ```
+    uv run req init --help
+    uv run req refine --help
+    ```
+
+## Prepare a workspace (`init`)
+
+Before you begin to refine requirements, you create a workspace. For this you use `req init`. You must specify a `workspace`. This is the base folder for all your requirement sessions. When you often work in the same base folder, you can set an environment variable (`export REQ_WORKSPACE=/data/requirements`). You can also specify a relative path 
+
+```
+uv run req init -workspace ../sessions -id ABCD-1234 --input "'Automatic Teller System' (ATM): The user wants to withdraw cash."
+```
+
+## Refine requirements (`refine`)
+
+```
+```
