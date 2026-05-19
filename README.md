@@ -1,4 +1,3 @@
-<img width="1310" height="941" alt="req-help" src="https://github.com/user-attachments/assets/ae76f790-3060-40d0-a044-a6cc0f4932b5" />
 # biz.dfch.IncoseIso25010Refiner
 
 ## Installation
