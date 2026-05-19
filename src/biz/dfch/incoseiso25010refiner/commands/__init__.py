@@ -24,6 +24,7 @@ from .args import WorkspaceOpt
 from .args import FileOpt
 
 from .init import init
+from .query import query
 from .refine import refine
 from .validate import validate
 
@@ -37,6 +38,7 @@ __all__ = [
     "WorkspaceOpt",
 
     "init",
+    "query",
     "refine",
     "validate",
 ]

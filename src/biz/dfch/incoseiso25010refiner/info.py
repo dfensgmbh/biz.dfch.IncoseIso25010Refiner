@@ -13,39 +13,22 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-"""'validate' command."""
 
-import json
-import typer
-
-from biz.dfch.logging import log
-from ..info import Info
-from ..text.text_utils import TextUtils
-
-from .args import FileOpt
-
-app = typer.Typer(
-    name=Info.name,
-    help=Info.description,
-    epilog=Info.epilog,
-    no_args_is_help=True,
-)
+from dataclasses import dataclass
 
 
-@app.command()
-def validate(
-    file: FileOpt,
-):
-    """
-    Examine if the specified file is valid JSON.
-    """
+@dataclass
+class Info:
+    """Program information."""
 
-    text = file.read_text(encoding="utf-8")
-
-    is_json = TextUtils.is_json(text)
-    if is_json:
-        log.debug("'%s' [is_json: %s]", file, is_json)
-    else:
-        log.error("'%s' [is_json: %s]", file, is_json)
-
-    _ = json.loads(text)
+    name = "IncoseIso25010Refiner"
+    version = "0.1.0"
+    description = (
+        f"{name}, v{version}. An INCOSE and ISO25010 requirements refiner."
+    )
+    epilog = (
+        "Copyright 2025-2026 d-fens GmbH, Ronald Rink, "
+        "https://github.com/dfensgmbh/biz.dfch.IncoseIso25010Refiner"
+        ". "
+        "Licensed under AGPLv3."
+    )

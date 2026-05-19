@@ -19,29 +19,8 @@
 
 """Application entry point."""
 
-
-def main():
-    """main"""
-
-    # DFTODO: Currently, we define the relative part hard coded. It is
-    # important that we create the I18n instance before any imports to log.
-    # Maybe we find a better solution for this in some time.
-    from biz.dfch.i18n import I18n  # pylint: disable=C0415, E0401
-
-    I18n.Factory.create("biz/dfch/incoseiso25010refiner")
-
-    from biz.dfch.incoseiso25010refiner.args import (
-        Args,
-    )
-
-    parser = Args().invoke()
-
-    from biz.dfch.incoseiso25010refiner.app import (
-        App,
-    )
-
-    App(parser).invoke()
+from main import app
 
 
 if __name__ == "__main__":
-    main()
+    app()

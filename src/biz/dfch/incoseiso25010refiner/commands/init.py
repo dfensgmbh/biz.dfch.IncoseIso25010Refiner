@@ -23,6 +23,7 @@ import typer
 
 from ..constant import Constant
 from ..ui.rich_utils import RichUtils
+from ..info import Info
 from ..iso25010 import Iso25010
 
 from .args import WorkspaceOpt
@@ -30,7 +31,12 @@ from .args import SessionIdOpt
 from .args import CharacteristicsOpt
 from .args import InputOpt
 
-app = typer.Typer(no_args_is_help=True)
+app = typer.Typer(
+    name=Info.name,
+    help=Info.description,
+    epilog=Info.epilog,
+    no_args_is_help=True,
+)
 
 
 @app.command()
@@ -41,7 +47,7 @@ def init(
     characteristics: CharacteristicsOpt = None,
 ):
     """
-    Initialize the workspace and session configuration.
+    Initialise the workspace and source document.
 
     This command sets up the local environment and ensures the
     specified workspace path is valid for the upcoming session.
@@ -95,9 +101,13 @@ def init(
         lines.append(f"# {c.value}\n")
     lines.append("")
 
-    output_file = Path(path) / Constant.SOURCE_DOCUMENT
-    assert not output_file.exists(), output_file
+    source_doc = Path(path) / Constant.SOURCE_DOCUMENT
+    assert not source_doc.exists(), source_doc
 
     data = "\n".join(lines)
-    output_file.write_text(data, encoding="utf-8")
-    console.print()
+    source_doc.write_text(data, encoding="utf-8")
+
+    console.print(
+        f"You can now start your work in: '[link=file:///{source_doc}]"
+        f"{source_doc}[/link]'."
+    )

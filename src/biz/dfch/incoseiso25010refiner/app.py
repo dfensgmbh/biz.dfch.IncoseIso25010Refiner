@@ -30,13 +30,11 @@ from rich.table import Table
 from rich.theme import Theme
 
 from biz.dfch.logging import log
-from biz.dfch.version import Version
 
 from .chat.chat_config import ChatConfig
 from .chat.chat_client_factory import ChatClientFactory
 from .parse import (
     parse_iso_response,
-    Question,
 )
 
 from .ui.rich_utils import RichUtils
@@ -111,10 +109,6 @@ class App:  # pylint: disable=R0903
         return table
 
     def __init__(self, parser: argparse.ArgumentParser):
-
-        Version().ensure_minimum_version(
-            self._VERSION_REQUIRED_MAJOR, self._VERSION_REQUIRED_MINOR
-        )
 
         assert isinstance(parser, argparse.ArgumentParser)
         self._parser = parser
