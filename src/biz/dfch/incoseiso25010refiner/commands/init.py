@@ -55,7 +55,7 @@ def init(
 
     assert isinstance(workspace, Path), type(workspace)
     path = workspace / session_id
-    assert not path.exists(), f"Path does not exist: '{path}'."
+    assert not path.exists(), f"Path does already exist: '{path}'."
     assert text.strip()
 
     input_file = Path(text)
