@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-"""'init' command."""
+"""'restore' command."""
 
 from pathlib import Path
 import uuid
@@ -23,12 +23,13 @@ import typer
 
 from ..constant import Constant
 from ..ui.rich_utils import RichUtils
+from rich.prompt import Confirm
 from ..info import Info
 from ..iso25010 import Iso25010
 
 from .args import WorkspaceOpt
 from .args import SessionIdOpt
-from .args import CharacteristicsOpt
+from .args import YesOpt
 from .args import InputOpt
 
 app = typer.Typer(
@@ -40,37 +41,24 @@ app = typer.Typer(
 
 
 @app.command()
-def init(
-    text: InputOpt,
+def restore(
     session_id: SessionIdOpt = str(uuid.uuid4()),
     workspace: WorkspaceOpt = Path("."),
-    characteristics: CharacteristicsOpt = None,
+    do_not_confirm: YesOpt = False,
 ):
     """
-    Initialise the workspace and source document.
-
-    This command sets up the local environment and ensures the
-    specified workspace path is valid for the upcoming session.
+    Restores the last copy of the source document.
     """
 
     assert isinstance(workspace, Path), type(workspace)
     path = workspace / session_id
-    assert not path.exists(), f"Path does not exist: '{path}'."
-    assert text.strip()
-
-    input_file = Path(text)
-    if input_file.exists() and input_file.is_file():
-        text = input_file.read_text(encoding="utf-8")
-
-    if characteristics is None:
-        characteristics = list(Iso25010)
+    assert path.exists(), f"Path does not exist: '{path}'."
+    assert path.is_dir(), f"Path is not a directory: '{path}'."
 
     table = RichUtils.make_table(
         {
             "workspace": workspace,
             "session_id": session_id,
-            "characteristics": characteristics,
-            "input": text,
         },
         title="Parameters",
     )
@@ -78,36 +66,28 @@ def init(
     console = Console()
     console.print(table)
 
-    console.print(f"Creating folder: '{path}' ...")
-    try:
-        path.mkdir()
-        console.print(f"Creating folder: '{path}' OK.")
-    except Exception:  # pylint: disable=W0718
-        console.print(f"Creating folder: '{path}' FAILED.")
-        console.print_exception(show_locals=True)
-        raise
-
-    template = f"""// This is the text for the requirement set '{session_id}'.
-// Title: <REQUIREMENT SET TITLE>
-
-# General Overview
-
-{text}
-
-"""
-
-    lines = template.splitlines()
-    for c in characteristics:
-        lines.append(f"# {c.value}\n")
-    lines.append("")
-
     source_doc = Path(path) / Constant.SOURCE_DOCUMENT
-    assert not source_doc.exists(), source_doc
+    assert source_doc.exists(), f"File does not exist: '{source_doc}'."
+    assert source_doc.is_file(), f"File is not a file: '{source_doc}'."
 
-    data = "\n".join(lines)
-    source_doc.write_text(data, encoding="utf-8")
+    pattern = f"{source_doc.stem}---*{source_doc.suffix}"
+    files = sorted(source_doc.parent.glob(pattern), reverse=True)
+    if 0 == len(files):
+        RichUtils.error("No file to restore.")
+        return
+
+    file = files[-1]
+    message = f"Do you want to restore file: '{file}'?"
+    if not do_not_confirm and not Confirm.ask(message):
+        RichUtils.error("Stop restore.")
+        return
+
+    # Delete file.
+    source_doc.unlink()
+    # Rename copy to source file.
+    file.rename(str(source_doc))
 
     console.print(
-        f"You can now start your work in: '[link=file:///{source_doc}]"
+        f"You can now continue your work in: '[link=file:///{source_doc}]"
         f"{source_doc}[/link]'."
     )

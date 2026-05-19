@@ -27,6 +27,7 @@ I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 from biz.dfch.incoseiso25010refiner.commands import init
 from biz.dfch.incoseiso25010refiner.commands import query
 from biz.dfch.incoseiso25010refiner.commands import refine
+from biz.dfch.incoseiso25010refiner.commands import restore
 from biz.dfch.incoseiso25010refiner.commands import validate
 
 from biz.dfch.incoseiso25010refiner.info import Info
@@ -49,6 +50,7 @@ def _callback():
 app.command(epilog=Info.epilog)(init)
 app.command(epilog=Info.epilog)(query)
 app.command(epilog=Info.epilog)(refine)
+app.command(epilog=Info.epilog)(restore)
 app.command(epilog=Info.epilog)(validate)
 
 if __name__ == "__main__":

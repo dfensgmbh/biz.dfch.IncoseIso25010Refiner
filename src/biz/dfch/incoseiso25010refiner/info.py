@@ -27,7 +27,7 @@ class Info:
         f"{name}, v{version}. An INCOSE and ISO25010 requirements refiner."
     )
     epilog = (
-        "Copyright 2025-2026 d-fens GmbH, Ronald Rink, "
+        "Copyright 2025-2026 Ronald Rink, d-fens GmbH, "
         "https://github.com/dfensgmbh/biz.dfch.IncoseIso25010Refiner"
         ". "
         "Licensed under AGPLv3."

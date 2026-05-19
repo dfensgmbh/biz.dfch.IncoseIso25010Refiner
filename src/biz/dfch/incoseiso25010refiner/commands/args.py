@@ -173,3 +173,10 @@ FileOpt = Annotated[
         help="Path to an existing input file.",
     ),
 ]
+
+YesOpt = Annotated[
+    bool,
+    typer.Option(
+        "--yes", "-y", help="Confirm action and do not ask for confirmation."
+    ),
+]

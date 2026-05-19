@@ -26,6 +26,7 @@ from .args import FileOpt
 from .init import init
 from .query import query
 from .refine import refine
+from .restore import restore
 from .validate import validate
 
 __all__ = [
@@ -40,5 +41,6 @@ __all__ = [
     "init",
     "query",
     "refine",
+    "restore",
     "validate",
 ]

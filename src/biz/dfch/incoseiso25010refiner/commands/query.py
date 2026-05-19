@@ -65,6 +65,12 @@ def query(
     Query the LLM and show response.
     """
 
+    assert text.strip()
+
+    input_file = Path(text)
+    if input_file.exists() and input_file.is_file():
+        text = input_file.read_text(encoding="utf-8")
+
     if not uri.strip():
         uri = ChatConfig.default_values[provider].base_url
 

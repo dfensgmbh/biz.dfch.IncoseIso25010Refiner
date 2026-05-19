@@ -15,12 +15,11 @@
 
 """'refine' command."""
 
+import json
+from dataclasses import asdict
 from pathlib import Path
 
 from rich.console import Console
-
-# from rich.table import Table
-# from rich.theme import Theme
 import typer
 
 from biz.dfch.diagnostics import Clock
@@ -198,8 +197,8 @@ def refine(
     result = RichUtils.create_analysis_table(iso25010_response.analysis)
     console.print(result)
 
-    result = RichUtils.create_questions_table(iso25010_response.questions)
-    console.print(result)
+    # result = RichUtils.create_questions_table(iso25010_response.questions)
+    # console.print(result)
 
     result = RichUtils.create_scores_table(
         iso25010_response.summary.scores, iso25010_response.summary.rationale
@@ -220,6 +219,11 @@ def refine(
         source_doc, iso25010_response.questions
     )
     source_doc.write_text(updated, encoding="utf-8")
+
+    # Save summary
+    summary_json = json.dumps(asdict(iso25010_response.summary), indent=2)
+    summary_doc = path / f"summary---{timestamp}.json"
+    summary_doc.write_text(summary_json, encoding="utf-8")
 
     console.print(
         f"You can now continue your work in: '[link=file:///{source_doc}]"
