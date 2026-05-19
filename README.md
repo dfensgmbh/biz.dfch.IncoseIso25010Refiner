@@ -1,3 +1,4 @@
+<img width="1310" height="941" alt="req-help" src="https://github.com/user-attachments/assets/ae76f790-3060-40d0-a044-a6cc0f4932b5" />
 # biz.dfch.IncoseIso25010Refiner
 
 ## Installation
@@ -61,6 +62,8 @@ With `uv` you can start the programme directly in the root folder of the git rep
     uv run req --help
     ```
 
+    <img width="1310" height="941" alt="req-help" src="https://github.com/user-attachments/assets/31009441-eb16-4636-8f24-189ec59c4d89" />
+
 1. Start specific command with `uv` and get help for this command
 
     ```
@@ -68,15 +71,25 @@ With `uv` you can start the programme directly in the root folder of the git rep
     uv run req refine --help
     ```
 
+    <img width="1310" height="941" alt="req-init-help" src="https://github.com/user-attachments/assets/6fd44a5b-a530-46a6-b017-579f887a4251" />
+
 ## Prepare a workspace (`init`)
 
 Before you begin to refine requirements, you create a workspace. For this you use `req init`. You must specify a `workspace`. This is the base folder for all your requirement sessions. When you often work in the same base folder, you can set an environment variable (`export REQ_WORKSPACE=/data/requirements`). You can also specify a relative path 
 
 ```
-uv run req init -workspace ../sessions -id ABCD-1234 --input "'Automatic Teller System' (ATM): The user wants to withdraw cash."
+uv run req init --workspace ../sessions -id ABCD-1234 --input "'Automatic Teller System' (ATM): The user wants to withdraw cash."
 ```
+
+<img width="1310" height="941" alt="req-init-session" src="https://github.com/user-attachments/assets/64549934-681f-4fe0-8bff-2ed6ec4d9767" />
 
 ## Refine requirements (`refine`)
 
 ```
+uv run req refine --workspace ../sessions -id ABCD-1234
 ```
+
+<img width="1310" height="941" alt="req-refine-help" src="https://github.com/user-attachments/assets/ef70f921-5b37-4a33-898e-61f276ce8b50" />
+
+<img width="1310" height="941" alt="req-refine" src="https://github.com/user-attachments/assets/f13b4f46-0646-45db-a95e-becfbbf67b31" />
+
