@@ -70,7 +70,8 @@ With `uv` you can start the programme directly in the root folder of the git rep
     uv run req refine --help
     ```
 
-    <img width="1310" height="941" alt="req-init-help" src="https://github.com/user-attachments/assets/6fd44a5b-a530-46a6-b017-579f887a4251" />
+    <!--<img width="1310" height="941" alt="req-init-help" src="https://github.com/user-attachments/assets/6fd44a5b-a530-46a6-b017-579f887a4251" />-->
+    ![Show req init help](https://github.com/user-attachments/assets/6fd44a5b-a530-46a6-b017-579f887a4251)
 
 ## Prepare a workspace (`init`)
 
