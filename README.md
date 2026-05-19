@@ -61,7 +61,7 @@ With `uv` you can start the programme directly in the root folder of the git rep
     uv run req --help
     ```
 
-    <img width="1310" height="941" alt="req-help" src="https://github.com/user-attachments/assets/31009441-eb16-4636-8f24-189ec59c4d89" />
+    ![Show req help](https://github.com/user-attachments/assets/31009441-eb16-4636-8f24-189ec59c4d89)
 
 1. Start specific command with `uv` and get help for this command
 
@@ -70,7 +70,6 @@ With `uv` you can start the programme directly in the root folder of the git rep
     uv run req refine --help
     ```
 
-    <!--<img width="1310" height="941" alt="req-init-help" src="https://github.com/user-attachments/assets/6fd44a5b-a530-46a6-b017-579f887a4251" />-->
     ![Show req init help](https://github.com/user-attachments/assets/6fd44a5b-a530-46a6-b017-579f887a4251)
 
 ## Prepare a workspace (`init`)
@@ -81,15 +80,27 @@ Before you begin to refine requirements, you create a workspace. For this you us
 uv run req init --workspace ../sessions -id ABCD-1234 --input "'Automatic Teller System' (ATM): The user wants to withdraw cash."
 ```
 
-<img width="1310" height="941" alt="req-init-session" src="https://github.com/user-attachments/assets/64549934-681f-4fe0-8bff-2ed6ec4d9767" />
+![Start new session](https://github.com/user-attachments/assets/64549934-681f-4fe0-8bff-2ed6ec4d9767)
 
 ## Refine requirements (`refine`)
+
+```
+uv run req --help
+```
+
+![Show req refine help](https://github.com/user-attachments/assets/ef70f921-5b37-4a33-898e-61f276ce8b50)
 
 ```
 uv run req refine --workspace ../sessions -id ABCD-1234
 ```
 
-<img width="1310" height="941" alt="req-refine-help" src="https://github.com/user-attachments/assets/ef70f921-5b37-4a33-898e-61f276ce8b50" />
+![Refine requirements](https://github.com/user-attachments/assets/f13b4f46-0646-45db-a95e-becfbbf67b31)
 
-<img width="1310" height="941" alt="req-refine" src="https://github.com/user-attachments/assets/f13b4f46-0646-45db-a95e-becfbbf67b31" />
 
+## Restore last source document (`restore)
+
+```
+uv run req restore --workspace ../sessions -id ABCD-1234
+
+uv run req restore --workspace ../sessions -id ABCD-1234 -y
+```
