@@ -111,10 +111,7 @@ uv run req restore --workspace ../sessions -id ABCD-1234
 uv run req restore --workspace ../sessions -id ABCD-1234 -y
 ```
 
-<<<<<<< HEAD
-=======
-![Restore previous version of source docuemnt](https://github.com/user-attachments/assets/5795f4b2-a9ea-4418-b3cc-3d10c5da07cd)
+![Restore previous version of source document](https://github.com/user-attachments/assets/5795f4b2-a9ea-4418-b3cc-3d10c5da07cd)
 
 
->>>>>>> 718faf0fc3f225c8fb633b93aac32f6702c095ba
 NOTE: we used [`asciinema`](https://asciinema.org/) to record the terminal sessions and [`agg`](https://docs.asciinema.org/manual/agg/) to make animated GIFs.
