@@ -25,7 +25,7 @@ Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\
 
     Windows (Command Prompt): `set CHAT_API_TOKEN=...`
 
-    Linux: `export CHAT_API_TOKEN="..."
+    Linux: `export CHAT_API_TOKEN=...`
 
 1. Change to `src` directory
 
@@ -97,12 +97,21 @@ uv run req refine --workspace ../sessions -id ABCD-1234
 ![Refine requirements](https://github.com/user-attachments/assets/f13b4f46-0646-45db-a95e-becfbbf67b31)
 
 
-## Restore last source document (`restore)
+## Restore last source document (`restore`)
+
+```
+uv run req restore --help
+```
+
+![Show req restore help](https://github.com/user-attachments/assets/a7dad735-399b-47f1-a448-919a94ad822f)
 
 ```
 uv run req restore --workspace ../sessions -id ABCD-1234
 
 uv run req restore --workspace ../sessions -id ABCD-1234 -y
 ```
+
+![Restore previous version of source docuemnt](https://github.com/user-attachments/assets/5795f4b2-a9ea-4418-b3cc-3d10c5da07cd)
+
 
 NOTE: we used [`asciinema`](https://asciinema.org/) to record the terminal sessions and [`agg`](https://docs.asciinema.org/manual/agg/) to make animated GIFs.
