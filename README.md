@@ -104,3 +104,5 @@ uv run req restore --workspace ../sessions -id ABCD-1234
 
 uv run req restore --workspace ../sessions -id ABCD-1234 -y
 ```
+
+NOTE: we used [`asciinema`](https://asciinema.org/) to record the terminal sessions and [`agg`](https://docs.asciinema.org/manual/agg/) to make animated GIFs.
