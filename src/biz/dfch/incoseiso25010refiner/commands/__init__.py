@@ -22,6 +22,8 @@ from .args import ModelOpt
 from .args import SessionIdOpt
 from .args import WorkspaceOpt
 from .args import FileOpt
+from .args import InputOpt
+from .args import PromptOpt
 
 from .init import init
 from .query import query
@@ -34,6 +36,8 @@ __all__ = [
     "ApiTokenOpt",
     "BaseUriOpt",
     "FileOpt",
+    "InputOpt",
+    "PromptOpt",
     "ModelOpt",
     "SessionIdOpt",
     "WorkspaceOpt",

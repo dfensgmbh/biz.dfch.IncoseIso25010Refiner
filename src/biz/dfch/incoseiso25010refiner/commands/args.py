@@ -143,6 +143,15 @@ InputOpt = Annotated[
     ),
 ]
 
+PromptOpt = Annotated[
+    str,
+    typer.Option(
+        "--prompt",
+        "-t",
+        help="Prompt text. " "You can also specify a path to an existing file.",
+    ),
+]
+
 MaxTokensOpt = Annotated[
     int,
     typer.Option(
@@ -170,7 +179,7 @@ FileOpt = Annotated[
         dir_okay=False,
         readable=True,
         resolve_path=True,
-        help="Path to an existing input file.",
+        help="Path to an existing file.",
     ),
 ]
 

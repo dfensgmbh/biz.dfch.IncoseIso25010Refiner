@@ -27,7 +27,6 @@ from biz.dfch.diagnostics import Clock
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
-from ..constant import Constant
 from ..chat.chat_client_factory import ChatClientFactory
 from ..chat.chat_config import ChatConfig
 from ..chat.providers import Providers
@@ -38,6 +37,7 @@ from ..ui.rich_utils import RichUtils
 from .args import ApiTokenOpt
 from .args import BaseUriOpt
 from .args import InputOpt
+from .args import PromptOpt
 from .args import MaxTokensOpt
 from .args import ModelOpt
 from .args import ProviderOpt
@@ -55,6 +55,7 @@ app = typer.Typer(
 def query(
     api_token: ApiTokenOpt,
     text: InputOpt,
+    template: PromptOpt = "",
     uri: BaseUriOpt = "",
     model: ModelOpt = "",
     temperature: TemperateOpt = -1,
@@ -71,6 +72,10 @@ def query(
     if input_file.exists() and input_file.is_file():
         text = input_file.read_text(encoding="utf-8")
 
+    template_file = Path(template)
+    if template_file.exists() and template_file.is_file():
+        template = template_file.read_text(encoding="utf-8")
+
     if not uri.strip():
         uri = ChatConfig.default_values[provider].base_url
 
@@ -85,6 +90,7 @@ def query(
         "max_tokens": max_tokens,
         "temperature": temperature,
         "input": text,
+        "template": str(template_file),
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(
@@ -103,10 +109,8 @@ def query(
         del data["max_tokens"]
     if -1 == temperature:
         del data["temperature"]
-    template_file = Constant.PROMPTS_DIR / Constant.PROMPT_REFINE
-    assert template_file.exists(), template_file
 
-    data["template_content"] = template_file.read_text(encoding="utf-8")
+    data["template_content"] = template
     data["session_id"] = str(uuid.uuid4())
     data["output_path"] = str(Path("."))
 
