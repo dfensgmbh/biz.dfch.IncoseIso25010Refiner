@@ -75,7 +75,7 @@ def refine(
     """
 
     assert isinstance(workspace, Path), type(workspace)
-    path = workspace / session_id
+    path = Path(workspace / session_id).resolve()
     assert path.exists(), f"Path does not exist: '{path}'."
 
     source_doc = path / Constant.SOURCE_DOCUMENT

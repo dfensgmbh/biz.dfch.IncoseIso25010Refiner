@@ -54,7 +54,7 @@ def restore(
     """
 
     assert isinstance(workspace, Path), type(workspace)
-    path = workspace / session_id
+    path = Path(workspace / session_id).resolve()
     assert path.exists(), f"Path does not exist: '{path}'."
     assert path.is_dir(), f"Path is not a directory: '{path}'."
 
