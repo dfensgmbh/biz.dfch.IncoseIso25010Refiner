@@ -20,18 +20,16 @@ import uuid
 
 from dotenv import load_dotenv
 from rich.console import Console
+from rich.prompt import Confirm
 import typer
 
 from ..constant import Constant
 from ..ui.rich_utils import RichUtils
-from rich.prompt import Confirm
 from ..info import Info
-from ..iso25010 import Iso25010
 
 from .args import WorkspaceOpt
 from .args import SessionIdOpt
 from .args import YesOpt
-from .args import InputOpt
 
 load_dotenv()
 
@@ -79,12 +77,22 @@ def restore(
         RichUtils.error("No file to restore.")
         return
 
-    file = files[-1]
-    message = f"Do you want to restore file: '{file}'?"
+    file_links = []
+    for file in files:
+        file_links.append(
+            f"[link=file:///{file.resolve()}]{file.resolve()}[/link]"
+        )
+    RichUtils.info(f"Versions:\n{'\n'.join(file_links)}")
+
+    file = files[0]
+    message = (
+        f"Do you want to restore file: '[link=file:///{file}]{file}[/link]'?"
+    )
     if not do_not_confirm and not Confirm.ask(message):
         RichUtils.error("Stop restore.")
         return
 
+    RichUtils.print(f"Restore file: '[link=file:///{file}]{file}[/link]' ...")
     # Delete file.
     source_doc.unlink()
     # Rename copy to source file.
