@@ -21,6 +21,7 @@
     "flake8.importStrategy": "fromEnvironment",
     "cSpell.words": [
         "altgraph",
+        "amet",
         "analysability",
         "asciinema",
         "asctime",
@@ -73,6 +74,7 @@
         "pytokens",
         "pywin",
         "replaceability",
+        "reqs",
         "sdist",
         "setuptools",
         "tomlkit",
