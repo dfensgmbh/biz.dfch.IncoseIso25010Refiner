@@ -18,10 +18,10 @@
 # pylint: disable=C0413
 # flake8: noqa: E402
 
+from dotenv import load_dotenv
 import typer
 
 from biz.dfch.i18n import I18n
-
 I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
 from biz.dfch.incoseiso25010refiner.commands import init
@@ -31,6 +31,8 @@ from biz.dfch.incoseiso25010refiner.commands import restore
 from biz.dfch.incoseiso25010refiner.commands import validate
 
 from biz.dfch.incoseiso25010refiner.info import Info
+
+load_dotenv()
 
 app = typer.Typer(
     name=Info.name,

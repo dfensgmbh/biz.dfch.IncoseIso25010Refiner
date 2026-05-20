@@ -19,6 +19,7 @@ import json
 from dataclasses import asdict
 from pathlib import Path
 
+from dotenv import load_dotenv
 from rich.console import Console
 import typer
 
@@ -46,6 +47,8 @@ from .args import ProviderOpt
 from .args import SessionIdOpt
 from .args import TemperateOpt
 from .args import WorkspaceOpt
+
+load_dotenv()
 
 app = typer.Typer(
     name=Info.name,

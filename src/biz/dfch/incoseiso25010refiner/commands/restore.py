@@ -18,6 +18,7 @@
 from pathlib import Path
 import uuid
 
+from dotenv import load_dotenv
 from rich.console import Console
 import typer
 
@@ -31,6 +32,8 @@ from .args import WorkspaceOpt
 from .args import SessionIdOpt
 from .args import YesOpt
 from .args import InputOpt
+
+load_dotenv()
 
 app = typer.Typer(
     name=Info.name,

@@ -16,13 +16,18 @@
 """'validate' command."""
 
 import json
+
 import typer
+from dotenv import load_dotenv
 
 from biz.dfch.logging import log
+
 from ..info import Info
 from ..text.text_utils import TextUtils
 
 from .args import FileOpt
+
+load_dotenv()
 
 app = typer.Typer(
     name=Info.name,
