@@ -91,7 +91,7 @@ def init(
         raise
 
     template = f"""// This is the text for the requirement set '{session_id}'.
-// Title: <REQUIREMENT SET TITLE>
+// Title: {text}
 
 # General Overview
 
