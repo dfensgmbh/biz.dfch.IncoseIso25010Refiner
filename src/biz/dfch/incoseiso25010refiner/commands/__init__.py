@@ -25,6 +25,7 @@ from .args import FileOpt
 from .args import InputOpt
 from .args import PromptOpt
 
+from .commit import commit
 from .init import init
 from .query import query
 from .refine import refine
@@ -42,6 +43,7 @@ __all__ = [
     "SessionIdOpt",
     "WorkspaceOpt",
 
+    "commit",
     "init",
     "query",
     "refine",

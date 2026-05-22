@@ -24,6 +24,7 @@ import typer
 from biz.dfch.i18n import I18n
 I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
+from biz.dfch.incoseiso25010refiner.commands import commit
 from biz.dfch.incoseiso25010refiner.commands import init
 from biz.dfch.incoseiso25010refiner.commands import query
 from biz.dfch.incoseiso25010refiner.commands import refine
@@ -49,6 +50,7 @@ def _callback():
     pass
 
 
+app.command(epilog=Info.epilog)(commit)
 app.command(epilog=Info.epilog)(init)
 app.command(epilog=Info.epilog)(query)
 app.command(epilog=Info.epilog)(refine)
