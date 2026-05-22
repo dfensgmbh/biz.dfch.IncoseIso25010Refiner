@@ -86,16 +86,16 @@ class CharacteristicsType(click.ParamType):
     name = " ".join([e.name for e in Iso25010])
 
     def convert(self, value, param, ctx):
-        # already resolved (e.g. default value)
+        # Already resolved (for example default value).
         if isinstance(value, Iso25010):
             return value
 
-        # 1. exact match by name (case-insensitive).
+        # 1) Exact match by name (case-insensitive).
         for member in Iso25010:
             if member.name.lower() == value.lower():
                 return member
 
-        # 2. partial match by name (case-insensitive).
+        # 2) Partial match by name (case-insensitive).
         matches = [
             member
             for member in Iso25010

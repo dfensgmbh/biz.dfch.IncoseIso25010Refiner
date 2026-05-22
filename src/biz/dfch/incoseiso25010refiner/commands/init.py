@@ -66,7 +66,7 @@ def init(
         text = input_file.read_text(encoding="utf-8")
 
     if characteristics is None:
-        characteristics = list(Iso25010)
+        characteristics = Iso25010.all()
 
     table = RichUtils.make_table(
         {

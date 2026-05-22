@@ -87,7 +87,7 @@ def refine(
     text = source_doc.read_text(encoding="utf-8")
 
     if characteristics is None:
-        characteristics = list(Iso25010)
+        characteristics = Iso25010.all()
 
     if not uri.strip():
         uri = ChatConfig.default_values[provider].base_url
@@ -173,15 +173,16 @@ def refine(
     is_json = TextUtils.is_json(text)
 
     console = Console()
-    # RichUtils.print("Response:")
-    # try:
-    #     console.print(JSON(text, indent=2))
-    # except Exception:  # pylint: disable=W0718  # type:ignore
-    #     console.print(Markdown(text))
 
     # Save response as json or text.
-    extension = ".json" if is_json else ".txt"
-    response_file = path / f"response---{timestamp}{extension}"
+    if is_json:
+        extension = Constant.RESPONSE_FILE_EXT
+    else:
+        extension = Constant.DEFAULT_FILE_EXT
+
+    response_file = (
+        path / f"{Constant.RESPONSE_FILE_PREFIX}{timestamp}{extension}"
+    )
     RichUtils.print(f"Writing response: '{response_file}' ...")
     assert not response_file.exists(), response_file
     response_file.write_text(text, encoding="utf-8")

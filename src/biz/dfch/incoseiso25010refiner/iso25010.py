@@ -19,6 +19,7 @@
 
 """ISO25010 characteristics."""
 
+from __future__ import annotations
 from enum import StrEnum
 from dataclasses import dataclass
 
@@ -35,6 +36,11 @@ class Iso25010(StrEnum):
     MAINTAINABILITY = "Maintainability"
     FLEXIBILITY = "Flexibility"
     SAFETY = "Safety"
+
+    @staticmethod
+    def all() -> list[Iso25010]:
+        """Return all characteristics."""
+        return list(Iso25010)
 
 
 class Iso25010Functionality(StrEnum):
