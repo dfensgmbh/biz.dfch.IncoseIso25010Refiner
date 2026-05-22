@@ -88,7 +88,9 @@ def restore(
     message = (
         f"Do you want to restore file: '[link=file:///{file}]{file}[/link]'?"
     )
-    if not do_not_confirm and not Confirm.ask(message):
+    if not do_not_confirm and not Confirm.ask(
+        message, show_default=True, default=True
+    ):
         RichUtils.error("Stop restore.")
         return
 
