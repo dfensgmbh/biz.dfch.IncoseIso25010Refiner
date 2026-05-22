@@ -80,6 +80,7 @@
         "tomlkit",
         "typer",
         "ufeff",
+        "USERPROFILE",
         "utilised",
         "venv",
         "venvdeb",

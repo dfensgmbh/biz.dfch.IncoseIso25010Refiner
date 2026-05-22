@@ -17,6 +17,20 @@ Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `wget -qO- https://a
 
 Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\roaming\Python...\Scripts\...` directory.
 
+## Build as `--onefile` executable
+
+When you want to start the programme as a single executable (`pyinstaller --onefile`) you can create an executable with this command from the project root directory:
+
+```
+uv run pyinstaller --onefile --add-data "./src/biz/dfch/incoseiso25010refiner/logging.conf:." --add-data "./pyproject.toml:." --add-data "./src/prompts/*:./src/prompts/" src/main.py
+```
+
+This will create an executable in the `./dist/` folder.
+
+Create an `.env` file with the settings for `CHAT_API_TOKEN` or `REQ_WORKSPACE` in the current working directory and the programme will use these settings when you start it.
+
+NOTE: use `${USERPROFILE}` on Windows and `${HOME}` on Linux when you want to identify the home directory of the user.
+
 ## Start the programme with `Python`
 
 1. Add API key to local terminal session
