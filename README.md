@@ -35,6 +35,8 @@ NOTE: use `${USERPROFILE}` on Windows and `${HOME}` on Linux when you want to id
 
 1. Add API key to local terminal session
 
+    You can create a file with the name `.env` and add the environment variables and their values to it. Or you can create environment variables as you see below:
+
     Windows (PowerShell): `$ENV:CHAT_API_TOKEN="..."`
 
     Windows (Command Prompt): `set CHAT_API_TOKEN=...`
@@ -50,8 +52,6 @@ NOTE: use `${USERPROFILE}` on Windows and `${HOME}` on Linux when you want to id
     Windows: `.\.venv\Scripts\Activate.ps1`
 
     Linux: `source ./.venv\bin/activate`
-
-    Note: when you use `uv`
 
 1. Start the programme with prompt text
 
