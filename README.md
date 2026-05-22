@@ -15,7 +15,9 @@ If `uv` is not available you can install it with these commands:
 Windows: `winget install --id=astral-sh.uv -e`
 Linux: `curl -LsSf https://astral.sh/uv/install.sh | sh` or `wget -qO- https://astral.sh/uv/install.sh | sh`
 
-Note: on Windows if `uv` is not in the `PATH` you can find it in the `~\AppData\roaming\Python...\Scripts\...` directory.
+Note: on Windows if `uv` is not in the `PATH` you can find it in one of these directories:
+* `~\AppData\roaming\Python...\Scripts\...`
+* `~\.local\bin\`.
 
 ## Build as `--onefile` executable
 
