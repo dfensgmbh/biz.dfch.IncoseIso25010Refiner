@@ -26,6 +26,8 @@ I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
 from biz.dfch.incoseiso25010refiner.commands import commit
 from biz.dfch.incoseiso25010refiner.commands import init
+from biz.dfch.incoseiso25010refiner.commands import erase
+from biz.dfch.incoseiso25010refiner.commands import list_
 from biz.dfch.incoseiso25010refiner.commands import query
 from biz.dfch.incoseiso25010refiner.commands import refine
 from biz.dfch.incoseiso25010refiner.commands import restore
@@ -47,10 +49,9 @@ app = typer.Typer(
 def _callback():
     # We use `callback` only to make sure that `typer` continues to show
     # "sub-commands" when there is only one "sub-command".
-    pass
-
-
+app.command(name="list", epilog=Info.epilog)(list_)
 app.command(epilog=Info.epilog)(commit)
+app.command(epilog=Info.epilog)(erase)
 app.command(epilog=Info.epilog)(init)
 app.command(epilog=Info.epilog)(query)
 app.command(epilog=Info.epilog)(refine)
