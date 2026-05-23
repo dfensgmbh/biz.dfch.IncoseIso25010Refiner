@@ -22,12 +22,10 @@ from dotenv import load_dotenv
 from rich.console import Console
 import typer
 
-from biz.dfch.logging import log
-
-from ..constant import Constant
-from ..ui.rich_utils import RichUtils
 from ..info import Info
 from ..iso25010 import Iso25010
+from ..session import Session
+from ..ui.rich_utils import RichUtils
 
 from .args import WorkspaceOpt
 from .args import SessionIdOpt
@@ -60,7 +58,7 @@ def init(
 
     assert isinstance(workspace, Path), type(workspace)
     path = Path(workspace / session_id).resolve()
-    assert not path.exists(), f"Path does already exist: '{path}'."
+    assert not path.exists(), f"Path must not exist: '{path}'."
     assert text.strip()
 
     input_file = Path(text)
@@ -83,36 +81,11 @@ def init(
     console = Console()
     console.print(table)
 
-    log.debug(f"Creating folder: '{path}' ...")
-    try:
-        path.mkdir()
-        log.info(f"Creating folder: '{path}' OK.")
-
-    except Exception:  # pylint: disable=W0718
-        log.error(f"Creating folder: '{path}' FAILED.")
-        raise
-
-    template = f"""// This is the text for the requirement set '{session_id}'.
-// Title: {text}
-
-# General Overview
-
-{text}
-
-"""
-
-    lines = template.splitlines()
-    for c in characteristics:
-        lines.append(f"# {c.value}\n")
-    lines.append("")
-
-    source_doc = Path(path) / Constant.SOURCE_DOCUMENT
-    assert not source_doc.exists(), source_doc
-
-    data = "\n".join(lines)
-    source_doc.write_text(data, encoding="utf-8")
+    session = Session.create(
+        workspace, name=session_id, characteristics=characteristics, title=text
+    )
 
     console.print(
-        f"You can now start your work in: '[link=file:///{source_doc}]"
-        f"{source_doc}[/link]'."
+        f"You can now start your work in: '[link=file:///{session.source}]"
+        f"{session.source}[/link]'."
     )
