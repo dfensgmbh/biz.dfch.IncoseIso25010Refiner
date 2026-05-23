@@ -23,6 +23,8 @@ import json
 import urllib.error
 import urllib.request
 
+from biz.dfch.logging.log import log
+
 from .chat_client_base import ChatClientBase
 
 
@@ -66,6 +68,21 @@ class OllamaChatClient(ChatClientBase):
                 request, timeout=self.REQUEST_TIMEOUT
             ) as response:
                 data = json.loads(response.read().decode(self._encoding))
+
+                choices = data.get("choices", [])
+                usage = data.get("usage", {})
+                usage_map = {
+                    "finish_reason": (
+                        choices[0].get("finish_reason", "unknown")
+                        if choices
+                        else "unknown"
+                    ),
+                    "prompt_tokens": usage.get("prompt_tokens", "?"),
+                    "completion_tokens": usage.get("completion_tokens", "?"),
+                    "total_tokens": usage.get("total_tokens", "?"),
+                }
+                log.debug(usage_map)
+
         except urllib.error.HTTPError as e:
             body = e.read().decode(self._encoding, errors="replace")
             raise RuntimeError(
