@@ -135,14 +135,11 @@ def refine(
     client = ChatClientFactory.create(chat_config)
 
     # Start query.
-    start_time = Clock.now_isodate()
     log.debug("Querying LLM ...")
-    RichUtils.print(f"{start_time}: Querying LLM ...")
     sw = Stopwatch.start_new()
     try:
         response = client.query()
         sw.stop()
-        stop_time = Clock.now_isodate()
     except TimeoutError as ex:
         sw.stop()
         elapsed = sw.elapsed_seconds
@@ -151,17 +148,10 @@ def refine(
             elapsed,
             exc_info=ex,
         )
-        RichUtils.error(
-            f"{start_time}: Querying LLM FAILED. TotalSeconds: "
-            f"{elapsed:.3f}."
-        )
         raise
 
     elapsed = sw.elapsed_seconds
     log.info("Querying LLM OK. TotalSeconds: %.3f", elapsed)
-    RichUtils.info(
-        f"{stop_time}: Querying LLM OK. TotalSeconds: " f"{elapsed:.3f}."
-    )
     timestamp = Clock.now_file()
 
     # Examine response.
@@ -172,8 +162,6 @@ def refine(
         text = TextUtils.clean_text(text)
     is_json = TextUtils.is_json(text)
 
-    console = Console()
-
     # Save response as json or text.
     if is_json:
         extension = Constant.RESPONSE_FILE_EXT
@@ -183,10 +171,10 @@ def refine(
     response_file = (
         path / f"{Constant.RESPONSE_FILE_PREFIX}{timestamp}{extension}"
     )
-    RichUtils.print(f"Writing response: '{response_file}' ...")
+    log.debug("Writing response: '%s' ...", response_file)
     assert not response_file.exists(), response_file
     response_file.write_text(text, encoding="utf-8")
-    RichUtils.info(f"Writing response: '{response_file}' OK.")
+    log.info("Writing response: '%s' OK.", response_file)
 
     # When we do not have valid JSON, show error message and exit.
     assert is_json, (
@@ -213,10 +201,10 @@ def refine(
     console.print(result)
 
     # Create copy of source document.
-    RichUtils.print("Making copy of source document ...")
+    log.debug("Making copy of source document ...")
     source_copy = FileUtils.make_copy(source_doc, f"---{timestamp}")
     assert source_copy.exists(), source_copy
-    RichUtils.info(f"Making copy of source document '{source_copy}' OK.")
+    log.info("Making copy of source document '%s' OK.", source_copy)
 
     # Change source document and add new questions to it.
     updated = FileUtils.update_source_doc(
@@ -229,7 +217,7 @@ def refine(
     summary_doc = path / f"summary---{timestamp}.json"
     summary_doc.write_text(summary_json, encoding="utf-8")
 
-    console.print(
+    log.info(
         f"You can now continue your work in: '[link=file:///{source_doc}]"
         f"{source_doc}[/link]'."
     )

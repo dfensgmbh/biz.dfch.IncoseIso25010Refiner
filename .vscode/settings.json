@@ -46,6 +46,7 @@
         "ipykernel",
         "isort",
         "Italiano",
+        "kwargs",
         "levelname",
         "macholib",
         "mccabe",

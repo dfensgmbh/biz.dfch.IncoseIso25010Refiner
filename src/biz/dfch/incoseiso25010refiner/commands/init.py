@@ -22,6 +22,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 import typer
 
+from biz.dfch.logging import log
+
 from ..constant import Constant
 from ..ui.rich_utils import RichUtils
 from ..info import Info
@@ -81,13 +83,13 @@ def init(
     console = Console()
     console.print(table)
 
-    console.print(f"Creating folder: '{path}' ...")
+    log.debug(f"Creating folder: '{path}' ...")
     try:
         path.mkdir()
-        console.print(f"Creating folder: '{path}' OK.")
+        log.info(f"Creating folder: '{path}' OK.")
+
     except Exception:  # pylint: disable=W0718
-        console.print(f"Creating folder: '{path}' FAILED.")
-        console.print_exception(show_locals=True)
+        log.error(f"Creating folder: '{path}' FAILED.")
         raise
 
     template = f"""// This is the text for the requirement set '{session_id}'.

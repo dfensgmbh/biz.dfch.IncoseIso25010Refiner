@@ -23,6 +23,8 @@ from rich.console import Console
 from rich.prompt import Confirm
 import typer
 
+from biz.dfch.logging import log
+
 from ..constant import Constant
 from ..ui.rich_utils import RichUtils
 from ..info import Info
@@ -74,7 +76,7 @@ def restore(
     pattern = f"{source_doc.stem}---*{source_doc.suffix}"
     files = sorted(source_doc.parent.glob(pattern), reverse=True)
     if 0 == len(files):
-        RichUtils.error("No file to restore.")
+        log.error("No file to restore.")
         return
 
     file_links = []
@@ -82,7 +84,7 @@ def restore(
         file_links.append(
             f"[link=file:///{file.resolve()}]{file.resolve()}[/link]"
         )
-    RichUtils.info(f"Versions:\n{'\n'.join(file_links)}")
+    log.info(f"Previous versions:\n{'\n'.join(file_links)}")
 
     file = files[0]
     message = (
@@ -91,16 +93,17 @@ def restore(
     if not do_not_confirm and not Confirm.ask(
         message, show_default=True, default=True
     ):
-        RichUtils.error("Stop restore.")
+        log.error("Stop restore.")
         return
 
-    RichUtils.print(f"Restore file: '[link=file:///{file}]{file}[/link]' ...")
+    log.debug(f"Restore file: '[link=file:///{file}]{file}[/link]' ...")
     # Delete file.
     source_doc.unlink()
     # Rename copy to source file.
     file.rename(str(source_doc))
+    log.info(f"Restore file: '[link=file:///{file}]{file}[/link]' OK.")
 
-    console.print(
+    log.info(
         f"You can now continue your work in: '[link=file:///{source_doc}]"
         f"{source_doc}[/link]'."
     )

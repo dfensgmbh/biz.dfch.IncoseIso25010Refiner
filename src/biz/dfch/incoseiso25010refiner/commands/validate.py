@@ -45,12 +45,17 @@ def validate(
     Examine if the specified file is valid JSON.
     """
 
+    log.debug("Read file: '%s' ...", file.name)
     text = file.read_text(encoding="utf-8")
+    log.info("Read file: '%s' OK.", file.name)
 
+    log.debug("Examine if file '%s' is JSON ...", file)
     is_json = TextUtils.is_json(text)
     if is_json:
-        log.debug("'%s' [is_json: %s]", file, is_json)
+        log.info("Examine if file '%s' is JSON: %s", file, is_json)
     else:
-        log.error("'%s' [is_json: %s]", file, is_json)
+        log.error("Examine if file '%s' is JSON: %s", file, is_json)
 
+    log.debug("Read file '%s' as JSON ...", file)
     _ = json.loads(text)
+    log.info("Read file '%s' as JSON OK.", file)

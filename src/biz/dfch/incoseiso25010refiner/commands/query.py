@@ -23,7 +23,6 @@ from rich.json import JSON
 from rich.markdown import Markdown
 import typer
 
-from biz.dfch.diagnostics import Clock
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
@@ -119,14 +118,11 @@ def query(
     client = ChatClientFactory.create(chat_config)
 
     # Start query.
-    start_time = Clock.now_isodate()
     log.debug("Querying LLM ...")
-    RichUtils.print(f"{start_time}: Querying LLM ...")
     sw = Stopwatch.start_new()
     try:
         response = client.query()
         sw.stop()
-        stop_time = Clock.now_isodate()
     except TimeoutError as ex:
         sw.stop()
         elapsed = sw.elapsed_seconds
@@ -135,17 +131,10 @@ def query(
             elapsed,
             exc_info=ex,
         )
-        RichUtils.error(
-            f"{start_time}: Querying LLM FAILED. TotalSeconds: "
-            f"{elapsed:.3f}."
-        )
         raise
 
     elapsed = sw.elapsed_seconds
-    log.info("Querying LLM OK. TotalSeconds: %.3f", elapsed)
-    RichUtils.info(
-        f"{stop_time}: Querying LLM OK. TotalSeconds: " f"{elapsed:.3f}."
-    )
+    log.info("Querying LLM OK. TotalSeconds: %.3f.", elapsed)
 
     # Examine response.
     text = TextUtils.remove_md_json(response)
@@ -155,8 +144,7 @@ def query(
         text = TextUtils.clean_text(text)
     is_json = TextUtils.is_json(text)
 
-    console = Console()
-    RichUtils.print("Response:")
+    log.info("Response:")
     try:
         console.print(JSON(text, indent=2))
     except Exception:  # pylint: disable=W0718  # type:ignore
