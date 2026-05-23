@@ -52,7 +52,11 @@ class RichUtils:
             table = Table()
         else:
             assert isinstance(title, str), type(title)
-            table = Table(title=title)
+            table = Table(
+                title=title,
+                header_style="bold cyan",
+                show_header=True,
+            )
 
         table.add_column("Parameter", style="cyan")
         # table.add_column("Value", style="green")
@@ -132,7 +136,7 @@ class RichUtils:
             expand=True,
         )
 
-        table.add_column("Characteristic", style="bold cyan", min_width=20)
+        table.add_column("Characteristic", style="bold yellow", min_width=20)
         table.add_column("Rationale", style="white", ratio=1)
 
         if isinstance(rationale, str) and rationale.strip():
@@ -166,9 +170,10 @@ class RichUtils:
         table = Table(
             title="ISO/IEC 25010 Quality Characteristics Coverage",
             box=None,
+            header_style="bold cyan",
             show_header=True,
         )
-        table.add_column("Characteristic", style="cyan", width=28)
+        table.add_column("Characteristic", style="bold yellow", width=28)
         table.add_column("Score", width=40)
         table.add_column("Value", justify="right", width=6)
 

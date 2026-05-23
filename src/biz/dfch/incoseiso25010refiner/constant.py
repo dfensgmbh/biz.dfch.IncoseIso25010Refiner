@@ -38,7 +38,7 @@ class Constant:
     DEFAULT_FILE_EXT = ".txt"
 
     PROJECT_ROOT = FileUtils.find_project_root().resolve()
-    SRC_DIR = (FileUtils.find_project_root() / "src").resolve()
-    PROMPTS_DIR = (FileUtils.find_project_root() / "src" / "prompts").resolve()
+    SRC_DIR = (PROJECT_ROOT / "src").resolve()
+    PROMPTS_DIR = (SRC_DIR / "prompts").resolve()
 
     PROMPT_REFINE = "prompt-refine.md"
