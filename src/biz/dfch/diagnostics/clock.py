@@ -78,12 +78,26 @@ class Clock:
         """Return the current datetime as 'yyyy-MM-dd HH:mm:ss.fff'.
 
         Example:
-            "2024-05-18 12:00:00.123"
+            "1927-03-27 08:15:42.123"
         """
         current = cls._current()
         return (
             current.strftime("%Y-%m-%d %H:%M:%S.")
             + f"{current.microsecond // 1000:03d}"
+        )
+
+    @classmethod
+    def format_isodate(cls, dt: datetime) -> str:
+        """Return the specified datetime as 'yyyy-MM-dd HH:mm:ss.fff'.
+
+        Example:
+            "1927-03-27 08:15:42.123"
+        """
+        assert isinstance(dt, datetime), type(dt)
+
+        return (
+            dt.strftime("%Y-%m-%d %H:%M:%S.")
+            + f"{dt.microsecond // 1000:03d}"
         )
 
     @classmethod
@@ -93,6 +107,20 @@ class Clock:
         Suitable for use in filenames.
 
         Example:
-            "2024-05-18---12-00-00"
+            "1927-03-27---08-15-42"
         """
         return cls._current().strftime("%Y-%m-%d---%H-%M-%S")
+
+    @classmethod
+    def format_file(cls, dt: datetime) -> str:
+        """Return the specified datetime as 'yyyy-MM-dd---HH-mm-ss'.
+
+        Suitable for use in filenames.
+
+        Example:
+            "1927-03-27---08-15-42"
+        """
+
+        assert isinstance(dt, datetime), type(dt)
+
+        return dt.strftime("%Y-%m-%d---%H-%M-%S")
