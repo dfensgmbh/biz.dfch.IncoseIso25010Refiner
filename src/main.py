@@ -53,12 +53,15 @@ def _callback():
     # We use `callback` only to make sure that `typer` continues to show
     # "sub-commands" when there is only one "sub-command".
 app.command(name="list", epilog=Info.epilog)(list_)
+app.command(epilog=Info.epilog)(checkpoint)
 app.command(epilog=Info.epilog)(commit)
 app.command(epilog=Info.epilog)(erase)
+app.command(epilog=Info.epilog)(info)
 app.command(epilog=Info.epilog)(init)
 app.command(epilog=Info.epilog)(query)
 app.command(epilog=Info.epilog)(refine)
 app.command(epilog=Info.epilog)(restore)
+app.command(epilog=Info.epilog)(show)
 app.command(epilog=Info.epilog)(validate)
 
 if __name__ == "__main__":

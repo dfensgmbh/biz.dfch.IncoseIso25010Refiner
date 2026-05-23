@@ -18,6 +18,7 @@
 from __future__ import annotations
 from datetime import datetime
 from pathlib import Path
+import re
 import shutil
 
 from biz.dfch.logging import log
@@ -56,6 +57,12 @@ class Session:
         def file(self) -> Path:
             """Return the source document file as `Path`."""
             return self._file
+
+        @property
+        def contents(self) -> str:
+            """Return the contents of the source document of this session."""
+
+            return self.file.read_text(encoding="utf-8")
 
         def get_versions(self) -> list[Path]:
             """
@@ -103,7 +110,21 @@ class Session:
 
             return result
 
-        # def restore_source_version
+        def update(self, value: str, add_version: bool = False) -> None:
+            """Update the contents of the source document with `value`."""
+
+            assert isinstance(value, str), type(value)
+            assert value.strip()
+            assert isinstance(add_version, bool), type(add_version)
+
+            log.debug("Update file '%s' ...", self.file)
+
+            if add_version:
+                self.add_version()
+
+            self.file.write_text(value, encoding="utf-8")
+            log.info("Update file '%s' OK.", self.file)
+
         def restore_last_version(self) -> bool:
             """
             Restore the last version of source document.
@@ -144,9 +165,13 @@ class Session:
         def __str__(self):
             return repr(self)
 
+    CHECKPOINT_PATTERN = re.compile(
+        r"---\d{4}-\d{2}-\d{2}---\d{2}-\d{2}-\d{2}$"
+    )
+
     _workspace: Path
     _source: Source
-    _checkpoint: datetime | None
+    _checkpoint: datetime
     name: str
     path: Path
 
@@ -170,7 +195,7 @@ class Session:
         ), f"Source document must exist: '{source_doc}'."
         assert source_doc.is_file(), f"Source must be a file: '{source_doc}'."
 
-        self._checkpoint = None
+        self._checkpoint = self.set_checkpoint()
         self._workspace = workspace.resolve()
         self.name = name
         self.path = path
@@ -192,19 +217,46 @@ class Session:
 
         return self._checkpoint
 
-    def get_checkpoint(self) -> datetime | None:
+    def get_checkpoint(self, style: bool | None = None) -> datetime | str:
         """
-        Return the session checkpoint, if there is one. Otherwise, None.
+        Return the current session checkpoint, or create a new one
+        if there is none.
+
+        Args:
+            style(bool | None):
+                * If style is `None`, the return value is
+                    `datetime`.
+                * If style is `True`, the return value is
+                    `yyyy-MM-dd---HH-mm-ss`.
+                * If style is `True`, the return value is
+                    `yyyy-MM-dd HH:mm:ss.fff`.
+
+        Returns:
+            result: (datetime | str):
+                * If style is `None`, the return value is
+                    `datetime`.
+                * If style is `True`, the return value is
+                    `yyyy-MM-dd---HH-mm-ss`.
+                * If style is `True`, the return value is
+                    `yyyy-MM-dd HH:mm:ss.fff`.
         """
 
-        return self._checkpoint
+        assert style is None or isinstance(style, bool), type(style)
+
+        if self._checkpoint is None:
+            self.set_checkpoint()
+
+        if style is None:
+            return self._checkpoint
+
+        if style:
+            return Clock.format_file(self._checkpoint)
+
+        return Clock.format_isodate(self._checkpoint)
 
     def add_response(self, value: str) -> Path:
         """
-        Add a new response to the session.
-
-        You must set a checkpoint in the session, before you can start this
-        function.
+        Add a new response with the current checkpoint to the session.
         """
 
         assert isinstance(value, str), type(value)
@@ -228,6 +280,57 @@ class Session:
         log.info("Writing response: '%s' OK.", result)
 
         return result
+
+    def get_items(self, base_name: str | None = None) -> list[Path]:
+        """
+        Return a list of item in this session that start with `base_name`.
+
+        The result is a list with the newest element first.
+        """
+
+        assert base_name is None or isinstance(base_name, str), type(base_name)
+
+        result: list[Path] = []
+
+        if base_name is not None and base_name.strip():
+            base_name = None
+
+        result = sorted(
+            [
+                f
+                for f in self.path.iterdir()
+                if f.is_file()
+                and (base_name is None or f.stem.startswith(base_name))
+                and self.CHECKPOINT_PATTERN.search(f.stem)
+            ],
+            reverse=True,
+        )
+
+        return result
+
+    def add_item(self, base_name: str, value: str, suffix: str) -> Path:
+        """
+        Add an item to the current session. The item name has this format:
+        `<base_name>---<checkpoint>`
+        """
+
+        assert isinstance(base_name, str), type(base_name)
+        assert base_name.strip()
+        assert isinstance(value, str), type(value)
+        assert value.strip()
+        assert isinstance(suffix, str), type(suffix)
+
+        log.debug(f"Create file name from base '{base_name}' ...")
+        name = f"{base_name}---{self.get_checkpoint(True)}{suffix}"
+        file = Path(self.path / name).resolve()
+        log.info(f"Create file name from base '{base_name}' OK: [{file}].")
+        assert not file.exists(), f"File must not exist: '{file}'."
+
+        log.debug(f"Write file '{file}' ...")
+        file.write_text(value, encoding="utf-8")
+        log.info(f"Write file '{file}' OK.")
+
+        return file
 
     @staticmethod
     def is_valid(workspace: Path, name: str) -> bool:

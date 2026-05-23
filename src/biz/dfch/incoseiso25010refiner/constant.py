@@ -32,10 +32,11 @@ class Constant:
 
     SOURCE_DOCUMENT = "source.md"
 
-    RESPONSE_FILE_PREFIX = "response---"
-    RESPONSE_FILE_EXT = ".json"
-
     DEFAULT_FILE_EXT = ".txt"
+    JSON_FILE_EXT = ".json"
+
+    RESPONSE_FILE_PREFIX = "response---"
+    RESPONSE_FILE_EXT = JSON_FILE_EXT
 
     PROJECT_ROOT = FileUtils.find_project_root().resolve()
     SRC_DIR = (PROJECT_ROOT / "src").resolve()

@@ -22,7 +22,6 @@ from rich.console import Console
 from rich.prompt import Confirm
 import typer
 
-from biz.dfch.diagnostics import Clock
 from biz.dfch.logging import log
 
 from ..constant import Constant
@@ -30,6 +29,7 @@ from ..info import Info
 from ..iso25010 import Iso25010
 from ..parse import parse_iso_response
 from ..text.file_utils import FileUtils
+from ..session import Session
 from ..ui.rich_utils import RichUtils
 
 from .args import FileOpt
@@ -62,13 +62,9 @@ def commit(
     path = Path(workspace / session_id).resolve()
     assert path.exists(), f"Path does not exist: '{path}'."
 
-    source_doc = path / Constant.SOURCE_DOCUMENT
-    assert source_doc.exists(), f"File does not exist: '{source_doc}'."
-    assert source_doc.is_file(), f"File is not a file: '{source_doc}'."
-
-    if source_doc.exists() and source_doc.is_file():
-        text = source_doc.read_text(encoding="utf-8")
-    text = source_doc.read_text(encoding="utf-8")
+    session = Session(workspace, session_id)
+    source_doc = session.source.file
+    text = session.source.contents
 
     if file is not None:
         full_name = Path(path / file).resolve()
@@ -112,17 +108,12 @@ def commit(
         text = f.read_text(encoding="utf-8")
         iso25010_response = parse_iso_response(text)
 
-        # Create copy of source document.
-        timestamp = Clock.now_file()
-        RichUtils.print("Making copy of source document ...")
-        source_copy = FileUtils.make_copy(source_doc, f"---{timestamp}")
-        assert source_copy.exists(), source_copy
-        RichUtils.info(f"Making copy of source document '{source_copy}' OK.")
-
-        # Change source document and add new questions to it.
+        # Create copy of source document,
+        # then change source document and add new questions to it.
         updated = FileUtils.update_source_doc(
             source_doc, iso25010_response.questions
         )
+        session.source.update(updated, True)
         source_doc.write_text(updated, encoding="utf-8")
 
         console.print(

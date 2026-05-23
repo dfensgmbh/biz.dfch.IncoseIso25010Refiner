@@ -24,7 +24,6 @@ import typer
 
 from ..session import Session
 
-from ..constant import Constant
 from ..info import Info
 from ..ui.rich_utils import RichUtils
 

@@ -93,7 +93,7 @@ def refine(
     log.info("Get session '%s' OK.", session_id)
 
     source_doc = session.source.file
-    text = source_doc.read_text(encoding="utf-8")
+    text = session.source.contents
 
     data = {
         "workspace": str(workspace),
@@ -153,9 +153,6 @@ def refine(
     elapsed = sw.elapsed_seconds
     log.info("Querying LLM OK. TotalSeconds: %.3f", elapsed)
 
-    checkpoint = session.set_checkpoint()
-    timestamp = Clock.format_file(checkpoint)
-
     # Examine response.
     text = TextUtils.remove_md_json(response)
     text = TextUtils.clean_pseudo_json(text)
@@ -179,9 +176,6 @@ def refine(
     result = RichUtils.create_analysis_table(iso25010_response.analysis)
     console.print(result)
 
-    # result = RichUtils.create_questions_table(iso25010_response.questions)
-    # console.print(result)
-
     result = RichUtils.create_scores_table(
         iso25010_response.summary.scores, iso25010_response.summary.rationale
     )
@@ -190,19 +184,16 @@ def refine(
     result = RichUtils.create_iso25010_chart(iso25010_response.summary.scores)
     console.print(result)
 
-    # Create copy of source document.
-    session.source.add_version()
-
-    # Change source document and add new questions to it.
+    # Create copy of source document,
+    # then change source document and add new questions to it.
     updated = FileUtils.update_source_doc(
         source_doc, iso25010_response.questions
     )
-    source_doc.write_text(updated, encoding="utf-8")
+    session.source.update(updated, True)
 
-    # Save summary
+    # Save summary.
     summary_json = json.dumps(asdict(iso25010_response.summary), indent=2)
-    summary_doc = path / f"summary---{timestamp}.json"
-    summary_doc.write_text(summary_json, encoding="utf-8")
+    session.add_item("summary", summary_json, Constant.JSON_FILE_EXT)
 
     log.info(
         f"You can now continue your work in: '[link=file:///{source_doc}]"
