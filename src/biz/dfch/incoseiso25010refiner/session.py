@@ -16,13 +16,17 @@
 """Session class."""
 
 from __future__ import annotations
+from datetime import datetime
 from pathlib import Path
 import shutil
 
 from biz.dfch.logging import log
+from biz.dfch.diagnostics.clock import Clock
 
 from .constant import Constant
 from .iso25010 import Iso25010
+
+from .text.text_utils import TextUtils
 
 
 class Session:
@@ -30,10 +34,121 @@ class Session:
     The session when you work with a requirement set.
     """
 
+    class Source:
+        """This is the source document of a `Session`."""
+
+        _session: Session
+        _file: Path
+
+        def __init__(self, session: Session) -> None:
+            assert isinstance(session, Session), type(session)
+            self._session = session
+
+            path = session.path
+
+            file = Path(path / Constant.SOURCE_DOCUMENT).resolve()
+            assert file.exists(), f"Source document must exist: '{file}'."
+            assert file.is_file(), f"Source must be a file: '{file}'."
+
+            self._file = file
+
+        @property
+        def file(self) -> Path:
+            """Return the source document file as `Path`."""
+            return self._file
+
+        def get_versions(self) -> list[Path]:
+            """
+            Get a list of source document versions.
+            The list contains the newest items first.
+            """
+
+            pattern = f"{self._file.stem}---*{self._file.suffix}"
+            result = sorted(self._session.path.glob(pattern), reverse=True)
+
+            return result
+
+        def add_version(self) -> Path:
+            """
+            Add a new version of the source document to the session.
+
+            You must set a checkpoint in the session, before you can start this
+            function.
+            """
+
+            checkpoint = self._session.get_checkpoint()
+            assert isinstance(checkpoint, datetime), (
+                "You must create a checkpoint before you can start this "
+                "function."
+            )
+
+            result = Path(
+                self._session.path
+                / (
+                    f"{self.file.stem}---"
+                    f"{Clock.format_file(checkpoint)}"
+                    f"{self.file.suffix}"
+                )
+            ).resolve()
+
+            # Create copy of source document.
+            assert not result.exists(), f"File must not exist: '{result}'."
+
+            log.debug("Make a copy of '%s' to '%s' ...", self.file, result)
+            shutil.copy2(self._file, str(result))
+            log.info("Make a copy of '%s' to '%s' OK.", self.file, result)
+
+            assert result.exists(), f"File must exist: '{result}'."
+            assert result.is_file(), f"File must be a file: '{result}'."
+
+            return result
+
+        # def restore_source_version
+        def restore_last_version(self) -> bool:
+            """
+            Restore the last version of source document.
+
+            Return True, if operation is satisfactory. Return False, if not or
+            if there is nothing to restore.
+            """
+
+            files = self.get_versions()
+            if 0 == len(files):
+                return False
+            file = files[0]
+
+            try:
+                log.debug(
+                    f"Restore file: '[link=file:///{file}]{file}[/link]' ..."
+                )
+                # Delete file.
+                self._file.unlink()
+                # Rename copy to source file.
+                file.rename(str(self._file))
+                log.info(
+                    f"Restore file: '[link=file:///{file}]{file}[/link]' OK."
+                )
+
+                return True
+            except Exception as ex:  # pylint: disable=W0718
+                log.error(
+                    f"Restore file: '[link=file:///{file}]{file}[/link]' OK.",
+                    exc_info=ex,
+                )
+
+            return False
+
+        def __repr__(self):
+            return str(self._file)
+
+        def __str__(self):
+            return repr(self)
+
     _workspace: Path
-    _name: str
-    _path: Path
-    _source: Path
+    _source: Source
+    _checkpoint: datetime | None
+    name: str
+    path: Path
 
     def __init__(self, workspace: Path, name: str) -> None:
         """Create an existing session with specified workspace and name."""
@@ -55,16 +170,64 @@ class Session:
         ), f"Source document must exist: '{source_doc}'."
         assert source_doc.is_file(), f"Source must be a file: '{source_doc}'."
 
+        self._checkpoint = None
         self._workspace = workspace.resolve()
-        self._name = name
-        self._path = path
-        self._source = source_doc
+        self.name = name
+        self.path = path
+        self._source = self.Source(self)
 
     @property
-    def source(self) -> Path:
-        """Return the source document path of this session."""
+    def source(self) -> Source:
+        """Return the source document of this session."""
 
         return self._source
+
+    def set_checkpoint(self) -> datetime:
+        """
+        Set a new checkpoint. If you set a checkpoint before,
+        this function overwrites the checkpoint.
+        """
+
+        self._checkpoint = Clock().now()
+
+        return self._checkpoint
+
+    def get_checkpoint(self) -> datetime | None:
+        """
+        Return the session checkpoint, if there is one. Otherwise, None.
+        """
+
+        return self._checkpoint
+
+    def add_response(self, value: str) -> Path:
+        """
+        Add a new response to the session.
+
+        You must set a checkpoint in the session, before you can start this
+        function.
+        """
+
+        assert isinstance(value, str), type(value)
+        assert isinstance(self._checkpoint, datetime), type(self._checkpoint)
+
+        # Save response as json or text.
+        is_json = TextUtils.is_json(value)
+        if is_json:
+            extension = Constant.RESPONSE_FILE_EXT
+        else:
+            extension = Constant.DEFAULT_FILE_EXT
+
+        timestamp = Clock.format_file(self._checkpoint)
+        result = (
+            self.path / f"{Constant.RESPONSE_FILE_PREFIX}{timestamp}{extension}"
+        ).resolve()
+
+        log.debug("Writing response: '%s' ...", result)
+        assert not result.exists(), result
+        result.write_text(value, encoding="utf-8")
+        log.info("Writing response: '%s' OK.", result)
+
+        return result
 
     @staticmethod
     def is_valid(workspace: Path, name: str) -> bool:

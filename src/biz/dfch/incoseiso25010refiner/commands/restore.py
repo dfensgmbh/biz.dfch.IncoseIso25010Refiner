@@ -25,9 +25,9 @@ import typer
 
 from biz.dfch.logging import log
 
-from ..constant import Constant
 from ..ui.rich_utils import RichUtils
 from ..info import Info
+from ..session import Session
 
 from .args import WorkspaceOpt
 from .args import SessionIdOpt
@@ -69,12 +69,9 @@ def restore(
     console = Console()
     console.print(table)
 
-    source_doc = Path(path) / Constant.SOURCE_DOCUMENT
-    assert source_doc.exists(), f"File does not exist: '{source_doc}'."
-    assert source_doc.is_file(), f"File is not a file: '{source_doc}'."
+    session = Session(workspace, session_id)
 
-    pattern = f"{source_doc.stem}---*{source_doc.suffix}"
-    files = sorted(source_doc.parent.glob(pattern), reverse=True)
+    files = session.source.get_versions()
     if 0 == len(files):
         log.error("No file to restore.")
         return
@@ -96,14 +93,10 @@ def restore(
         log.error("Stop restore.")
         return
 
-    log.debug(f"Restore file: '[link=file:///{file}]{file}[/link]' ...")
-    # Delete file.
-    source_doc.unlink()
-    # Rename copy to source file.
-    file.rename(str(source_doc))
-    log.info(f"Restore file: '[link=file:///{file}]{file}[/link]' OK.")
+    session.source.restore_last_version()
 
     log.info(
-        f"You can now continue your work in: '[link=file:///{source_doc}]"
-        f"{source_doc}[/link]'."
+        f"You can now continue your work in: "
+        f"'[link=file:///{session.source.file}]"
+        f"{session.source.file}[/link]'."
     )

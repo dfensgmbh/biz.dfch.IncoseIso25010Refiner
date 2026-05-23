@@ -34,6 +34,7 @@ from ..chat.providers import Providers
 from ..info import Info
 from ..iso25010 import Iso25010
 from ..parse import parse_iso_response
+from ..session import Session
 from ..text.text_utils import TextUtils
 from ..text.file_utils import FileUtils
 from ..ui.rich_utils import RichUtils
@@ -76,15 +77,7 @@ def refine(
 
     assert isinstance(workspace, Path), type(workspace)
     path = Path(workspace / session_id).resolve()
-    assert path.exists(), f"Path does not exist: '{path}'."
-
-    source_doc = path / Constant.SOURCE_DOCUMENT
-    assert source_doc.exists(), f"File does not exist: '{source_doc}'."
-    assert source_doc.is_file(), f"File is not a file: '{source_doc}'."
-
-    if source_doc.exists() and source_doc.is_file():
-        text = source_doc.read_text(encoding="utf-8")
-    text = source_doc.read_text(encoding="utf-8")
+    assert path.exists(), f"Path must exist: '{path}'."
 
     if characteristics is None:
         characteristics = Iso25010.all()
@@ -94,6 +87,13 @@ def refine(
 
     if not model.strip():
         model = ChatConfig.default_values[provider].model
+
+    log.debug("Get session '%s' ...", session_id)
+    session = Session(workspace, session_id)
+    log.info("Get session '%s' OK.", session_id)
+
+    source_doc = session.source.file
+    text = source_doc.read_text(encoding="utf-8")
 
     data = {
         "workspace": str(workspace),
@@ -152,7 +152,9 @@ def refine(
 
     elapsed = sw.elapsed_seconds
     log.info("Querying LLM OK. TotalSeconds: %.3f", elapsed)
-    timestamp = Clock.now_file()
+
+    checkpoint = session.set_checkpoint()
+    timestamp = Clock.format_file(checkpoint)
 
     # Examine response.
     text = TextUtils.remove_md_json(response)
@@ -162,19 +164,7 @@ def refine(
         text = TextUtils.clean_text(text)
     is_json = TextUtils.is_json(text)
 
-    # Save response as json or text.
-    if is_json:
-        extension = Constant.RESPONSE_FILE_EXT
-    else:
-        extension = Constant.DEFAULT_FILE_EXT
-
-    response_file = (
-        path / f"{Constant.RESPONSE_FILE_PREFIX}{timestamp}{extension}"
-    )
-    log.debug("Writing response: '%s' ...", response_file)
-    assert not response_file.exists(), response_file
-    response_file.write_text(text, encoding="utf-8")
-    log.info("Writing response: '%s' OK.", response_file)
+    session.add_response(text)
 
     # When we do not have valid JSON, show error message and exit.
     assert is_json, (
@@ -201,10 +191,7 @@ def refine(
     console.print(result)
 
     # Create copy of source document.
-    log.debug("Making copy of source document ...")
-    source_copy = FileUtils.make_copy(source_doc, f"---{timestamp}")
-    assert source_copy.exists(), source_copy
-    log.info("Making copy of source document '%s' OK.", source_copy)
+    session.source.add_version()
 
     # Change source document and add new questions to it.
     updated = FileUtils.update_source_doc(

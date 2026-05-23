@@ -86,6 +86,6 @@ def init(
     )
 
     console.print(
-        f"You can now start your work in: '[link=file:///{session.source}]"
-        f"{session.source}[/link]'."
+        f"You can now start your work in: '[link=file:///{session.source.file}]"
+        f"{session.source.file}[/link]'."
     )
