@@ -55,7 +55,8 @@ class RichUtils:
             table = Table(title=title)
 
         table.add_column("Parameter", style="cyan")
-        table.add_column("Value", style="green")
+        # table.add_column("Value", style="green")
+        table.add_column("Value")
 
         for key, value in data.items():
             if isinstance(value, list):
