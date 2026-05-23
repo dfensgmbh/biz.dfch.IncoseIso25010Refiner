@@ -27,6 +27,8 @@ from .args import PromptOpt
 
 from .commit import commit
 from .init import init
+from .erase import erase
+from .list import list_
 from .query import query
 from .refine import refine
 from .restore import restore
@@ -44,7 +46,9 @@ __all__ = [
     "WorkspaceOpt",
 
     "commit",
+    "erase",
     "init",
+    "list_",
     "query",
     "refine",
     "restore",
