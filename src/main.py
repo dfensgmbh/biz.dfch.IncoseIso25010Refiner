@@ -24,13 +24,16 @@ import typer
 from biz.dfch.i18n import I18n
 I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
+from biz.dfch.incoseiso25010refiner.commands import checkpoint
 from biz.dfch.incoseiso25010refiner.commands import commit
+from biz.dfch.incoseiso25010refiner.commands import info
 from biz.dfch.incoseiso25010refiner.commands import init
 from biz.dfch.incoseiso25010refiner.commands import erase
 from biz.dfch.incoseiso25010refiner.commands import list_
 from biz.dfch.incoseiso25010refiner.commands import query
 from biz.dfch.incoseiso25010refiner.commands import refine
 from biz.dfch.incoseiso25010refiner.commands import restore
+from biz.dfch.incoseiso25010refiner.commands import show
 from biz.dfch.incoseiso25010refiner.commands import validate
 
 from biz.dfch.incoseiso25010refiner.info import Info

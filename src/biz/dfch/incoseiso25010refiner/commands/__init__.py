@@ -25,13 +25,16 @@ from .args import FileOpt
 from .args import InputOpt
 from .args import PromptOpt
 
+from .checkpoint import checkpoint
 from .commit import commit
+from .info import info
 from .init import init
 from .erase import erase
 from .list import list_
 from .query import query
 from .refine import refine
 from .restore import restore
+from .show import show
 from .validate import validate
 
 __all__ = [
@@ -44,13 +47,15 @@ __all__ = [
     "ModelOpt",
     "SessionIdOpt",
     "WorkspaceOpt",
-
+    "checkpoint",
     "commit",
     "erase",
+    "info",
     "init",
     "list_",
     "query",
     "refine",
     "restore",
+    "show",
     "validate",
 ]
