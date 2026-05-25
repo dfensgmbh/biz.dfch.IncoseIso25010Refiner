@@ -37,6 +37,7 @@ from biz.dfch.incoseiso25010refiner.commands import query
 from biz.dfch.incoseiso25010refiner.commands import refine
 from biz.dfch.incoseiso25010refiner.commands import restore
 from biz.dfch.incoseiso25010refiner.commands import show
+from biz.dfch.incoseiso25010refiner.commands import stub
 from biz.dfch.incoseiso25010refiner.commands import validate
 
 from biz.dfch.incoseiso25010refiner.info import Info

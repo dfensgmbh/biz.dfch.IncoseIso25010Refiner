@@ -36,6 +36,7 @@ from .query import query
 from .refine import refine
 from .restore import restore
 from .show import show
+from .stub import stub
 from .validate import validate
 
 __all__ = [
@@ -59,5 +60,6 @@ __all__ = [
     "refine",
     "restore",
     "show",
+    "stub",
     "validate",
 ]

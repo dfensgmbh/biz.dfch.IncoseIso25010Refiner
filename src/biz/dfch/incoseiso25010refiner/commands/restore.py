@@ -50,7 +50,7 @@ def restore(
     do_not_confirm: YesOpt = False,
 ):
     """
-    Restores the last copy of the source document.
+    Restores the previous version of the source document.
     """
 
     assert isinstance(workspace, Path), type(workspace)
@@ -93,7 +93,7 @@ def restore(
         log.error("Stop restore.")
         return
 
-    session.source.restore_last_version()
+    session.source.restore_previous_version()
 
     log.info(
         f"You can now continue your work in: "
