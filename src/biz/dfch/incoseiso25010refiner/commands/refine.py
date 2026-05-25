@@ -23,7 +23,6 @@ from dotenv import load_dotenv
 from rich.console import Console
 import typer
 
-from biz.dfch.diagnostics import Clock
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
@@ -135,7 +134,7 @@ def refine(
     client = ChatClientFactory.create(chat_config)
 
     # Start query.
-    log.debug("Querying LLM ...")
+    log.debug("Query LLM ...")
     sw = Stopwatch.start_new()
     try:
         response = client.query()
@@ -144,14 +143,14 @@ def refine(
         sw.stop()
         elapsed = sw.elapsed_seconds
         log.error(
-            "Querying LLM FAILED. TotalSeconds: %.3f",
+            "Query LLM FAILED. TotalSeconds: %.3f",
             elapsed,
             exc_info=ex,
         )
         raise
 
     elapsed = sw.elapsed_seconds
-    log.info("Querying LLM OK. TotalSeconds: %.3f", elapsed)
+    log.info("Query LLM OK. TotalSeconds: %.3f", elapsed)
 
     # Examine response.
     text = TextUtils.remove_md_json(response)

@@ -50,7 +50,7 @@ ApiTokenOpt = Annotated[
 
 BaseUriOpt = Annotated[
     str,
-    typer.Option("--base-url", "-uri", envvar="CHAT_BASE_URL", help="Base URL"),
+    typer.Option("--base-url", "-u", "-uri", envvar="CHAT_BASE_URL", help="Base URL"),
 ]
 
 WorkspaceOpt = Annotated[
@@ -186,6 +186,8 @@ FileOpt = Annotated[
 YesOpt = Annotated[
     bool,
     typer.Option(
-        "--yes", "-y", help="Confirm action and do not ask for confirmation."
+        "--yes",
+        "-y",
+        help="Confirm action now and do not ask for extra confirmation.",
     ),
 ]

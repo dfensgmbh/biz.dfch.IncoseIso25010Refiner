@@ -25,8 +25,6 @@ from biz.dfch.i18n import I18n
 
 I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
-from biz.dfch.logging import log
-
 from biz.dfch.incoseiso25010refiner.commands import checkpoint
 from biz.dfch.incoseiso25010refiner.commands import replay
 from biz.dfch.incoseiso25010refiner.commands import diff
