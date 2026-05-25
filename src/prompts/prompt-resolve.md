@@ -10,8 +10,9 @@ Here are rule that you must obey, when you write the requirement:
 3. Your statement must be un-ambiguous.
 4. Do not use "-ing" form.
 5. Do not use "'s" (Saxon genitive).
-6. Even if the question or answer is in a different language, your statement must be in US English language.
-7. But if there is quoted text in a language different than US English, you leave that text unchanged in the original language.
+6. Do not use semicolon.
+7. Even if the question or answer is in a different language, your statement must be in US English language.
+8. But if there is quoted text in a language different than US English, you leave that text unchanged in the original language.
 
 # Here is the question with the answer (PHRASE)
 
