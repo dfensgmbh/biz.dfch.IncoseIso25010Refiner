@@ -192,7 +192,7 @@ def refine(
 
     # Save summary.
     summary_json = json.dumps(asdict(iso25010_response.summary), indent=2)
-    session.add_item("summary", summary_json, Constant.JSON_FILE_EXT)
+    session.add_item("refine-summary", summary_json, Constant.JSON_FILE_EXT)
 
     log.info(
         f"You can now continue your work in: '[link=file:///{source_doc}]"
