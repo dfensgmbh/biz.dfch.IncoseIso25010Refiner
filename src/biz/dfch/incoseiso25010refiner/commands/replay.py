@@ -48,7 +48,7 @@ app = typer.Typer(
 
 
 @app.command()
-def commit(
+def replay(
     session_id: SessionIdOpt,
     workspace: WorkspaceOpt = Path("."),
     file: FileOpt = None,  # type: ignore

@@ -26,7 +26,7 @@ from .args import InputOpt
 from .args import PromptOpt
 
 from .checkpoint import checkpoint
-from .commit import commit
+from .replay import replay
 from .diff import diff
 from .erase import erase
 from .info import info
@@ -50,7 +50,7 @@ __all__ = [
     "SessionIdOpt",
     "WorkspaceOpt",
     "checkpoint",
-    "commit",
+    "replay",
     "diff",
     "erase",
     "info",

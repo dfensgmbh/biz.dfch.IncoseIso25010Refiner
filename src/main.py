@@ -22,12 +22,13 @@ from dotenv import load_dotenv
 import typer
 
 from biz.dfch.i18n import I18n
+
 I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
 from biz.dfch.logging import log
 
 from biz.dfch.incoseiso25010refiner.commands import checkpoint
-from biz.dfch.incoseiso25010refiner.commands import commit
+from biz.dfch.incoseiso25010refiner.commands import replay
 from biz.dfch.incoseiso25010refiner.commands import diff
 from biz.dfch.incoseiso25010refiner.commands import info
 from biz.dfch.incoseiso25010refiner.commands import init
@@ -62,7 +63,7 @@ def _callback(ctx: typer.Context):
 
 app.command(name="list", epilog=Info.epilog)(list_)
 app.command(epilog=Info.epilog)(checkpoint)
-app.command(epilog=Info.epilog)(commit)
+app.command(epilog=Info.epilog)(replay)
 app.command(epilog=Info.epilog)(diff)
 app.command(epilog=Info.epilog)(erase)
 app.command(epilog=Info.epilog)(info)
