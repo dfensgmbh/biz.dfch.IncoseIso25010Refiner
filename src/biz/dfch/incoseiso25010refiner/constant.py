@@ -44,3 +44,4 @@ class Constant:
 
     PROMPT_REFINE = "prompt-refine.md"
     PROMPT_RESOLVE = "prompt-resolve.md"
+    PROMPT_SUMMARY = "prompt-summary.md"

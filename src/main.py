@@ -38,6 +38,7 @@ from biz.dfch.incoseiso25010refiner.commands import resolve
 from biz.dfch.incoseiso25010refiner.commands import restore
 from biz.dfch.incoseiso25010refiner.commands import show
 from biz.dfch.incoseiso25010refiner.commands import stub
+from biz.dfch.incoseiso25010refiner.commands import summary
 from biz.dfch.incoseiso25010refiner.commands import validate
 
 from biz.dfch.incoseiso25010refiner.info import Info
@@ -73,6 +74,7 @@ app.command(epilog=Info.epilog)(resolve)
 app.command(epilog=Info.epilog)(restore)
 app.command(epilog=Info.epilog)(show)
 app.command(epilog=Info.epilog)(stub)
+app.command(epilog=Info.epilog)(summary)
 app.command(epilog=Info.epilog)(validate)
 
 if __name__ == "__main__":
