@@ -34,6 +34,7 @@ from biz.dfch.incoseiso25010refiner.commands import erase
 from biz.dfch.incoseiso25010refiner.commands import list_
 from biz.dfch.incoseiso25010refiner.commands import query
 from biz.dfch.incoseiso25010refiner.commands import refine
+from biz.dfch.incoseiso25010refiner.commands import resolve
 from biz.dfch.incoseiso25010refiner.commands import restore
 from biz.dfch.incoseiso25010refiner.commands import show
 from biz.dfch.incoseiso25010refiner.commands import stub
@@ -68,6 +69,7 @@ app.command(epilog=Info.epilog)(info)
 app.command(epilog=Info.epilog)(init)
 app.command(epilog=Info.epilog)(query)
 app.command(epilog=Info.epilog)(refine)
+app.command(epilog=Info.epilog)(resolve)
 app.command(epilog=Info.epilog)(restore)
 app.command(epilog=Info.epilog)(show)
 app.command(epilog=Info.epilog)(stub)

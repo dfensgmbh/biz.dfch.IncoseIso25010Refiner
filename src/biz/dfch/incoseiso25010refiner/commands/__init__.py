@@ -34,6 +34,7 @@ from .init import init
 from .list import list_
 from .query import query
 from .refine import refine
+from .resolve import resolve
 from .restore import restore
 from .show import show
 from .stub import stub
@@ -58,6 +59,7 @@ __all__ = [
     "list_",
     "query",
     "refine",
+    "resolve",
     "restore",
     "show",
     "stub",
