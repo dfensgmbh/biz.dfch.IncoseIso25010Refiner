@@ -50,7 +50,9 @@ ApiTokenOpt = Annotated[
 
 BaseUriOpt = Annotated[
     str,
-    typer.Option("--base-url", "-u", "-uri", envvar="CHAT_BASE_URL", help="Base URL"),
+    typer.Option(
+        "--base-url", "-u", "-uri", envvar="CHAT_BASE_URL", help="Base URL"
+    ),
 ]
 
 WorkspaceOpt = Annotated[
