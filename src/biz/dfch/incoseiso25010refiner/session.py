@@ -16,6 +16,7 @@
 """Session class."""
 
 from __future__ import annotations
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 import re
@@ -28,6 +29,39 @@ from .constant import Constant
 from .iso25010 import Iso25010
 
 from .text.text_utils import TextUtils
+
+
+@dataclass
+class Question:
+    """Represents a question with an optional answer."""
+
+    question: str = ""
+    idx: int = -1
+    answer: list[str] = field(default_factory=list)
+    start: int = -1
+    end: int = -1
+
+    def has_answer(self) -> bool:
+        """Return `True` if question has an answer. Return `False` if not."""
+        return 0 != len(self.answer)
+
+    @staticmethod
+    def is_question(line: str) -> bool:
+        """Return `True` if the line is a question. Return  `False` if not."""
+        return line.startswith(">")
+
+    @staticmethod
+    def is_terminator(line: str) -> bool:
+        """Return `True` if the line ends a question. Return `False` if not."""
+        assert isinstance(line, str), type(line)
+
+        if line.startswith(">"):
+            return True
+        if line.startswith("//"):
+            return True
+        if line.startswith("#"):
+            return True
+        return False
 
 
 class Session:
@@ -79,6 +113,22 @@ class Session:
 
             return self.file.read_text(encoding="utf-8")
 
+        @staticmethod
+        def _clean_document(lines: list[str]) -> list[str]:
+            i = 0
+            while i < len(lines):
+                if (
+                    lines[i].strip() == ""
+                    and i + 1 < len(lines)
+                    and lines[i + 1].strip() == ""
+                    and i + 2 < len(lines)
+                    and lines[i + 2].strip() == ""
+                ):
+                    lines.pop(i)
+                else:
+                    i += 1
+            return lines
+
         @property
         def lines(self) -> list[str]:
             """Return the contents of the source document as a list of lines."""
@@ -86,6 +136,35 @@ class Session:
             result = self.contents.splitlines()
 
             return result
+
+        def update(
+            self,
+            value: str | list[str],
+            *,
+            do_not_clean: bool = False,
+            do_add_version: bool = False,
+        ) -> None:
+            """Update the contents of the source document with `value`."""
+
+            assert isinstance(value, (str, list)), type(value)
+            assert isinstance(do_not_clean, bool), type(do_not_clean)
+            assert isinstance(do_add_version, bool), type(do_add_version)
+
+            log.debug("Update file '%s' ...", self.file)
+
+            if isinstance(value, str):
+                assert value.strip()
+                value = value.splitlines()
+
+            if not do_not_clean:
+                value = self._clean_document(value)
+
+            if do_add_version:
+                self.add_version()
+
+            value = "\n".join(value)
+            self.file.write_text(value, encoding="utf-8")
+            log.info("Update file '%s' OK.", self.file)
 
         def get_versions(self) -> list[Path]:
             """
@@ -133,20 +212,28 @@ class Session:
 
             return result
 
-        def update(self, value: str, add_version: bool = False) -> None:
-            """Update the contents of the source document with `value`."""
+        def get_previous_version(self) -> Session.Source | None:
+            """
+            Return the previous version of the source document.
 
-            assert isinstance(value, str), type(value)
-            assert value.strip()
-            assert isinstance(add_version, bool), type(add_version)
+            Args:
+                None (None): This method does not have any parameters.
+            Returns:
+                result (Session | None): An instance of a `Source` object that
+                is the previous version the source document.
 
-            log.debug("Update file '%s' ...", self.file)
+                When there is no previous version, the method returns `None`.
+            """
+            result: Session.Source | None = None
 
-            if add_version:
-                self.add_version()
+            versions = self.get_versions()
+            if 0 == len(versions):
+                return result
 
-            self.file.write_text(value, encoding="utf-8")
-            log.info("Update file '%s' OK.", self.file)
+            previous = versions[0].name
+            result = Session.Source(self._session, previous)
+
+            return result
 
         def restore_previous_version(self) -> bool:
             """
@@ -184,26 +271,50 @@ class Session:
 
             return False
 
-        def get_previous_version(self) -> Session.Source | None:
+        def get_questions(self) -> list[Question]:
             """
-            Return the previous version of the source document.
-
-            Args:
-                None (None): This method does not have any parameters.
-            Returns:
-                result (Session | None): An instance of a `Source` object that
-                is the previous version the source document.
-
-                When there is no previous version, the method returns `None`.
+            Return the list of questions and answers in the source document.
             """
-            result: Session.Source | None = None
 
-            versions = self.get_versions()
-            if 0 == len(versions):
-                return result
+            result: list[Question] = []
 
-            previous = versions[0].name
-            result = Session.Source(self._session, previous)
+            lines = self.lines
+            n = len(lines)
+            i = 0
+
+            while i < n:
+                line = lines[i]
+                if not Question.is_question(line):
+                    i += 1
+                    continue
+
+                question = Question()
+                question.question = line[1:].strip()
+                question.idx = i
+
+                result.append(question)
+
+                i += 1
+                while i < n:
+                    line = lines[i]
+                    if Question.is_terminator(line):
+                        break
+                    # Examine if there a 2 consecutive blank lines.
+                    if (
+                        line.strip() == ""
+                        and i + 1 < n
+                        and lines[i + 1].strip() == ""
+                    ):
+                        break
+
+                    answer = line.strip()
+                    if answer:
+                        question.answer.append(answer)
+                        if -1 == question.start:
+                            question.start = i
+                        question.end = i
+
+                    i += 1
 
             return result
 

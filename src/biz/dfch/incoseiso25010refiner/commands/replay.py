@@ -113,7 +113,7 @@ def replay(
         updated = FileUtils.update_source_doc(
             source_doc, iso25010_response.questions
         )
-        session.source.update(updated, True)
+        session.source.update(updated, do_add_version=True)
         source_doc.write_text(updated, encoding="utf-8")
 
         console.print(

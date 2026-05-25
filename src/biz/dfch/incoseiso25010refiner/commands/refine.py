@@ -189,7 +189,7 @@ def refine(
     updated = FileUtils.update_source_doc(
         source_doc, iso25010_response.questions
     )
-    session.source.update(updated, True)
+    session.source.update(updated, do_add_version=True)
 
     # Save summary.
     summary_json = json.dumps(asdict(iso25010_response.summary), indent=2)
