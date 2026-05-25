@@ -39,15 +39,30 @@ class Session:
         """This is the source document of a `Session`."""
 
         _session: Session
+        _name: str
         _file: Path
 
-        def __init__(self, session: Session) -> None:
+        def __init__(
+            self, session: Session, name: str = Constant.SOURCE_DOCUMENT
+        ) -> None:
+            """
+            Make a `Source` object in the specified `Session`.
+
+            Args:
+                session (Session): The `Session` from which to return the
+                    source document.
+                name (str): The name of the source document.
+
+                    *default*: `source.md`.
+            """
+
             assert isinstance(session, Session), type(session)
+            assert isinstance(name, str), type(name)
+
             self._session = session
+            self._name = name
 
-            path = session.path
-
-            file = Path(path / Constant.SOURCE_DOCUMENT).resolve()
+            file = Path(session.path / name).resolve()
             assert file.exists(), f"Source document must exist: '{file}'."
             assert file.is_file(), f"Source must be a file: '{file}'."
 
@@ -63,6 +78,14 @@ class Session:
             """Return the contents of the source document of this session."""
 
             return self.file.read_text(encoding="utf-8")
+
+        @property
+        def lines(self) -> list[str]:
+            """Return the contents of the source document as a list of lines."""
+
+            result = self.contents.splitlines()
+
+            return result
 
         def get_versions(self) -> list[Path]:
             """
@@ -125,12 +148,14 @@ class Session:
             self.file.write_text(value, encoding="utf-8")
             log.info("Update file '%s' OK.", self.file)
 
-        def restore_last_version(self) -> bool:
+        def restore_previous_version(self) -> bool:
             """
-            Restore the last version of source document.
+            Restore the previous version of source document.
 
-            Return True, if operation is satisfactory. Return False, if not or
-            if there is nothing to restore.
+            Returns:
+                result (bool): `True`, if operation is satisfactory.
+
+                `False`, if not or if there is nothing to restore.
             """
 
             files = self.get_versions()
@@ -158,6 +183,29 @@ class Session:
                 )
 
             return False
+
+        def get_previous_version(self) -> Session.Source | None:
+            """
+            Return the previous version of the source document.
+
+            Args:
+                None (None): This method does not have any parameters.
+            Returns:
+                result (Session | None): An instance of a `Source` object that
+                is the previous version the source document.
+
+                When there is no previous version, the method returns `None`.
+            """
+            result: Session.Source | None = None
+
+            versions = self.get_versions()
+            if 0 == len(versions):
+                return result
+
+            previous = versions[0].name
+            result = Session.Source(self._session, previous)
+
+            return result
 
         def __repr__(self):
             return str(self._file)

@@ -27,9 +27,10 @@ from .args import PromptOpt
 
 from .checkpoint import checkpoint
 from .commit import commit
+from .diff import diff
+from .erase import erase
 from .info import info
 from .init import init
-from .erase import erase
 from .list import list_
 from .query import query
 from .refine import refine
@@ -49,6 +50,7 @@ __all__ = [
     "WorkspaceOpt",
     "checkpoint",
     "commit",
+    "diff",
     "erase",
     "info",
     "init",
