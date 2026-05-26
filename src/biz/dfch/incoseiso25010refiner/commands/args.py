@@ -31,6 +31,7 @@ ProviderOpt = Annotated[
         "-p",
         envvar="CHAT_PROVIDER",
         help="LLM provider.",
+        case_sensitive=False,
     ),
 ]
 
