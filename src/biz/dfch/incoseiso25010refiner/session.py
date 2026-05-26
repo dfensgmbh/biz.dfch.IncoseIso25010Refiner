@@ -163,6 +163,7 @@ class Session:
                 self.add_version()
 
             value = "\n".join(value)
+            value = value.rstrip("\n") + "\n"
             self.file.write_text(value, encoding="utf-8")
             log.info("Update file '%s' OK.", self.file)
 
