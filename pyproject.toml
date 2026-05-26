@@ -47,9 +47,12 @@ classifiers = [
 
 dependencies = [
     "dacite>=1.9.2",
+    "instructor>=1.15.0",
+    "litellm>=1.60.0",
+    "pydantic>=2.10.0",
     "python-dotenv>=1.2.2",
     "requests>=2.34.2",
-    "rich>=15.0.0",
+    "rich>=14.0.0",
     "typer>=0.25.1",
 ]
 
