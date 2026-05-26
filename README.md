@@ -131,3 +131,19 @@ uv run req restore --workspace ../sessions -id ABCD-1234 -y
 
 
 NOTE: we used [`asciinema`](https://asciinema.org/) to record the terminal sessions and [`agg`](https://docs.asciinema.org/manual/agg/) to make animated GIFs.
+
+### Resolve questions and answers (`resolve`)
+
+```
+uv run req resolve --workspace ../reqs/ -id 42
+```
+
+<img width="1512" height="1053" alt="resolve" src="https://github.com/user-attachments/assets/4cde857b-f6f1-49e9-a5dc-bbcd0b99aae8" />
+
+### Make summary of requirements (`summary`)
+
+```
+uv run req summary --workspace ../reqs/ -id 42
+```
+
+<img width="1512" height="1053" alt="summary" src="https://github.com/user-attachments/assets/c22dd429-56c8-4933-be9e-6cff3de0b318" />
