@@ -59,18 +59,15 @@ def info(
         assert isinstance(items, list), type(items)
 
         return [
-            f"[link=file:///{i.resolve()}]{i.resolve().name}[/link]"
+            RichUtils.make_link(i.resolve(), i.resolve().name)
             for i in items
         ]
 
     source_stem = session.source.file.stem
     data = {
-        "workspace": f"[link=file://{workspace}]{workspace}[/link]",
-        "session_id": f"[link=file://{session.path}]{session_id}[/link]",
-        "source": (
-            f"[link=file:///{session.source.file}]"
-            f"{session.source.file}[/link]"
-        ),
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path),
+        "source": RichUtils.make_link(session.source.file),
         "versions": "\n".join(get_links(session.source.get_versions())),
         "items": "\n".join(
             get_links(

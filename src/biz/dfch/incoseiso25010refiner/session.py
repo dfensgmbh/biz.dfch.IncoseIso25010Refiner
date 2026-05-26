@@ -29,6 +29,7 @@ from .constant import Constant
 from .iso25010 import Iso25010
 
 from .text.text_utils import TextUtils
+from .ui.rich_utils import RichUtils
 
 
 @dataclass
@@ -253,20 +254,20 @@ class Session:
 
             try:
                 log.debug(
-                    f"Restore file: '[link=file:///{file}]{file}[/link]' ..."
+                    f"Restore file: '{RichUtils.make_link(file)}' ..."
                 )
                 # Delete file.
                 self._file.unlink()
                 # Rename copy to source file.
                 file.rename(str(self._file))
                 log.info(
-                    f"Restore file: '[link=file:///{file}]{file}[/link]' OK."
+                    f"Restore file: '{RichUtils.make_link(file)}' OK."
                 )
 
                 return True
             except Exception as ex:  # pylint: disable=W0718
                 log.error(
-                    f"Restore file: '[link=file:///{file}]{file}[/link]' OK.",
+                    f"Restore file: '{RichUtils.make_link(file)}' OK.",
                     exc_info=ex,
                 )
 

@@ -195,6 +195,7 @@ def refine(
     session.add_item("refine-summary", summary_json, Constant.JSON_FILE_EXT)
 
     log.info(
-        f"You can now continue your work in: '[link=file:///{source_doc}]"
-        f"{source_doc}[/link]'."
+        "You can now continue your work in: "
+        f"'{RichUtils.make_link(session.source.file)}'"
     )
+

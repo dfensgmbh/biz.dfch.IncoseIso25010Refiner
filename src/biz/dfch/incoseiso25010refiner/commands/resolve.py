@@ -248,6 +248,6 @@ def resolve(
     session.source.update(contents, do_add_version=True)
 
     log.info(
-        f"You can now continue your work in: '[link=file:///{source_doc}]"
-        f"{source_doc}[/link]'."
+        "You can now continue your work in: "
+        f"'{RichUtils.make_link(session.source.file)}'"
     )

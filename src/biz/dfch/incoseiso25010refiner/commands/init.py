@@ -86,6 +86,7 @@ def init(
     )
 
     console.print(
-        f"You can now start your work in: '[link=file:///{session.source.file}]"
+        "You can now start your work in: "
+        f"'{RichUtils.make_link(session.source.file)}'"
         f"{session.source.file}[/link]'."
     )

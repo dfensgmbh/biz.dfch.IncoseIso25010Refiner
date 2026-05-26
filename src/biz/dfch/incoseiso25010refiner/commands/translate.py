@@ -196,8 +196,8 @@ def translate(
         model = f"openai/{ChatConfig.default_values[provider].model}"
 
     data = {
-        "workspace": str(workspace),
-        "session_id": session_id,
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path),
         "provider": provider,
         "base_url": uri,
         "api_token": 0 < len(api_token),
@@ -261,12 +261,12 @@ def translate(
         )
 
         file = session.add_item(
-            f"summary-{language}", response.translated_text, ".md"
+            f"summary-{language.name}", response.translated_text, ".md"
         )
 
         log.info(
-            f"You can now continue your work in: '[link=file:///{file}]"
-            f"{file}[/link]'."
+            "You can now continue your work in: "
+            f"'{RichUtils.make_link(file)}'"
         )
 
     except TimeoutError as ex:

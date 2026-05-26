@@ -56,7 +56,7 @@ def list_(
     for path in paths:
         is_valid = Session.is_valid(workspace, path.name)
         value = (
-            f"[link=file:///{path.resolve()}]{path.resolve()}[/link] "
+            f"{RichUtils.make_link(path.resolve())} "
             f"[{is_valid}]"
         )
         sessions[path.name] = value

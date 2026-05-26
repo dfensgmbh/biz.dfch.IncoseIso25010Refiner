@@ -116,9 +116,9 @@ def replay(
         session.source.update(updated, do_add_version=True)
         source_doc.write_text(updated, encoding="utf-8")
 
-        console.print(
-            f"You can now continue your work in: '[link=file:///{source_doc}]"
-            f"{source_doc}[/link]'."
+        log.info(
+            "You can now continue your work in: "
+            f"'{RichUtils.make_link(session.source.file)}'"
         )
 
         break

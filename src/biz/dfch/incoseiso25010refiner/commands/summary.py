@@ -145,6 +145,6 @@ def summary(
     summary_doc = session.add_item("summary", response, suffix=".md")
 
     log.info(
-        f"You can find the summary here: '[link=file:///{summary_doc}]"
-        f"{summary_doc}[/link]'."
+        "You can now continue your work in: "
+        f"'{RichUtils.make_link(summary_doc)}'"
     )

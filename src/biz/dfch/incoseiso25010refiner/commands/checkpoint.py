@@ -51,13 +51,13 @@ def checkpoint(
 
     assert isinstance(workspace, Path), type(workspace)
     path = Path(workspace / session_id).resolve()
-    assert path.exists(), f"Path does not exist: '{path}'."
+    assert path.exists(), f"Path must exist: '{path}'."
 
     session = Session(workspace, session_id)
 
     data = {
-        "workspace": f"[link=file://{workspace}]{workspace}[/link]",
-        "session_id": f"[link=file://{session.path}]{session_id}[/link]",
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path),
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(
