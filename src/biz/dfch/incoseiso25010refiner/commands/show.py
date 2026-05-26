@@ -57,8 +57,8 @@ def show(
     session = Session(workspace, session_id)
 
     data = {
-        "workspace": f"[link=file://{workspace}]{workspace}[/link]",
-        "session_id": f"[link=file://{session.path}]{session_id}[/link]",
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path),
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(
