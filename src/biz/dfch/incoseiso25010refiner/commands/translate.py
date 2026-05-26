@@ -23,10 +23,10 @@ from typing import Annotated
 import instructor
 from pydantic import BaseModel, Field
 from rich.console import Console
-from rich.panel import Panel
 import typer
 from dotenv import load_dotenv
 
+from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
 from ..chat.providers import Providers
@@ -183,6 +183,7 @@ def translate(
         text = input_file.read_text(encoding="utf-8")
 
     from litellm import completion, litellm  # pylint: disable=C0415
+
     litellm.model_cost = ZeroCostMap(litellm.model_cost)
 
     model = f"openai/{model}"
@@ -215,8 +216,8 @@ def translate(
 
     console = Console()
     console.print(table)
-    
-    log.info("Translating text to %s using %s", language.value, model)
+
+    log.debug("Translate text to '%s' ...", language.value)
 
     # Initialize instructor with litellm
     client = instructor.from_litellm(
@@ -224,6 +225,7 @@ def translate(
         mode=instructor.Mode.MD_JSON,
     )
 
+    sw = Stopwatch.start_new()
     try:
         # response = client.chat.completions.create(
         response, raw = client.create_with_completion(
@@ -231,7 +233,7 @@ def translate(
             messages=[
                 {
                     "role": "system",
-                    "content": f"You are a professional translator. Translate the input to {language.value}.",
+                    "content": f"You are a requirements engineer and professional translator. Translate the input to {language.value}.",
                 },
                 {"role": "user", "content": text},
             ],
@@ -239,16 +241,7 @@ def translate(
             api_key=api_token,
             base_url=uri,
         )
-
-        # console = Console()
-        # console.print(
-        #     Panel(
-        #         f"[bold blue]Original ({response.detected_language}):[/] {response.original_text}\n"
-        #         f"[bold green]Translated ({language.value}):[/] {response.translated_text}",
-        #         title="Translation Result",
-        #         expand=False,
-        #     )
-        # )
+        sw.stop()
 
         data = AiTokenUsage.from_response(raw)
         log.debug("Parameters: [%s]", data)
@@ -260,13 +253,38 @@ def translate(
         console = Console()
         console.print(table)
 
-        file = session.add_item(f"summary-{language}", response.translated_text, ".md")
+        elapsed = sw.elapsed_seconds
+        log.info(
+            "Translate text to '%s' OK. TotalSeconds: %.3f",
+            language.value,
+            elapsed,
+        )
+
+        file = session.add_item(
+            f"summary-{language}", response.translated_text, ".md"
+        )
 
         log.info(
             f"You can now continue your work in: '[link=file:///{file}]"
             f"{file}[/link]'."
         )
 
+    except TimeoutError as ex:
+        sw.stop()
+        elapsed = sw.elapsed_seconds
+        log.error(
+            "Query LLM FAILED. TotalSeconds: %.3f",
+            elapsed,
+            exc_info=ex,
+        )
+        raise
     except Exception as ex:
-        log.error("Translation FAILED.", exc_info=ex)
+        sw.stop()
+        elapsed = sw.elapsed_seconds
+        log.error(
+            "Translate text to '%s' FAILED. TotalSeconds: %.3f",
+            elapsed,
+            language.value,
+            exc_info=ex,
+        )
         raise typer.Exit(code=1)
