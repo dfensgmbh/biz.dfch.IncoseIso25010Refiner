@@ -20,6 +20,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from rich.console import Console
+from rich.markup import escape
 from rich.syntax import Syntax
 import typer
 
@@ -81,7 +82,7 @@ def diff(
         "source": f"[link=file://{src['file']}]{src['name']}[/link]",
         "previous": f"[link=file://{prv['file']}]{prv['name']}[/link]",
     }
-    log.debug("Parameters: [%s]", data)
+    log.debug("Parameters: [escape(str(%s))]", data)
     table = RichUtils.make_table(
         data,
         title="Parameters",

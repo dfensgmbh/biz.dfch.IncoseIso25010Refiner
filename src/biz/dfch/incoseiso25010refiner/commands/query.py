@@ -20,6 +20,7 @@ import uuid
 
 from rich.console import Console
 from rich.json import JSON
+from rich.markup import escape
 from rich.markdown import Markdown
 import typer
 
@@ -91,7 +92,7 @@ def query(
         "input": text,
         "template": str(template_file),
     }
-    log.debug("Parameters: [%s]", data)
+    log.debug("Parameters: [escape(str(%s))]", data)
     table = RichUtils.make_table(
         data,
         title="Parameters",

@@ -20,6 +20,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.markdown import Markdown
+from rich.markup import escape
 import typer
 
 from biz.dfch.logging import log
@@ -60,7 +61,7 @@ def show(
         "workspace": f"[link=file://{workspace}]{workspace}[/link]",
         "session_id": f"[link=file://{session.path}]{session_id}[/link]",
     }
-    log.debug("Parameters: [%s]", data)
+    log.debug("Parameters: [escape(str(%s))]", data)
     table = RichUtils.make_table(
         data,
         title="Parameters",
