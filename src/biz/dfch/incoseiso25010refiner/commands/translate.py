@@ -197,7 +197,7 @@ def translate(
 
     data = {
         "workspace": RichUtils.make_link(workspace),
-        "session_id": RichUtils.make_link(session.path),
+        "session_id": RichUtils.make_link(session.path, session_id),
         "provider": provider,
         "base_url": uri,
         "api_token": 0 < len(api_token),

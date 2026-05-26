@@ -70,8 +70,8 @@ def init(
 
     table = RichUtils.make_table(
         {
-            "workspace": workspace,
-            "session_id": session_id,
+            "workspace": RichUtils.make_link(workspace),
+            "session_id": RichUtils.make_link(path, session_id),
             "characteristics": characteristics,
             "input": text,
         },
@@ -87,6 +87,5 @@ def init(
 
     console.print(
         "You can now start your work in: "
-        f"'{RichUtils.make_link(session.source.file)}'"
-        f"{session.source.file}[/link]'."
+        f"'{RichUtils.make_link(session.source.file)}'."
     )

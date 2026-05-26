@@ -77,7 +77,7 @@ def diff(
 
     data = {
         "workspace": RichUtils.make_link(workspace),
-        "session_id": RichUtils.make_link(session.path),
+        "session_id": RichUtils.make_link(session.path, session_id),
         "source": RichUtils.make_link(Path(str(src['file'])), src['name']),
         "previous": RichUtils.make_link(Path(str(prv['file'])), prv['name']),
     }

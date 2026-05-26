@@ -66,7 +66,7 @@ def info(
     source_stem = session.source.file.stem
     data = {
         "workspace": RichUtils.make_link(workspace),
-        "session_id": RichUtils.make_link(session.path),
+        "session_id": RichUtils.make_link(session.path, session_id),
         "source": RichUtils.make_link(session.source.file),
         "versions": "\n".join(get_links(session.source.get_versions())),
         "items": "\n".join(

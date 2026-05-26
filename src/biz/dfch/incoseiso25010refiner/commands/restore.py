@@ -58,18 +58,18 @@ def restore(
     assert path.exists(), f"Path does not exist: '{path}'."
     assert path.is_dir(), f"Path is not a directory: '{path}'."
 
+    session = Session(workspace, session_id)
+
     table = RichUtils.make_table(
         {
             "workspace": {RichUtils.make_link(workspace)},
-            "session_id": {RichUtils.make_link(path)},
+            "session_id": RichUtils.make_link(session.path, session_id),
         },
         title="Parameters",
     )
 
     console = Console()
     console.print(table)
-
-    session = Session(workspace, session_id)
 
     files = session.source.get_versions()
     if 0 == len(files):

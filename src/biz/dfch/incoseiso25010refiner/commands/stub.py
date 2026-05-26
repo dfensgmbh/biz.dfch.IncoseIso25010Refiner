@@ -117,8 +117,8 @@ def stub(
         characteristics = Iso25010.all()
 
     data = {
-        "workspace": str(workspace),
-        "session_id": session_id,
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(path, session_id),
         "characteristics": characteristics,
         "file": file,
     }
