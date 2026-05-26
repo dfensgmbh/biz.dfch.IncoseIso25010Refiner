@@ -22,6 +22,8 @@ from pathlib import Path
 import re
 import shutil
 
+from rich.markup import escape
+
 from biz.dfch.logging import log
 from biz.dfch.diagnostics.clock import Clock
 
@@ -482,7 +484,9 @@ class Session:
         log.debug(f"Create file name from base '{base_name}' ...")
         name = f"{base_name}---{self.get_checkpoint(True)}{suffix}"
         file = Path(self.path / name).resolve()
-        log.info(f"Create file name from base '{base_name}' OK: [{file}].")
+        log.info(
+            f"Create file name from base '{base_name}' OK: [{escape(str(file))}]."
+        )
         assert not file.exists(), f"File must not exist: '{file}'."
 
         log.debug(f"Write file '{file}' ...")
