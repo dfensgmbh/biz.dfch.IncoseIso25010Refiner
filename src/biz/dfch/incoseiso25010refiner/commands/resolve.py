@@ -20,7 +20,6 @@ from typing import Annotated
 
 from dotenv import load_dotenv
 from rich.console import Console
-from rich.markup import escape
 import typer
 
 from biz.dfch.diagnostics import Stopwatch
@@ -120,7 +119,7 @@ def resolve(
             [f"[{q.idx+1}] {q.question}" for q in questions_with_answer]
         ),
     }
-    log.debug("Parameters: [escape(str(%s))]", data)
+    log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(
         data,
         title="Parameters",
@@ -153,14 +152,14 @@ def resolve(
         line_number = q.idx + 1
 
         # Start query.
-        log.debug("Resolve question [escape(str(%s))] ...", line_number)
+        log.debug("Resolve question [%s] ...", line_number)
 
         # Prepare client.
         data["prompt"] = f"{q.question}\n{'\n'.join(q.answer)}"
         chat_config = ChatConfig.from_dict(data)
         client = ChatClientFactory.create(chat_config)
 
-        log.debug(data[escape(str("prompt"))])
+        log.debug(data["prompt"])
         sw = Stopwatch.start_new()
         try:
             requirement = client.query()
@@ -194,9 +193,7 @@ def resolve(
                 None,
             )
             if qr is not None:
-                log.debug(
-                    "[escape(str(%s))] Remove question without answer.", i
-                )
+                log.debug("[%s] Remove question without answer.", i)
                 lines[i] = ""
                 continue
 
@@ -213,13 +210,13 @@ def resolve(
             question.idx + 1,
         )
         for j in range(question.end, question.idx, -1):
-            log.debug("[escape(str(%s))] Remove answer: '%s'.", j, lines[j])
+            log.debug("[%s] Remove answer: '%s'.", j, lines[j])
             del lines[j]
 
         requirement = requirements[i]
-        log.debug("[escape(str(%s))] Remove question: '%s'.", i, lines[i])
+        log.debug("[%s] Remove question: '%s'.", i, lines[i])
         del lines[i]
-        log.debug("[escape(str(%s))] Add requirement: '%s'.", i, requirement)
+        log.debug("[%s] Add requirement: '%s'.", i, requirement)
         lines.insert(i, requirement)
 
         log.info(
@@ -232,7 +229,7 @@ def resolve(
         if i > 0 and lines[i - 1].startswith(">"):
             lines.insert(i, "")
             lines.insert(i, "")
-            log.debug("[escape(str(%s))] Insert double line padding.", i)
+            log.debug("[%s] Insert double line padding.", i)
             continue
 
         # Examine if there is a question within the two consecutive previous
@@ -244,7 +241,7 @@ def resolve(
             and lines[i - 2].startswith(">")
         ):
             lines.insert(i, "")
-            log.debug("[escape(str(%s))] Insert single line padding.", i)
+            log.debug("[%s] Insert single line padding.", i)
             continue
 
     contents = "\n".join(lines)

@@ -22,8 +22,6 @@ from pathlib import Path
 import re
 import shutil
 
-from rich.markup import escape
-
 from biz.dfch.logging import log
 from biz.dfch.diagnostics.clock import Clock
 

@@ -20,7 +20,6 @@ from pathlib import Path
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.prompt import Confirm
-from rich.markup import escape
 import typer
 
 from biz.dfch.logging import log
@@ -87,7 +86,7 @@ def replay(
         "characteristics": characteristics,
         "file": file,
     }
-    log.debug("Parameters: [escape(str(%s))]", data)
+    log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(
         data,
         title="Parameters",
