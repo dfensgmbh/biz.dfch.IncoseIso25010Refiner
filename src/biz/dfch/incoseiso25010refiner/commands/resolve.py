@@ -99,14 +99,13 @@ def resolve(
     session = Session(workspace, session_id)
     log.info("Get session '%s' OK.", session_id)
 
-    source_doc = session.source.file
     lines = session.source.lines
     questions = session.source.get_questions()
     questions_with_answer = [q for q in questions if q.has_answer()]
 
     data = {
-        "workspace": str(workspace),
-        "session_id": session_id,
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path, session_id),
         "provider": provider,
         "base_url": uri,
         "api_token": 0 < len(api_token),
@@ -248,6 +247,6 @@ def resolve(
     session.source.update(contents, do_add_version=True)
 
     log.info(
-        f"You can now continue your work in: '[link=file:///{source_doc}]"
-        f"{source_doc}[/link]'."
+        "You can now continue your work in: "
+        f"'{RichUtils.make_link(session.source.file)}'"
     )

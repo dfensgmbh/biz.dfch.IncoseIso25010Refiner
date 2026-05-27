@@ -95,8 +95,8 @@ def refine(
     text = session.source.contents
 
     data = {
-        "workspace": str(workspace),
-        "session_id": session_id,
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path, session_id),
         "provider": provider,
         "base_url": uri,
         "api_token": 0 < len(api_token),
@@ -195,6 +195,7 @@ def refine(
     session.add_item("refine-summary", summary_json, Constant.JSON_FILE_EXT)
 
     log.info(
-        f"You can now continue your work in: '[link=file:///{source_doc}]"
-        f"{source_doc}[/link]'."
+        "You can now continue your work in: "
+        f"'{RichUtils.make_link(session.source.file)}'"
     )
+

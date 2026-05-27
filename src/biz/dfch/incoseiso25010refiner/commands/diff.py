@@ -76,10 +76,10 @@ def diff(
         prv["name"] = previous.file.name
 
     data = {
-        "workspace": f"[link=file://{workspace}]{workspace}[/link]",
-        "session_id": f"[link=file://{session.path}]{session_id}[/link]",
-        "source": f"[link=file://{src['file']}]{src['name']}[/link]",
-        "previous": f"[link=file://{prv['file']}]{prv['name']}[/link]",
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path, session_id),
+        "source": RichUtils.make_link(Path(str(src['file'])), src['name']),
+        "previous": RichUtils.make_link(Path(str(prv['file'])), prv['name']),
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(

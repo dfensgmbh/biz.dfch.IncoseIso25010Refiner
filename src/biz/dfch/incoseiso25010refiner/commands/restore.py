@@ -58,18 +58,18 @@ def restore(
     assert path.exists(), f"Path does not exist: '{path}'."
     assert path.is_dir(), f"Path is not a directory: '{path}'."
 
+    session = Session(workspace, session_id)
+
     table = RichUtils.make_table(
         {
-            "workspace": workspace,
-            "session_id": session_id,
+            "workspace": {RichUtils.make_link(workspace)},
+            "session_id": RichUtils.make_link(session.path, session_id),
         },
         title="Parameters",
     )
 
     console = Console()
     console.print(table)
-
-    session = Session(workspace, session_id)
 
     files = session.source.get_versions()
     if 0 == len(files):
@@ -78,14 +78,13 @@ def restore(
 
     file_links = []
     for file in files:
-        file_links.append(
-            f"[link=file:///{file.resolve()}]{file.resolve()}[/link]"
-        )
+        file_links.append(RichUtils.make_link(file.resolve()))
     log.info(f"Previous versions:\n{'\n'.join(file_links)}")
 
     file = files[0]
     message = (
-        f"Do you want to restore file: '[link=file:///{file}]{file}[/link]'?"
+        "Do you want to restore file: "
+        f"'{RichUtils.make_link(file)}'?"
     )
     if not do_not_confirm and not Confirm.ask(
         message, show_default=True, default=True
@@ -96,7 +95,6 @@ def restore(
     session.source.restore_previous_version()
 
     log.info(
-        f"You can now continue your work in: "
-        f"'[link=file:///{session.source.file}]"
-        f"{session.source.file}[/link]'."
+        "You can now continue your work in: "
+        f"'{RichUtils.make_link(session.source.file)}'."
     )

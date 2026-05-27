@@ -89,8 +89,8 @@ def summary(
     text = session.source.contents
 
     data = {
-        "workspace": str(workspace),
-        "session_id": session_id,
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path, session_id),
         "provider": provider,
         "base_url": uri,
         "api_token": 0 < len(api_token),
@@ -145,6 +145,6 @@ def summary(
     summary_doc = session.add_item("summary", response, suffix=".md")
 
     log.info(
-        f"You can find the summary here: '[link=file:///{summary_doc}]"
-        f"{summary_doc}[/link]'."
+        "You can now continue your work in: "
+        f"'{RichUtils.make_link(summary_doc)}'"
     )

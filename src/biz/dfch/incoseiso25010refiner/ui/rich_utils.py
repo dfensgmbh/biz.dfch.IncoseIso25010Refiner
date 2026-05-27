@@ -17,6 +17,9 @@
 Support functions for `rich`.
 """
 
+from pathlib import Path
+from typing import Any
+
 from rich import box
 from rich.console import Console
 from rich.progress_bar import ProgressBar
@@ -28,6 +31,32 @@ from ..parse import Question
 
 class RichUtils:
     """RichUtils"""
+
+    @staticmethod
+    def make_link(path: Path, display: Any | None = None) -> str:
+        """
+        Make a rich link from a `Path`.
+
+        Args:
+            path (Path): The `Path` to make the link from.
+            display (Any | None): If specified, this is the "display string" of
+                the link.
+
+                If not specified, the link shows the full `path .
+
+                *default*: `None`
+        Returns:
+            result (str): The `rich` string that contains a link to `path`.
+        """
+
+        assert isinstance(path, Path), type(path)
+
+        if display is None:
+            display = path
+
+        result = f"[link=file://{path}]{str(display)}[/link]"
+
+        return result
 
     @staticmethod
     def print(value: str) -> None:

@@ -39,6 +39,7 @@ from .restore import restore
 from .show import show
 from .stub import stub
 from .summary import summary
+from .translate import translate
 from .validate import validate
 
 __all__ = [
@@ -65,5 +66,6 @@ __all__ = [
     "show",
     "stub",
     "summary",
+    "translate",
     "validate",
 ]

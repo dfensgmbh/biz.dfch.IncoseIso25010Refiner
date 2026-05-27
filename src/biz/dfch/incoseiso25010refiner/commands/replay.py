@@ -81,8 +81,8 @@ def replay(
         characteristics = Iso25010.all()
 
     data = {
-        "workspace": str(workspace),
-        "session_id": session_id,
+        "workspace": RichUtils.make_link(workspace),
+        "session_id": RichUtils.make_link(session.path, session_id),
         "characteristics": characteristics,
         "file": file,
     }
@@ -116,9 +116,9 @@ def replay(
         session.source.update(updated, do_add_version=True)
         source_doc.write_text(updated, encoding="utf-8")
 
-        console.print(
-            f"You can now continue your work in: '[link=file:///{source_doc}]"
-            f"{source_doc}[/link]'."
+        log.info(
+            "You can now continue your work in: "
+            f"'{RichUtils.make_link(session.source.file)}'"
         )
 
         break
