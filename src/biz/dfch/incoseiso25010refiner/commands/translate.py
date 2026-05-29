@@ -164,7 +164,10 @@ def translate(
     workspace: WorkspaceOpt = Path("."),
     characteristics: CharacteristicsOpt = None,
     language: Annotated[
-        Language, typer.Option("--target", "-l", help="Target language")
+        Language,
+        typer.Option(
+            "--target", "-l", help="Target language", case_sensitive=False
+        ),
     ] = Language.EN,
 ):
     """
