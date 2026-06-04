@@ -72,7 +72,7 @@ def refine(
     provider: ProviderOpt = Providers.DEFAULT,
     workspace: WorkspaceOpt = Path("."),
     characteristics: CharacteristicsOpt = None,
-    language: LanguageCode = LanguageCode.DE,
+    language: LanguageOpt = LanguageCode.DE,
 ):
     """
     Query the LLM and add questions for refinement.
