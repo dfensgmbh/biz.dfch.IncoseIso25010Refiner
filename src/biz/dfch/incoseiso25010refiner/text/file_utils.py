@@ -66,6 +66,33 @@ class FileUtils:
 
     @staticmethod
     def update_source_doc(file: Path, questions: list[Question]) -> str:
+        """
+        Annotate a source document with review questions grouped by
+        ISO 25010 characteristic.
+
+        For each characteristic heading found in the file (a line starting
+        with ``# <characteristic>``), the matching questions from *questions*
+        are inserted immediately after that heading as block-quote lines
+        (``> <question text>``).
+        The scan runs from the bottom of the file upward so that inserting
+        lines does not shift the indices of headings that have not yet been
+        processed.
+
+        Args:
+            file: Path to an existing, readable text file.
+            questions: List of 
+                :class:`~biz.dfch.incoseiso25010refiner.parse.models.Question`
+                objects whose ``characteristic`` and ``question`` attributes
+                are used for matching and insertion.
+
+        Returns:
+            The full updated file content as a single string with
+            ``\\n``-separated lines and a trailing newline.
+
+        Raises:
+            AssertionError: If *file* does not exist or is not a regular file,
+                or if either argument is of the wrong type.
+        """
         assert isinstance(file, Path), type(file)
         assert file.exists(), file
         assert file.is_file(), file
