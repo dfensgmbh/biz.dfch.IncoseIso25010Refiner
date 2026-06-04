@@ -21,6 +21,8 @@ from typing import Annotated
 import click
 import typer
 
+from biz.dfch.i18n import LanguageCode
+
 from ..chat.providers import Providers
 from ..iso25010 import Iso25010
 
@@ -192,5 +194,16 @@ YesOpt = Annotated[
         "--yes",
         "-y",
         help="Confirm action now and do not ask for extra confirmation.",
+    ),
+]
+
+LanguageOpt = Annotated[
+    LanguageCode,
+    typer.Option(
+        "--language",
+        "-l",
+        help="Target language of the operation.",
+        case_sensitive=False,
+        envvar="REQ_LANGUAGE",
     ),
 ]

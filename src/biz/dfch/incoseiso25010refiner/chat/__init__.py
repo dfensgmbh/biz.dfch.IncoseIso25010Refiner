@@ -15,12 +15,16 @@
 
 """chat package."""
 
+from .ai_token_usage import AiTokenUsage
 from .abacus_chat_client import AbacusChatClient
+from .zero_cost_map import ZeroCostMap
 from .ollama_chat_client import OllamaChatClient
 from .openai_chat_client import OpenAiChatClient
 
 __all__ = [
+    "AiTokenUsage",
     "AbacusChatClient",
     "OllamaChatClient",
     "OpenAiChatClient",
+    "ZeroCostMap",
 ]

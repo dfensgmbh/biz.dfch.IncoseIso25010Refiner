@@ -15,10 +15,7 @@
 
 """'translate' command."""
 
-from collections.abc import Mapping
-from enum import Enum
 from pathlib import Path
-from typing import Annotated
 
 import instructor
 from pydantic import BaseModel, Field
@@ -27,9 +24,12 @@ import typer
 from dotenv import load_dotenv
 
 from biz.dfch.diagnostics import Stopwatch
+from biz.dfch.i18n import LanguageCode
 from biz.dfch.logging import log
 
+from ..chat.ai_token_usage import AiTokenUsage
 from ..chat.providers import Providers
+from ..chat.zero_cost_map import ZeroCostMap
 from ..chat.chat_config import ChatConfig
 from ..info import Info
 from ..session import Session
@@ -45,69 +45,7 @@ from .args import ProviderOpt
 from .args import SessionIdOpt
 from .args import TemperateOpt
 from .args import WorkspaceOpt
-
-
-class AiTokenUsage:
-    """
-    Extracts and normalizes AI token usage from a LiteLLM / Instructor
-    raw response.
-    """
-
-    @staticmethod
-    def _read(obj, key, default=None):
-        if obj is None:
-            return default
-        if isinstance(obj, Mapping):
-            return obj.get(key, default)
-        return getattr(obj, key, default)
-
-    @staticmethod
-    def _q(value):
-        return "?" if value is None else value
-
-    @staticmethod
-    def from_response(raw_response) -> dict[str, object]:
-        """
-        Extract token usage from a LiteLLM / Instructor raw response
-        into a flat dict.
-        Missing or null values are replaced with '?'.
-
-        Usage:
-            tokens = AiTokenUsage.from_response(raw_response)
-        """
-        r = AiTokenUsage._read
-        q = AiTokenUsage._q
-
-        usage = r(raw_response, "usage", {})
-        ctd = r(usage, "completion_tokens_details", {})
-        ptd = r(usage, "prompt_tokens_details", {})
-
-        return {
-            "prompt_tokens": q(r(usage, "prompt_tokens")),
-            "completion_tokens": q(r(usage, "completion_tokens")),
-            "total_tokens": q(r(usage, "total_tokens")),
-            "input_tokens": q(r(usage, "input_tokens")),
-            "output_tokens": q(r(usage, "output_tokens")),
-            "raw_input_tokens": q(r(usage, "raw_input_tokens")),
-            "accepted_prediction_tokens": q(
-                r(ctd, "accepted_prediction_tokens")
-            ),
-            "completion_audio_tokens": q(r(ctd, "audio_tokens")),
-            "reasoning_tokens": q(r(ctd, "reasoning_tokens")),
-            "rejected_prediction_tokens": q(
-                r(ctd, "rejected_prediction_tokens")
-            ),
-            "prompt_audio_tokens": q(r(ptd, "audio_tokens")),
-            "cached_tokens": q(r(ptd, "cached_tokens")),
-        }
-
-
-class Language(str, Enum):
-    """Language codes for translation."""
-
-    EN = "EN"
-    DE = "DE"
-    FR = "FR"
+from .args import LanguageOpt
 
 
 class TranslationResponse(BaseModel):
@@ -130,28 +68,6 @@ app = typer.Typer(
 )
 
 
-class ZeroCostMap(dict):
-    """A dictionary that returns a default cost for any missing model."""
-
-    DEFAULT_COST = {
-        "max_tokens": 128000,
-        "input_cost_per_token": 0.0,
-        "output_cost_per_token": 0.0,
-        "litellm_provider": "openai",
-        "mode": "chat",
-    }
-
-    def __getitem__(self, key):
-        return super().get(key, self.DEFAULT_COST)
-
-    def get(self, key, default=None):
-        return super().get(key, self.DEFAULT_COST)
-
-    def __contains__(self, key):
-        # This is the 'Wildcard' trick: tell LiteLLM we HAVE every model
-        return True
-
-
 def translate(
     api_token: ApiTokenOpt,
     session_id: SessionIdOpt,
@@ -163,12 +79,7 @@ def translate(
     provider: ProviderOpt = Providers.DEFAULT,
     workspace: WorkspaceOpt = Path("."),
     characteristics: CharacteristicsOpt = None,
-    language: Annotated[
-        Language,
-        typer.Option(
-            "--target", "-l", help="Target language", case_sensitive=False
-        ),
-    ] = Language.EN,
+    language: LanguageOpt = LanguageCode.EN,
 ):
     """
     Translate text using litellm and instructor (Structured Outputs).
@@ -236,7 +147,11 @@ def translate(
             messages=[
                 {
                     "role": "system",
-                    "content": f"You are a requirements engineer and professional translator. Translate the input to {language.value}.",
+                    "content": (
+                        "You are a requirements engineer and "
+                        "professional translator. "
+                        f"Translate the input to {language.value}."
+                    ),
                 },
                 {"role": "user", "content": text},
             ],
