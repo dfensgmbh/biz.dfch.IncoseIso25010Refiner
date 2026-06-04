@@ -24,6 +24,7 @@ from .args import WorkspaceOpt
 from .args import FileOpt
 from .args import InputOpt
 from .args import PromptOpt
+from .args import LanguageOpt
 
 from .checkpoint import checkpoint
 from .replay import replay
@@ -52,6 +53,7 @@ __all__ = [
     "ModelOpt",
     "SessionIdOpt",
     "WorkspaceOpt",
+    "LanguageOpt",
     "checkpoint",
     "replay",
     "diff",

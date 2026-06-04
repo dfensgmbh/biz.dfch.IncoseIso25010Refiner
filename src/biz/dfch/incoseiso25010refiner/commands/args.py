@@ -21,6 +21,8 @@ from typing import Annotated
 import click
 import typer
 
+from biz.dfch.i18n import LanguageCode
+
 from ..chat.providers import Providers
 from ..iso25010 import Iso25010
 
@@ -192,5 +194,57 @@ YesOpt = Annotated[
         "--yes",
         "-y",
         help="Confirm action now and do not ask for extra confirmation.",
+    ),
+]
+
+
+class LanguageCodeType(click.ParamType):
+    """LanguageCodeType"""
+
+    name = " ".join([e.name for e in LanguageCode])
+
+    def convert(self, value, param, ctx):
+        # Already resolved (for example default value).
+        if isinstance(value, LanguageCode):
+            return value
+
+        # 1) Exact match by name (case-insensitive).
+        for member in LanguageCode:
+            if member.name.lower() == value.lower():
+                return member
+
+        # 2) Partial match by name (case-insensitive).
+        matches = [
+            member
+            for member in LanguageCode
+            if member.name.lower().startswith(value.lower())
+        ]
+
+        if len(matches) == 1:
+            return matches[0]
+
+        if len(matches) > 1:
+            matched_names = ", ".join(m.name for m in matches)
+            self.fail(
+                f"'{value}' is ambiguous. Matches: {matched_names}", param, ctx
+            )
+
+        self.fail(
+            f"'{value}' is not a valid choice. Choose from: "
+            f"{', '.join(m.name for m in LanguageCode)}",
+            param,
+            ctx,
+        )
+
+
+LanguageOpt = Annotated[
+    LanguageCode,
+    typer.Option(
+        "--language",
+        "-l",
+        click_type=LanguageCodeType(),
+        help="Target language of the operation.",
+        case_sensitive=False,
+        envvar="REQ_LANGUAGE",
     ),
 ]
