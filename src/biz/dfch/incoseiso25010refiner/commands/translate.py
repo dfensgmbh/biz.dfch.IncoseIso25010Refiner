@@ -133,14 +133,14 @@ def translate(
 
     log.debug("Translate text to '%s' ...", language.value)
 
-    # Initialize instructor with litellm
-    client = instructor.from_litellm(
-        completion,
-        mode=instructor.Mode.MD_JSON,
-    )
-
     sw = Stopwatch.start_new()
     try:
+        # Initialize instructor with litellm
+        client = instructor.from_litellm(
+            completion,
+            mode=instructor.Mode.MD_JSON,
+        )
+
         # response = client.chat.completions.create(
         response, raw = client.create_with_completion(
             model=model,
@@ -159,9 +159,9 @@ def translate(
             api_key=api_token,
             base_url=uri,
         )
-        sw.stop()
-
         data = AiTokenUsage.from_response(raw)
+
+        sw.stop()
         log.debug("Parameters: [%s]", data)
         table = RichUtils.make_table(
             data,
