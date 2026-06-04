@@ -253,16 +253,12 @@ class Session:
             file = files[0]
 
             try:
-                log.debug(
-                    f"Restore file: '{RichUtils.make_link(file)}' ..."
-                )
+                log.debug(f"Restore file: '{RichUtils.make_link(file)}' ...")
                 # Delete file.
                 self._file.unlink()
                 # Rename copy to source file.
                 file.rename(str(self._file))
-                log.info(
-                    f"Restore file: '{RichUtils.make_link(file)}' OK."
-                )
+                log.info(f"Restore file: '{RichUtils.make_link(file)}' OK.")
 
                 return True
             except Exception as ex:  # pylint: disable=W0718
@@ -453,7 +449,7 @@ class Session:
 
         result: list[Path] = []
 
-        if base_name is not None and base_name.strip():
+        if base_name is not None and not base_name.strip():
             base_name = None
 
         result = sorted(
