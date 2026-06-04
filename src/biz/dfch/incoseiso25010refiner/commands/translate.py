@@ -17,7 +17,6 @@
 
 from pathlib import Path
 
-import instructor
 from pydantic import BaseModel, Field
 from rich.console import Console
 import typer
@@ -28,8 +27,8 @@ from biz.dfch.i18n import LanguageCode
 from biz.dfch.logging import log
 
 from ..chat.ai_token_usage import AiTokenUsage
+from ..chat.instructor_with_lite_llm import InstructorWithLiteLlm
 from ..chat.providers import Providers
-from ..chat.zero_cost_map import ZeroCostMap
 from ..chat.chat_config import ChatConfig
 from ..info import Info
 from ..session import Session
@@ -96,18 +95,14 @@ def translate(
     if input_file.exists() and input_file.is_file():
         text = input_file.read_text(encoding="utf-8")
 
-    from litellm import completion, litellm  # pylint: disable=C0415
-
-    litellm.model_cost = ZeroCostMap(litellm.model_cost)
-
-    model = f"openai/{model}"
+    model_name = model
 
     if not uri.strip():
         uri = ChatConfig.default_values[provider].base_url
     if not uri.endswith("/v1"):
         uri = f"{uri}/v1"
-    if not model.strip():
-        model = f"openai/{ChatConfig.default_values[provider].model}"
+    if not model_name.strip():
+        model_name = ChatConfig.default_values[provider].model
 
     data = {
         "workspace": RichUtils.make_link(workspace),
@@ -115,7 +110,7 @@ def translate(
         "provider": provider,
         "base_url": uri,
         "api_token": 0 < len(api_token),
-        "model": model,
+        "model": model_name,
         "max_tokens": max_tokens,
         "temperature": temperature,
         "characteristics": characteristics,
@@ -135,30 +130,18 @@ def translate(
 
     sw = Stopwatch.start_new()
     try:
-        # Initialize instructor with litellm
-        client = instructor.from_litellm(
-            completion,
-            mode=instructor.Mode.MD_JSON,
-        )
-
-        # response = client.chat.completions.create(
-        response, raw = client.create_with_completion(
-            model=model,
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a requirements engineer and "
-                        "professional translator. "
-                        f"Translate the input to {language.value}."
-                    ),
-                },
-                {"role": "user", "content": text},
-            ],
+        response, raw = InstructorWithLiteLlm(
             response_model=TranslationResponse,
             api_key=api_token,
             base_url=uri,
-        )
+            model=model_name,
+            system_prompt=(
+                "You are a requirements engineer and "
+                "professional translator. "
+                f"Translate the input to {language.value}."
+            ),
+            user_prompt=text,
+        ).complete()
         data = AiTokenUsage.from_response(raw)
 
         sw.stop()
@@ -196,6 +179,7 @@ def translate(
             exc_info=ex,
         )
         raise
+
     except Exception as ex:
         sw.stop()
         elapsed = sw.elapsed_seconds
