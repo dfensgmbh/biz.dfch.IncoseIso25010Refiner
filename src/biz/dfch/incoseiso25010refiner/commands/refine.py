@@ -29,6 +29,7 @@ from biz.dfch.logging import log
 from ..constant import Constant
 from ..chat.chat_client_factory import ChatClientFactory
 from ..chat.chat_config import ChatConfig
+from ..chat.instructor_with_lite_llm import InstructorWithLiteLlm
 from ..chat.providers import Providers
 from ..info import Info
 from ..iso25010 import Iso25010
@@ -47,6 +48,8 @@ from .args import ProviderOpt
 from .args import SessionIdOpt
 from .args import TemperateOpt
 from .args import WorkspaceOpt
+from .args import LanguageCode
+from .args import LanguageOpt
 
 load_dotenv()
 
@@ -69,6 +72,7 @@ def refine(
     provider: ProviderOpt = Providers.DEFAULT,
     workspace: WorkspaceOpt = Path("."),
     characteristics: CharacteristicsOpt = None,
+    language: LanguageCode = LanguageCode.DE,
 ):
     """
     Query the LLM and add questions for refinement.
@@ -104,6 +108,7 @@ def refine(
         "max_tokens": max_tokens,
         "temperature": temperature,
         "characteristics": characteristics,
+        "language": language,
         "input": text,
     }
     log.debug("Parameters: [%s]", data)
@@ -117,6 +122,7 @@ def refine(
 
     # Prepare map for chat configuration.
     del data["input"]
+    del data["language"]
     data["prompt"] = text
     data["api_token"] = api_token
     data["output_path"] = ""
@@ -171,6 +177,38 @@ def refine(
     # Parse response.
     iso25010_response = parse_iso_response(text)
 
+    if LanguageCode.EN != language:
+        count = len(iso25010_response.questions)
+        for i, q in enumerate(iso25010_response.questions):
+            log.debug(
+                "[%s/%s] Translate to '%s': '%s' ...",
+                i,
+                count,
+                language.name,
+                q.question,
+            )
+            translated, _ = InstructorWithLiteLlm(
+                response_model=str,
+                api_key=api_token,
+                base_url=uri,
+                model=model,
+                system_prompt=(
+                    "You are a requirements engineer and "
+                    "professional translator. "
+                    f"Translate the input to {language.value}. "
+                    "Return only the translated text, nothing else."
+                ),
+                user_prompt=q.question,
+            ).complete()
+            log.info(
+                "[%s/%s] Translate to '%s': '%s' OK.",
+                i,
+                count,
+                language.name,
+                q.question,
+            )
+            q.question = translated
+
     # Display results.
     result = RichUtils.create_analysis_table(iso25010_response.analysis)
     console.print(result)
@@ -198,4 +236,3 @@ def refine(
         "You can now continue your work in: "
         f"'{RichUtils.make_link(session.source.file)}'"
     )
-
