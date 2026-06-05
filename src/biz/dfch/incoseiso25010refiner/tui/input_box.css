@@ -1,0 +1,40 @@
+InputBox {
+    align: center middle;
+}
+
+#id_inputbox_dialog {
+    width: auto;
+    height: auto;
+    min-width: 40;
+    padding: 2 4;
+    background: $surface;
+    border: thick $primary;
+    align: center middle;
+}
+
+#id_inputbox_title {
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#id_inputbox_text {
+    margin-bottom: 1;
+}
+
+#id_inputbox_input {
+    width: 100%;
+    margin-bottom: 1;
+}
+
+#id_inputbox_buttons {
+    height: auto;
+    align: center middle;
+}
+
+#id_inputbox_ok {
+    margin: 0 1;
+}
+
+#id_inputbox_cancel {
+    margin: 0 1;
+}

@@ -15,6 +15,8 @@
 
 """Textual TUI application."""
 
+import contextlib
+import io
 from pathlib import Path
 
 from textual.app import App, ComposeResult, SystemCommand
@@ -25,15 +27,21 @@ from textual.widgets import (
     Header,
     Label,
     Button,
+    Log,
     Static,
     Link,
     ListView,
     ListItem,
 )
-from textual.containers import Horizontal
+from textual.containers import Horizontal, Vertical
 
+from ..commands.list import app as list_app
+from ..commands.refine import app as refine_app
+from ..commands.resolve import app as resolve_app
+from ..commands.restore import app as restore_app
 from ..info import Info
 from ..session import Session
+from .input_box import InputBox
 from .message_box_ok import MessageBoxOk
 from .message_box_ok_cancel import MessageBoxOkCancel
 from .message_box import (
@@ -67,6 +75,7 @@ class Container(Static):
 
     async def refresh_session(self) -> None:
         """Refresh the session metadata links and items list."""
+
         workspace_link = self.query_one("#id_workspace", Link)
         workspace_link.text = f"{self._session.workspace}"
         workspace_link.url = f"file://{self._session.workspace}"
@@ -80,6 +89,66 @@ class Container(Static):
         source_link.url = f"file://{self._session.source.file}"
 
         await self._refresh_items()
+
+    def _run_app(self, app, args: list[str]) -> None:
+        """Run a Typer app in a thread and stream output to the Log widget."""
+        log = self.query_one("#id_log", Log)
+        log.clear()
+
+        def stream() -> None:
+            class LogWriter(io.TextIOBase):
+                def __init__(self, callback):
+                    self._callback = callback
+
+                def write(self, text: str) -> int:
+                    for line in text.splitlines():
+                        if line:
+                            self._callback(line)
+                    return len(text)
+
+            writer = LogWriter(
+                lambda line: self.app.call_from_thread(log.write_line, line)
+            )
+            try:
+                with contextlib.redirect_stdout(writer), contextlib.redirect_stderr(writer):
+                    app(args, standalone_mode=False)
+                self.app.call_from_thread(self.app.run_worker, self.refresh_session, thread=False)
+            except Exception as ex:
+                _ex = ex
+                self.app.call_from_thread(lambda: self.notify(str(_ex), title="Command FAILED.", severity="error"))
+
+        self.run_worker(stream, thread=True)
+
+    def run_resolve(self) -> None:
+        """Run the resolve function in a thread and stream output to the Log widget."""
+        self._run_app(
+            resolve_app,
+            [
+                "--workspace", str(self._session.workspace),
+                "--session-id", str(self._session.name),
+            ],
+        )
+
+    def run_refine(self) -> None:
+        """Run the refine function in a thread and stream output to the Log widget."""
+        self._run_app(
+            refine_app,
+            [
+                "--workspace", str(self._session.workspace),
+                "--session-id", str(self._session.name),
+            ],
+        )
+
+    def run_restore(self) -> None:
+        """Run the restore function in a thread and stream output to the Log widget."""
+        self._run_app(
+            restore_app,
+            [
+                "--workspace", str(self._session.workspace),
+                "--session-id", str(self._session.name),
+                "--yes",
+            ],
+        )
 
     @on(ListView.Highlighted)
     def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
@@ -143,44 +212,61 @@ class Container(Static):
             return
 
         if event.button.id == "id_button_resolve":
-            self.query_one("#id_source", Link).action_open_link()
+            self.run_resolve()
             return
 
         if event.button.id == "id_button_refine":
-            self.query_one("#id_source", Link).action_open_link()
+            self.run_refine()
             return
 
     def compose(self) -> ComposeResult:
         """Compose the session metadata rows and action button."""
         with Horizontal(id="id_workspace_row"):
-            yield Label("Workspace: ")
+            # yield Label("Workspace: ")
             yield Link(
-                f"{self._session.workspace}",
+                "Workspace",
                 url=f"file://{self._session.workspace}",
-                tooltip="Open workspace folder",
+                tooltip=f"{self._session.workspace}",
                 id="id_workspace",
             )
-        with Horizontal(id="id_name_row"):
-            yield Label("Session: ")
             yield Link(
                 f"{self._session.name}",
                 url=f"file://{self._session.workspace / self._session.name}",
-                tooltip="Open session folder",
+                tooltip=f"{self._session.workspace / self._session.name}",
                 id="id_name",
             )
-        with Horizontal(id="id_source_row"):
-            yield Label("Source: ")
             yield Link(
                 f"{self._session.source.file}",
                 url=f"{self._session.source.file}",
-                tooltip="Open source file",
+                tooltip=f"{self._session.source.file}",
                 id="id_source",
             )
+        # with Horizontal(id="id_name_row"):
+            # yield Label("Session: ")
+            # yield Link(
+            #     f"{self._session.name}",
+            #     url=f"file://{self._session.workspace / self._session.name}",
+            #     tooltip=f"{self._session.workspace / self._session.name}",
+            #     id="id_name",
+            # )
+        # with Horizontal(id="id_source_row"):
+            # yield Label("Source: ")
+            # yield Link(
+            #     f"{self._session.source.file}",
+            #     url=f"{self._session.source.file}",
+            #     tooltip=f"{self._session.source.file}",
+            #     id="id_source",
+            # )
         with Horizontal(id="id_Loop"):
             yield Button("Edit", id="id_button_edit")
             yield Button("Resolve", id="id_button_resolve")
             yield Button("Refine", id="id_button_refine")
-        yield ListView(id="id_items")
+        with Vertical(id="id_Files"):
+            yield Label("Items")
+            yield ListView(id="id_items")
+        # with Vertical(id="id_log_container"):
+            yield Label("Output")
+            yield Log(id="id_log", auto_scroll=True)
 
 
 class Tui(App):
@@ -191,11 +277,12 @@ class Tui(App):
     BINDINGS = [
         ("q", "quit", "Quit"),
         ("?", "show_about", "About"),
-        Binding("e", "edit", "Edit", show=False),
-        Binding("s", "resolve", "Resolve", show=False),
-        Binding("f", "refine", "Refine", show=False),
+        Binding("e", "edit", "Edit", show=True),
+        Binding("s", "resolve", "Resolve", show=True),
+        Binding("f", "refine", "Refine", show=True),
         Binding("o", "open_item", "Open", show=True),
         Binding("d", "delete_item", "Delete", show=True),
+        Binding("c", "clear_log", "Clear", show=True),
     ]
     CSS_PATH = "tui.css"
 
@@ -248,6 +335,10 @@ class Tui(App):
         """Trigger the delete item action."""
         self.query_one(Container).action_delete_item()
 
+    def action_clear_log(self) -> None:
+        """Clear the log output."""
+        self.query_one("#id_log", Log).clear()
+
     def action_show_about(self) -> None:
         """Push the About modal screen."""
         screen: MessageBoxOk = MessageBoxOk(
@@ -260,8 +351,8 @@ class Tui(App):
         """Add custom commands to the command palette."""
         yield from super().get_system_commands(screen)
         yield SystemCommand(
-            "Refresh Session",
-            "Refresh the session metadata and items list",
+            "Select Session",
+            "Select an existing 'requirement set'.",
             self._refresh_session,
         )
         yield SystemCommand(
@@ -269,10 +360,71 @@ class Tui(App):
             "Show the 'Custom Command' dialog",
             self._show_custom_command,
         )
+        yield SystemCommand(
+            "Restore",
+            "Restore the previous version of the source document",
+            self._restore,
+        )
+        yield SystemCommand(
+            "List Sessions",
+            "Show all sessions in the workspace",
+            self._list_sessions,
+        )
 
     def _refresh_session(self) -> None:
         """Trigger a session refresh from the command palette."""
-        self.run_worker(self.query_one(Container).refresh_session, thread=False)
+
+        title = "Select Session"
+
+        def on_result(value: str | None) -> None:
+            if value is None or not value.strip():
+                self.call_after_refresh(lambda: self.notify("No new session selected.", title=title, severity="warning"))
+                return
+
+            try:
+                self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' ...", title=title))
+                self._session = Session(self._session.workspace, value)
+            except Exception as ex:
+                error = "Cannot get session"
+                self.push_screen(MessageBoxOk(text=str(ex), title=error))
+                self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' FAILED.", title=title, severity="error"))
+                return
+
+            self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' OK.", title=title))
+            container = self.query_one(Container)
+            container._session = self._session
+            self.run_worker(container.refresh_session, thread=False)
+
+        self.push_screen(
+            InputBox(
+                text="Are you sure?",
+                title=title,
+            ),
+            callback=on_result,
+        )
+
+    def _list_sessions(self) -> None:
+        """Invoke the list command from the command palette."""
+        self.query_one(Container)._run_app(
+            list_app,
+            [
+                "--workspace", str(self._session.workspace),
+            ],
+        )
+
+    def _restore(self) -> None:
+        """Trigger restore from the command palette."""
+        def on_confirm(result: int) -> None:
+            if result == MessageBoxResult.OK:
+                self.query_one(Container).run_restore()
+
+        self.push_screen(
+            MessageBoxOkCancel(
+                text="Restore the previous version of the source document?",
+                title="Restore",
+            ),
+            callback=on_confirm,  # type: ignore
+        )  # type: ignore
 
     def _show_custom_command(self) -> None:
         """Push the "Custom Command" modal screen."""
