@@ -31,7 +31,7 @@ from ..chat.providers import Providers
 from ..info import Info
 from ..iso25010 import Iso25010
 from ..session import Session
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import ApiTokenOpt
 from .args import BaseUriOpt

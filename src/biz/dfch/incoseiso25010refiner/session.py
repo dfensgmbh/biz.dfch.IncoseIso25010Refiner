@@ -29,7 +29,7 @@ from .constant import Constant
 from .iso25010 import Iso25010
 
 from .text.text_utils import TextUtils
-from .ui.rich_utils import RichUtils
+from .console.rich_utils import RichUtils
 
 
 @dataclass
@@ -326,9 +326,9 @@ class Session:
         r"---\d{4}-\d{2}-\d{2}---\d{2}-\d{2}-\d{2}$"
     )
 
-    _workspace: Path
     _source: Source
     _checkpoint: datetime
+    workspace: Path
     name: str
     path: Path
 
@@ -353,7 +353,7 @@ class Session:
         assert source_doc.is_file(), f"Source must be a file: '{source_doc}'."
 
         self._checkpoint = self.set_checkpoint()
-        self._workspace = workspace.resolve()
+        self.workspace = workspace.resolve()
         self.name = name
         self.path = path
         self._source = self.Source(self)

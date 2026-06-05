@@ -32,7 +32,7 @@ from ..chat.providers import Providers
 from ..chat.chat_config import ChatConfig
 from ..info import Info
 from ..session import Session
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import ApiTokenOpt
 from .args import BaseUriOpt

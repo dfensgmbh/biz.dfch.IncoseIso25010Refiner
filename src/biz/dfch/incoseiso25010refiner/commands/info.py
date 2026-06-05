@@ -25,7 +25,7 @@ from biz.dfch.logging import log
 
 from ..info import Info
 from ..session import Session
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import SessionIdOpt
 from .args import WorkspaceOpt
@@ -59,8 +59,7 @@ def info(
         assert isinstance(items, list), type(items)
 
         return [
-            RichUtils.make_link(i.resolve(), i.resolve().name)
-            for i in items
+            RichUtils.make_link(i.resolve(), i.resolve().name) for i in items
         ]
 
     source_stem = session.source.file.stem

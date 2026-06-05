@@ -37,7 +37,7 @@ from ..parse import parse_iso_response
 from ..session import Session
 from ..text.text_utils import TextUtils
 from ..text.file_utils import FileUtils
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import ApiTokenOpt
 from .args import BaseUriOpt

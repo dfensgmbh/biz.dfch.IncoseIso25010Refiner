@@ -25,7 +25,7 @@ import typer
 
 from biz.dfch.logging import log
 
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 from ..info import Info
 from ..session import Session
 
@@ -82,10 +82,7 @@ def restore(
     log.info(f"Previous versions:\n{'\n'.join(file_links)}")
 
     file = files[0]
-    message = (
-        "Do you want to restore file: "
-        f"'{RichUtils.make_link(file)}'?"
-    )
+    message = "Do you want to restore file: " f"'{RichUtils.make_link(file)}'?"
     if not do_not_confirm and not Confirm.ask(
         message, show_default=True, default=True
     ):

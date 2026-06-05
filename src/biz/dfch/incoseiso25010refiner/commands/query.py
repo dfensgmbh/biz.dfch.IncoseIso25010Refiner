@@ -31,7 +31,7 @@ from ..chat.chat_config import ChatConfig
 from ..chat.providers import Providers
 from ..info import Info
 from ..text.text_utils import TextUtils
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import ApiTokenOpt
 from .args import BaseUriOpt

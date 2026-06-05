@@ -12,3 +12,13 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+"""MessageBoxResult enumeration."""
+
+from enum import IntEnum
+
+
+class MessageBoxResult(IntEnum):
+    ESCAPE = -1
+    OK = 0
+    CANCEL = 1

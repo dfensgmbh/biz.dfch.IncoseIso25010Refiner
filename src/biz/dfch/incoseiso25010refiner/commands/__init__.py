@@ -30,6 +30,7 @@ from .checkpoint import checkpoint
 from .replay import replay
 from .diff import diff
 from .erase import erase
+from .ui import ui
 from .info import info
 from .init import init
 from .list import list_
@@ -58,6 +59,7 @@ __all__ = [
     "replay",
     "diff",
     "erase",
+    "ui",
     "info",
     "init",
     "list_",

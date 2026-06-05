@@ -25,7 +25,7 @@ import typer
 from ..session import Session
 
 from ..info import Info
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import WorkspaceOpt
 
@@ -55,10 +55,7 @@ def list_(
     sessions = {}
     for path in paths:
         is_valid = Session.is_valid(workspace, path.name)
-        value = (
-            f"{RichUtils.make_link(path.resolve())} "
-            f"[{is_valid}]"
-        )
+        value = f"{RichUtils.make_link(path.resolve())} " f"[{is_valid}]"
         sessions[path.name] = value
 
     console = Console()

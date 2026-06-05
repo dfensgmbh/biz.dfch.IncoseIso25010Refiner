@@ -30,7 +30,7 @@ from ..iso25010 import Iso25010
 from ..parse import parse_iso_response
 from ..text.file_utils import FileUtils
 from ..session import Session
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import FileOpt
 from .args import CharacteristicsOpt

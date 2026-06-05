@@ -1,0 +1,35 @@
+MessageBox {
+    align: center middle;
+}
+
+#id_messagebox_dialog {
+    width: auto;
+    height: auto;
+    min-width: 40;
+    padding: 2 4;
+    background: $surface;
+    border: thick $primary;
+    align: center middle;
+}
+
+#id_messagebox_title {
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+#id_messagebox_text {
+    margin-bottom: 1;
+}
+
+#id_messagebox_buttons {
+    height: auto;
+    align: center middle;
+}
+
+#id_messagebox_ok {
+    margin: 0 1;
+}
+
+#id_messagebox_cancel {
+    margin: 0 1;
+}

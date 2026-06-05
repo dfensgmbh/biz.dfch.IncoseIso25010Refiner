@@ -27,7 +27,7 @@ from biz.dfch.logging import log
 
 from ..info import Info
 from ..session import Session
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import SessionIdOpt
 from .args import WorkspaceOpt
@@ -78,8 +78,8 @@ def diff(
     data = {
         "workspace": RichUtils.make_link(workspace),
         "session_id": RichUtils.make_link(session.path, session_id),
-        "source": RichUtils.make_link(Path(str(src['file'])), src['name']),
-        "previous": RichUtils.make_link(Path(str(prv['file'])), prv['name']),
+        "source": RichUtils.make_link(Path(str(src["file"])), src["name"]),
+        "previous": RichUtils.make_link(Path(str(prv["file"])), prv["name"]),
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(

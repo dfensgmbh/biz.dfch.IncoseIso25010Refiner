@@ -28,6 +28,7 @@ I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 from biz.dfch.incoseiso25010refiner.commands import checkpoint
 from biz.dfch.incoseiso25010refiner.commands import replay
 from biz.dfch.incoseiso25010refiner.commands import diff
+from biz.dfch.incoseiso25010refiner.commands import ui
 from biz.dfch.incoseiso25010refiner.commands import info
 from biz.dfch.incoseiso25010refiner.commands import init
 from biz.dfch.incoseiso25010refiner.commands import erase
@@ -67,6 +68,7 @@ app.command(epilog=Info.epilog)(checkpoint)
 app.command(epilog=Info.epilog)(replay)
 app.command(epilog=Info.epilog)(diff)
 app.command(epilog=Info.epilog)(erase)
+app.command(epilog=Info.epilog)(ui)
 app.command(epilog=Info.epilog)(info)
 app.command(epilog=Info.epilog)(init)
 app.command(epilog=Info.epilog)(query)

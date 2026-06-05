@@ -13,20 +13,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-"""'show' command."""
+"""'gui' command."""
 
 from pathlib import Path
 
 from dotenv import load_dotenv
-from rich.console import Console
-from rich.markdown import Markdown
 import typer
 
 from biz.dfch.logging import log
 
 from ..info import Info
-from ..session import Session
-from ..console import RichUtils
+
+from ..tui import Tui
 
 from .args import SessionIdOpt
 from .args import WorkspaceOpt
@@ -42,31 +40,21 @@ app = typer.Typer(
 
 
 @app.command()
-def show(
+def ui(
     session_id: SessionIdOpt,
     workspace: WorkspaceOpt = Path("."),
 ):
     """
-    Show the contents of the source document.
+    Launch the graphical user interface.
     """
 
     assert isinstance(workspace, Path), type(workspace)
     path = Path(workspace / session_id).resolve()
     assert path.exists(), f"Path does not exist: '{path}'."
 
-    session = Session(workspace, session_id)
-
-    data = {
-        "workspace": RichUtils.make_link(workspace),
-        "session_id": RichUtils.make_link(session.path, session_id),
-    }
-    log.debug("Parameters: [%s]", data)
-    table = RichUtils.make_table(
-        data,
-        title="Parameters",
+    log.debug(
+        "Parameters: [workspace=%s, session_id=%s]", workspace, session_id
     )
 
-    console = Console()
-    console.print(table)
-
-    console.print(Markdown(session.source.contents))
+    tui = Tui(workspace=workspace, session_id=session_id)
+    tui.run()

@@ -25,7 +25,7 @@ from biz.dfch.logging import log
 
 from ..info import Info
 from ..session import Session
-from ..ui.rich_utils import RichUtils
+from ..console import RichUtils
 
 from .args import SessionIdOpt
 from .args import WorkspaceOpt

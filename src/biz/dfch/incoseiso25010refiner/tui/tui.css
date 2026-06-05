@@ -1,0 +1,38 @@
+Container {
+    margin: 1;
+}
+
+#id_workspace_row, #id_name_row, #id_source_row {
+    height: auto;
+}
+
+#id_Loop {
+    height: auto;
+    align: center middle;
+}
+
+#id_Loop Button {
+    margin: 1 5;
+}
+
+#id_items {
+    height: 10;
+    overflow-y: scroll;
+}
+
+AboutModal {
+    align: center middle;
+}
+
+#id_about_dialog {
+    width: auto;
+    height: auto;
+    padding: 2 4;
+    background: $surface;
+    border: thick $primary;
+    align: center middle;
+}
+
+#id_about_ok {
+    margin-top: 1;
+}
