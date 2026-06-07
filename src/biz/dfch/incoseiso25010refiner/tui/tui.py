@@ -70,7 +70,10 @@ class Container(Static):
         await list_view.clear()
         for item in self._session.get_items():
             await list_view.append(
-                ListItem(Link(item.name, url=f"file://{item}"), id=f"item_{item.stem}")
+                ListItem(
+                    Link(item.name, url=f"file://{item}"),
+                    id=f"item_{item.stem}",
+                )
             )
 
     async def refresh_session(self) -> None:
@@ -97,6 +100,10 @@ class Container(Static):
 
         def stream() -> None:
             class LogWriter(io.TextIOBase):
+                """
+                Writes log messages from external programs into
+                our log window.
+                """
                 def __init__(self, callback):
                     self._callback = callback
 
@@ -110,53 +117,81 @@ class Container(Static):
                 lambda line: self.app.call_from_thread(log.write_line, line)
             )
             try:
-                with contextlib.redirect_stdout(writer), contextlib.redirect_stderr(writer):
+                with (
+                    contextlib.redirect_stdout(writer),
+                    contextlib.redirect_stderr(writer),
+                ):
                     app(args, standalone_mode=False)
-                self.app.call_from_thread(self.app.run_worker, self.refresh_session, thread=False)
-            except Exception as ex:
+                self.app.call_from_thread(
+                    self.app.run_worker, self.refresh_session, thread=False
+                )
+            except Exception as ex:  # pylint: disable=W0718
                 _ex = ex
-                self.app.call_from_thread(lambda: self.notify(str(_ex), title="Command FAILED.", severity="error"))
+                self.app.call_from_thread(
+                    lambda: self.notify(
+                        str(_ex), title="Command FAILED.", severity="error"
+                    )
+                )
 
         self.run_worker(stream, thread=True)
 
     def run_resolve(self) -> None:
-        """Run the resolve function in a thread and stream output to the Log widget."""
+        """
+        Run the resolve function in a thread and stream output to the
+        Log widget.
+        """
         self._run_app(
             resolve_app,
             [
-                "--workspace", str(self._session.workspace),
-                "--session-id", str(self._session.name),
+                "--workspace",
+                str(self._session.workspace),
+                "--session-id",
+                str(self._session.name),
             ],
         )
 
     def run_refine(self) -> None:
-        """Run the refine function in a thread and stream output to the Log widget."""
+        """
+        Run the refine function in a thread and stream output to the Log widget.
+        """
         self._run_app(
             refine_app,
             [
-                "--workspace", str(self._session.workspace),
-                "--session-id", str(self._session.name),
+                "--workspace",
+                str(self._session.workspace),
+                "--session-id",
+                str(self._session.name),
             ],
         )
 
     def run_restore(self) -> None:
-        """Run the restore function in a thread and stream output to the Log widget."""
+        """
+        Run the restore function in a thread and stream output to the
+        Log widget.
+        """
         self._run_app(
             restore_app,
             [
-                "--workspace", str(self._session.workspace),
-                "--session-id", str(self._session.name),
+                "--workspace",
+                str(self._session.workspace),
+                "--session-id",
+                str(self._session.name),
                 "--yes",
             ],
         )
 
     @on(ListView.Highlighted)
     def on_list_view_highlighted(self, event: ListView.Highlighted) -> None:
-        """Refresh app bindings when the highlighted item changes."""
+        """
+        Refresh app bindings when the highlighted item changes.
+        """
+        _ = event
         self.app.refresh_bindings()
 
     def action_open_item(self) -> None:
-        """Open the currently highlighted item file in the default application."""
+        """
+        Open the currently highlighted item file in the default application.
+        """
         list_view = self.query_one("#id_items", ListView)
         highlighted = list_view.highlighted_child
         if highlighted is None:
@@ -300,7 +335,10 @@ class Tui(App):
         self.query_one("#id_button_refine", Button).press()
 
     def check_action(self, action: str, parameters: tuple) -> bool | None:
-        """Show open_item and delete_item in the footer only when an item is highlighted."""
+        """
+        Show open_item and delete_item in the footer only when an item
+        is highlighted.
+        """
         if action in ("open_item", "delete_item"):
             try:
                 list_view = self.query_one("#id_items", ListView)
@@ -360,19 +398,39 @@ class Tui(App):
 
         def on_result(value: str | None) -> None:
             if value is None or not value.strip():
-                self.call_after_refresh(lambda: self.notify("No new session selected.", title=title, severity="warning"))
+                self.call_after_refresh(
+                    lambda: self.notify(
+                        "No new session selected.",
+                        title=title,
+                        severity="warning",
+                    )
+                )
                 return
 
             try:
-                self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' ...", title=title))
+                self.call_after_refresh(
+                    lambda: self.notify(
+                        f"Load new session: '{value}' ...", title=title
+                    )
+                )
                 self._session = Session(self._session.workspace, value)
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=W0718
                 error = "Cannot get session"
                 self.push_screen(MessageBoxOk(text=str(ex), title=error))
-                self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' FAILED.", title=title, severity="error"))
+                self.call_after_refresh(
+                    lambda: self.notify(
+                        f"Load new session: '{value}' FAILED.",
+                        title=title,
+                        severity="error",
+                    )
+                )
                 return
 
-            self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' OK.", title=title))
+            self.call_after_refresh(
+                lambda: self.notify(
+                    f"Load new session: '{value}' OK.", title=title
+                )
+            )
             container = self.query_one(Container)
             container._session = self._session
             self.run_worker(container.refresh_session, thread=False)
@@ -390,12 +448,14 @@ class Tui(App):
         self.query_one(Container)._run_app(
             list_app,
             [
-                "--workspace", str(self._session.workspace),
+                "--workspace",
+                str(self._session.workspace),
             ],
         )
 
     def _restore(self) -> None:
         """Trigger restore from the command palette."""
+
         def on_confirm(result: int) -> None:
             if result == MessageBoxResult.OK:
                 self.query_one(Container).run_restore()
@@ -410,10 +470,12 @@ class Tui(App):
 
     def _show_custom_command(self) -> None:
         """Push the "Custom Command" modal screen."""
-        msg_Box = MessageBoxOkCancel(
-            text="Custom Command Text",
-            title="Custom Command Title",
-        ),
+        msg_Box = (
+            MessageBoxOkCancel(
+                text="Custom Command Text",
+                title="Custom Command Title",
+            ),
+        )
         self.push_screen(
             msg_Box,  # type: ignore
             callback=self._on_custom_command_result,  # type: ignore
