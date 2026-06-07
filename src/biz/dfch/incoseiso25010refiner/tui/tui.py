@@ -437,7 +437,7 @@ class Tui(App):
 
         self.push_screen(
             InputBox(
-                text="Are you sure?",
+                text="Type in the name of the session.",
                 title=title,
             ),
             callback=on_result,
