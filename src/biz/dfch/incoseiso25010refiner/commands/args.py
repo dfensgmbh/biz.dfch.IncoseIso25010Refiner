@@ -73,6 +73,20 @@ WorkspaceOpt = Annotated[
     ),
 ]
 
+HfCacheOpt = Annotated[
+    Path,
+    typer.Option(
+        ...,
+        "--hf-cache",
+        exists=True,
+        envvar="HF_CACHE",
+        help="The HuggingFace cache path.",
+        file_okay=False,
+        dir_okay=True,
+        resolve_path=True,
+    ),
+]
+
 SessionIdOpt = Annotated[
     str,
     typer.Option(

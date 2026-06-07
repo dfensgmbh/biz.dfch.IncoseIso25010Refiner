@@ -42,6 +42,7 @@ from biz.dfch.incoseiso25010refiner.commands import stub
 from biz.dfch.incoseiso25010refiner.commands import summary
 from biz.dfch.incoseiso25010refiner.commands import translate
 from biz.dfch.incoseiso25010refiner.commands import validate
+from biz.dfch.incoseiso25010refiner.commands import vector
 
 from biz.dfch.incoseiso25010refiner.info import Info
 
@@ -59,6 +60,8 @@ app = typer.Typer(
 def _callback(ctx: typer.Context):
     # We use `callback` only to make sure that `typer` continues to show
     # "sub-commands" when there is only one "sub-command".
+
+    _ = ctx
 
     return
 
@@ -80,6 +83,7 @@ app.command(epilog=Info.epilog)(stub)
 app.command(epilog=Info.epilog)(summary)
 app.command(epilog=Info.epilog)(translate)
 app.command(epilog=Info.epilog)(validate)
+app.command(epilog=Info.epilog)(vector)
 
 if __name__ == "__main__":
     app()

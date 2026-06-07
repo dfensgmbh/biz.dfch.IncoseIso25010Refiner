@@ -25,6 +25,7 @@ from .args import FileOpt
 from .args import InputOpt
 from .args import PromptOpt
 from .args import LanguageOpt
+from .args import HfCacheOpt
 
 from .checkpoint import checkpoint
 from .replay import replay
@@ -43,6 +44,7 @@ from .stub import stub
 from .summary import summary
 from .translate import translate
 from .validate import validate
+from .vector import vector
 
 __all__ = [
     "Annotated",
@@ -55,6 +57,7 @@ __all__ = [
     "SessionIdOpt",
     "WorkspaceOpt",
     "LanguageOpt",
+    "HfCacheOpt",
     "checkpoint",
     "replay",
     "diff",
@@ -72,4 +75,5 @@ __all__ = [
     "summary",
     "translate",
     "validate",
+    "vector",
 ]

@@ -19,6 +19,9 @@
     "python.testing.pytestEnabled": false,
     "python.testing.unittestEnabled": true,
     "flake8.importStrategy": "fromEnvironment",
+    "black-formatter.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
     "cSpell.words": [
         "aiohttp",
         "altgraph",
@@ -42,6 +45,7 @@
         "httpcore",
         "httplib",
         "httpx",
+        "huggingface",
         "inclusivity",
         "Incose",
         "incoseiso",
@@ -60,6 +64,7 @@
         "MEIPASS",
         "monokai",
         "mypy",
+        "NOMIC",
         "nonste",
         "normalised",
         "NOSONAR",
@@ -71,6 +76,7 @@
         "pefile",
         "platformdirs",
         "pycodestyle",
+        "pydantic",
         "pyflakes",
         "Pygments",
         "pyinstaller",
@@ -81,6 +87,7 @@
         "PYTHONPATH",
         "pytokens",
         "pywin",
+        "qdrant",
         "qualname",
         "replaceability",
         "reqs",

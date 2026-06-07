@@ -46,13 +46,18 @@ classifiers = [
 ]
 
 dependencies = [
+    "accelerate>=1.13.0",
+    "biz-dfch-ste100vocab>=0.5.0",
     "dacite>=1.9.2",
+    "einops>=0.8.2",
     "instructor>=1.15.0",
     "litellm>=1.60.0",
     "pydantic>=2.10.0",
     "python-dotenv>=1.2.2",
+    "qdrant-client>=1.18.0",
     "requests>=2.34.2",
     "rich>=14.0.0",
+    "sentence-transformers>=5.5.1",
     "textual>=8.2.7",
     "typer>=0.25.1",
 ]
