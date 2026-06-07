@@ -173,7 +173,7 @@ class Container(Static):
         if highlighted is None:
             self.app.push_screen(
                 MessageBoxOk(
-                    text="No file is selected.",
+                    text="You must select an item.",
                     title="Delete Item",
                 )
             )
@@ -196,7 +196,7 @@ class Container(Static):
                 self.app.run_worker(self.refresh_session, thread=False)
 
         msg_box: MessageBox = MessageBoxOkCancel(
-            text=f"Delete '{file.name}'?",
+            text=f"Delete item: '{file.name}'?",
             title="Delete Item",
         )
         self.app.push_screen(
@@ -222,7 +222,6 @@ class Container(Static):
     def compose(self) -> ComposeResult:
         """Compose the session metadata rows and action button."""
         with Horizontal(id="id_workspace_row"):
-            # yield Label("Workspace: ")
             yield Link(
                 "Workspace",
                 url=f"file://{self._session.workspace}",
@@ -241,22 +240,6 @@ class Container(Static):
                 tooltip=f"{self._session.source.file}",
                 id="id_source",
             )
-        # with Horizontal(id="id_name_row"):
-            # yield Label("Session: ")
-            # yield Link(
-            #     f"{self._session.name}",
-            #     url=f"file://{self._session.workspace / self._session.name}",
-            #     tooltip=f"{self._session.workspace / self._session.name}",
-            #     id="id_name",
-            # )
-        # with Horizontal(id="id_source_row"):
-            # yield Label("Source: ")
-            # yield Link(
-            #     f"{self._session.source.file}",
-            #     url=f"{self._session.source.file}",
-            #     tooltip=f"{self._session.source.file}",
-            #     id="id_source",
-            # )
         with Horizontal(id="id_Loop"):
             yield Button("Edit", id="id_button_edit")
             yield Button("Resolve", id="id_button_resolve")
@@ -264,7 +247,6 @@ class Container(Static):
         with Vertical(id="id_Files"):
             yield Label("Items")
             yield ListView(id="id_items")
-        # with Vertical(id="id_log_container"):
             yield Label("Output")
             yield Log(id="id_log", auto_scroll=True)
 
@@ -306,15 +288,15 @@ class Tui(App):
         self._session = Session(workspace, session_id)
 
     def action_edit(self) -> None:
-        """Trigger the Edit button action."""
+        """Trigger the 'Edit' button action."""
         self.query_one("#id_button_edit", Button).press()
 
     def action_resolve(self) -> None:
-        """Trigger the Resolve button action."""
+        """Trigger the 'Resolve' button action."""
         self.query_one("#id_button_resolve", Button).press()
 
     def action_refine(self) -> None:
-        """Trigger the Refine button action."""
+        """Trigger the 'Refine' button action."""
         self.query_one("#id_button_refine", Button).press()
 
     def check_action(self, action: str, parameters: tuple) -> bool | None:
@@ -323,7 +305,7 @@ class Tui(App):
             try:
                 list_view = self.query_one("#id_items", ListView)
                 return list_view.highlighted_child is not None
-            except Exception:
+            except Exception:  # pylint: disable=W0718
                 return False
         return True
 
