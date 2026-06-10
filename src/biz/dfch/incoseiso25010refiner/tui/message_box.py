@@ -15,14 +15,13 @@
 
 """Reusable MessageBox modal screen."""
 
-from biz.dfch.incoseiso25010refiner.tui.message_box_buttons import MessageBoxButtons
-from biz.dfch.incoseiso25010refiner.tui.message_box_result import MessageBoxResult
-
 from textual import on
 from textual.app import ComposeResult
 from textual.screen import ModalScreen
 from textual.widgets import Button, Label
 from textual.containers import Horizontal, Vertical
+
+from .message_box_result import MessageBoxResult
 
 
 class MessageBox(ModalScreen[int]):
@@ -46,7 +45,8 @@ class MessageBox(ModalScreen[int]):
 
         Args:
             text: The message to display.
-            buttons: List of button labels. The result is the index of the clicked button.
+            buttons: List of button labels. The result is the index
+                of the clicked button.
             title: Optional title shown above the message.
         """
 
@@ -55,7 +55,9 @@ class MessageBox(ModalScreen[int]):
         assert isinstance(text, str), type(text)
         assert text.strip()
         assert isinstance(buttons, list), type(buttons)
-        assert 0 <= default_button < len(buttons), f"default_button {default_button} out of range."
+        assert (
+            0 <= default_button < len(buttons)
+        ), f"default_button {default_button} out of range."
 
         self._text = text
         self._buttons = list(buttons)
@@ -70,8 +72,14 @@ class MessageBox(ModalScreen[int]):
             yield Label(self._text, id="id_messagebox_text")
             with Horizontal(id="id_messagebox_buttons"):
                 for i, label in enumerate(self._buttons):
-                    variant = "primary" if i == self._default_button else "default"
-                    yield Button(str(label), variant=variant, id=f"{self._ID_BUTTON_PREFIX}{i}")
+                    variant = (
+                        "primary" if i == self._default_button else "default"
+                    )
+                    yield Button(
+                        str(label),
+                        variant=variant,
+                        id=f"{self._ID_BUTTON_PREFIX}{i}",
+                    )
 
     @on(Button.Pressed)
     def on_button_pressed(self, event: Button.Pressed) -> None:

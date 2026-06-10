@@ -35,6 +35,8 @@ from textual.widgets import (
 )
 from textual.containers import Horizontal, Vertical
 
+from biz.dfch.i18n.language_code import LanguageCode
+
 from ..commands.list import app as list_app
 from ..commands.refine import app as refine_app
 from ..commands.resolve import app as resolve_app
@@ -104,6 +106,7 @@ class Container(Static):
                 Writes log messages from external programs into
                 our log window.
                 """
+
                 def __init__(self, callback):
                     self._callback = callback
 
@@ -304,23 +307,34 @@ class Tui(App):
     CSS_PATH = "tui.css"
 
     _session: Session
+    _language: LanguageCode
 
-    def __init__(self, workspace: Path, session_id: str, *args, **kwargs):
+    def __init__(
+        self,
+        workspace: Path,
+        session_id: str,
+        language: LanguageCode,
+        *args,
+        **kwargs
+    ):
         """Initialise the TUI with the given workspace path and session ID."""
         super().__init__(*args, **kwargs)
-
-        self.workspace = workspace
-        self.session_id = session_id
 
         assert isinstance(workspace, Path), type(workspace)
         assert workspace.exists(), f"Workspace must exist: '{workspace}'."
         assert workspace.is_dir(), f"Workspace must be a path: '{workspace}'."
+        assert isinstance(session_id, str), type(session_id)
+        assert isinstance(language, LanguageCode), type(language)
+
+        self.workspace = workspace
+        self.session_id = session_id
 
         path = Path((workspace) / session_id).resolve()
         assert path.exists(), f"Path must exist: '{path}'."
         assert path.is_dir(), f"Path must be a path: '{path}'."
 
         self._session = Session(workspace, session_id)
+        self._language = language
 
     def action_edit(self) -> None:
         """Trigger the 'Edit' button action."""
@@ -373,7 +387,7 @@ class Tui(App):
         yield SystemCommand(
             "Select Session",
             "Select an existing 'requirement set'.",
-            self._refresh_session,
+            self._select_session,
         )
         yield SystemCommand(
             "Custom Command",
@@ -390,9 +404,14 @@ class Tui(App):
             "Show all sessions in the workspace",
             self._list_sessions,
         )
+        yield SystemCommand(
+            "Select Language",
+            "Choose the language used by the application",
+            self._select_language,
+        )
 
-    def _refresh_session(self) -> None:
-        """Trigger a session refresh from the command palette."""
+    def _select_session(self) -> None:
+        """Start 'Select Session' on the command palette."""
 
         title = "Select Session"
 
@@ -444,7 +463,7 @@ class Tui(App):
         )
 
     def _list_sessions(self) -> None:
-        """Invoke the list command from the command palette."""
+        """Start 'List Sessions' command on the command palette."""
         self.query_one(Container)._run_app(
             list_app,
             [
@@ -454,9 +473,9 @@ class Tui(App):
         )
 
     def _restore(self) -> None:
-        """Trigger restore from the command palette."""
+        """Start 'Restore' command on command palette."""
 
-        def on_confirm(result: int) -> None:
+        def on_result(result: int) -> None:
             if result == MessageBoxResult.OK:
                 self.query_one(Container).run_restore()
 
@@ -465,28 +484,67 @@ class Tui(App):
                 text="Restore the previous version of the source document?",
                 title="Restore",
             ),
-            callback=on_confirm,  # type: ignore
+            callback=on_result,  # type: ignore
+        )  # type: ignore
+
+    def _select_language(self) -> None:
+        """Start 'Select Language' command on the command palette."""
+
+        title = "Select Language"
+
+        languages = [
+            lang for lang in LanguageCode if lang != LanguageCode.DEFAULT
+        ]
+
+        def on_result(index: int) -> None:
+            if languages[index] == self._language or (
+                index < 0 or index >= len(languages)
+            ):
+                self.notify(
+                    "Language not changed. Active language: "
+                    f"'{self._language.value}'.",
+                    title=title,
+                    severity="warning",
+                )
+                return
+            self._language = languages[index]
+            self.notify(
+                f"Language changed: '{self._language.value}'.",
+                title=title,
+            )
+
+        msg_box = MessageBox(
+            text="Please select the language:",
+            buttons=[lang.value for lang in languages],
+            title=title,
+            default_button=languages.index(self._language),
+        )
+
+        self.push_screen(
+            msg_box,
+            callback=on_result,  # type: ignore
         )  # type: ignore
 
     def _show_custom_command(self) -> None:
-        """Push the "Custom Command" modal screen."""
-        msg_Box = (
+        """Start 'Custom Command' command on the command palette."""
+
+        def on_result(self, result: MessageBoxResult) -> None:
+            """Handle the result of the 'Custom Command' modal."""
+            if result == MessageBoxResult.OK:
+                self.notify("OK was pressed.")
+            else:
+                self.notify("Cancel was pressed.")
+
+        msg_box = (
             MessageBoxOkCancel(
                 text="Custom Command Text",
                 title="Custom Command Title",
             ),
         )
         self.push_screen(
-            msg_Box,  # type: ignore
-            callback=self._on_custom_command_result,  # type: ignore
+            msg_box,  # type: ignore
+            callback=on_result,  # type: ignore
         )  # type: ignore
-
-    def _on_custom_command_result(self, result: MessageBoxResult) -> None:
-        """Handle the result of the "Custom Command" modal."""
-        if result == MessageBoxResult.OK:
-            self.notify("OK was pressed.")
-        else:
-            self.notify("Cancel was pressed.")
 
     def compose(self) -> ComposeResult:
         """Compose the main application layout."""

@@ -21,6 +21,7 @@ from dotenv import load_dotenv
 import typer
 
 from biz.dfch.logging import log
+from biz.dfch.i18n import LanguageCode
 
 from ..info import Info
 
@@ -28,6 +29,7 @@ from ..tui import Tui
 
 from .args import SessionIdOpt
 from .args import WorkspaceOpt
+from .args import LanguageOpt
 
 load_dotenv()
 
@@ -43,6 +45,7 @@ app = typer.Typer(
 def ui(
     session_id: SessionIdOpt,
     workspace: WorkspaceOpt = Path("."),
+    language: LanguageOpt = LanguageCode.EN,
 ):
     """
     Launch the graphical user interface.
@@ -53,8 +56,11 @@ def ui(
     assert path.exists(), f"Path does not exist: '{path}'."
 
     log.debug(
-        "Parameters: [workspace=%s, session_id=%s]", workspace, session_id
+        "Parameters: (workspace=%s, session_id=%s, language=%s)",
+        workspace,
+        session_id,
+        language,
     )
 
-    tui = Tui(workspace=workspace, session_id=session_id)
+    tui = Tui(workspace=workspace, session_id=session_id, language=language)
     tui.run()
