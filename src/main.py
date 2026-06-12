@@ -31,6 +31,7 @@ from biz.dfch.incoseiso25010refiner.commands import diff
 from biz.dfch.incoseiso25010refiner.commands import ui
 from biz.dfch.incoseiso25010refiner.commands import info
 from biz.dfch.incoseiso25010refiner.commands import init
+from biz.dfch.incoseiso25010refiner.commands import jira
 from biz.dfch.incoseiso25010refiner.commands import erase
 from biz.dfch.incoseiso25010refiner.commands import list_
 from biz.dfch.incoseiso25010refiner.commands import query
@@ -74,6 +75,7 @@ app.command(epilog=Info.epilog)(erase)
 app.command(epilog=Info.epilog)(ui)
 app.command(epilog=Info.epilog)(info)
 app.command(epilog=Info.epilog)(init)
+app.command(epilog=Info.epilog)(jira)
 app.command(epilog=Info.epilog)(query)
 app.command(epilog=Info.epilog)(refine)
 app.command(epilog=Info.epilog)(resolve)

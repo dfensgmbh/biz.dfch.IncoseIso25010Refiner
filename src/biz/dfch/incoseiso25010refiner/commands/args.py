@@ -48,7 +48,7 @@ ModelOpt = Annotated[
 ]
 
 ApiTokenOpt = Annotated[
-    str, typer.Option(envvar="CHAT_API_TOKEN", help="API token")
+    str, typer.Option(envvar="CHAT_API_TOKEN", help="API Token")
 ]
 
 BaseUriOpt = Annotated[
@@ -56,6 +56,24 @@ BaseUriOpt = Annotated[
     typer.Option(
         "--base-url", "-u", "-uri", envvar="CHAT_BASE_URL", help="Base URL"
     ),
+]
+
+JiraBaseUriOpt = Annotated[
+    str,
+    typer.Option(
+        "--jira-base-url", envvar="JIRA_BASE_URL", help="Jira Base URL"
+    ),
+]
+
+JiraProjectKeyOpt = Annotated[
+    str,
+    typer.Option(
+        "--jira-project-key", envvar="JIRA_PROJECT_KEY", help="Jira Project Key"
+    ),
+]
+
+JiraApiTokenOpt = Annotated[
+    str, typer.Option(envvar="JIRA_API_TOKEN", help="Jira API Token")
 ]
 
 WorkspaceOpt = Annotated[

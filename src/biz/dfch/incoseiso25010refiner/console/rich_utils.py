@@ -49,12 +49,15 @@ class RichUtils:
             result (str): The `rich` string that contains a link to `path`.
         """
 
-        assert isinstance(path, Path), type(path)
+        assert isinstance(path, (Path, str)), type(path)
 
         if display is None:
             display = path
 
-        result = f"[link=file://{path}]{str(display)}[/link]"
+        if isinstance(path, Path):
+            result = f"[link=file://{path}]{str(display)}[/link]"
+        else:
+            result = f"[link={path}]{str(display)}[/link]"
 
         return result
 

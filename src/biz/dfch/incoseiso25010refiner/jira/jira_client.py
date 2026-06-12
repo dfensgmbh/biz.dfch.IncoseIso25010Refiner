@@ -36,6 +36,13 @@ class JiraRequirementFields:
     # 'category' is mapped to the Jira custom field 'customfield_category'.
     # Adjust the field name to match your on-prem Jira configuration.
     category: Optional[str] = None
+    # Required custom fields for this Jira instance.
+    source: Optional[str] = None  # customfield_14601
+    characteristic: Optional[str] = None  # customfield_14602
+    level: Optional[str] = None  # customfield_14600
+    assignee: Optional[str] = (
+        None  # name (on-prem Jira uses name, not accountId)
+    )
 
 
 class JiraClient:
@@ -96,6 +103,23 @@ class JiraClient:
     # Public API
     # ------------------------------------------------------------------
 
+    def get_current_user(self) -> str:
+        """
+        Return the name of the currently authenticated user.
+
+        Returns:
+            result (str): The name of the current user.
+
+        Raises:
+            RuntimeError: If the Jira API returns a non-success status code.
+        """
+
+        url = self._api_url("myself")
+        response = self._session.get(url)
+        self._raise_for_status(response, "get current user")
+
+        return response.json()["name"]
+
     def create_issue(self, fields: JiraRequirementFields) -> str:
         """
         Create a new 'Requirement' issue.
@@ -130,6 +154,10 @@ class JiraClient:
         description: Optional[str] = None,
         labels: Optional[list[str]] = None,
         category: Optional[str] = None,
+        source: Optional[str] = None,
+        charakteristik: Optional[str] = None,
+        level: Optional[str] = None,
+        assignee: Optional[str] = None,
     ) -> None:
         """
         Edit an existing 'Requirement' issue identified by *issue_key*.
@@ -158,6 +186,10 @@ class JiraClient:
             description=description,
             labels=labels,
             category=category,
+            source=source,
+            charakteristik=charakteristik,
+            level=level,
+            assignee=assignee,
         )
 
         if not payload["fields"]:
@@ -217,6 +249,20 @@ class JiraClient:
             # your on-prem Jira instance (check via /rest/api/2/field).
             payload["fields"]["customfield_category"] = fields.category
 
+        if fields.assignee is not None:
+            payload["fields"]["assignee"] = {"name": fields.assignee}
+
+        if fields.source is not None:
+            payload["fields"]["customfield_14601"] = fields.source
+
+        if fields.characteristic is not None:
+            payload["fields"]["customfield_14602"] = {
+                "value": fields.characteristic
+            }
+
+        if fields.level is not None:
+            payload["fields"]["customfield_14600"] = {"value": fields.level}
+
         return payload
 
     def _build_edit_payload(
@@ -225,6 +271,10 @@ class JiraClient:
         description: Optional[str],
         labels: Optional[list[str]],
         category: Optional[str],
+        source: Optional[str] = None,
+        charakteristik: Optional[str] = None,
+        level: Optional[str] = None,
+        assignee: Optional[str] = None,
     ) -> dict:
         """Assemble the JSON payload for issue updates (only changed fields)."""
 
@@ -243,6 +293,18 @@ class JiraClient:
             # Adjust 'customfield_category' to the actual field ID used in
             # your on-prem Jira instance (check via /rest/api/2/field).
             updated_fields["customfield_category"] = category
+
+        if assignee is not None:
+            updated_fields["assignee"] = {"name": assignee}
+
+        if source is not None:
+            updated_fields["customfield_14601"] = source
+
+        if charakteristik is not None:
+            updated_fields["customfield_14602"] = {"value": charakteristik}
+
+        if level is not None:
+            updated_fields["customfield_14600"] = {"value": level}
 
         return {"fields": updated_fields}
 

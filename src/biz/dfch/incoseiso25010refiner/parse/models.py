@@ -13,9 +13,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 import json
+import re
 
 
 @dataclass
@@ -59,6 +60,32 @@ class IsoResponse:
     analysis: List[SentenceAnalysis]
     questions: List[Question]
     summary: Summary
+
+
+@dataclass
+class Section:
+    title: str
+    description: List[str] = field(default_factory=list)
+
+
+def parse_summary_markdown(text: str) -> List[Section]:
+    """Parse a markdown text into a list of Sections.
+
+    Each Section has a 'title' (from a ## heading) and a 'description'
+    (list of bullet point texts under that heading).
+    """
+    sections: List[Section] = []
+    current: Section | None = None
+
+    for line in text.splitlines():
+        line = line.strip()
+        if re.match(r"^##\s+", line):
+            current = Section(title=re.sub(r"^##\s+", "", line))
+            sections.append(current)
+        elif re.match(r"^-\s+", line) and current is not None:
+            current.description.append(re.sub(r"^-\s+", "", line))
+
+    return sections
 
 
 def parse_iso_response(json_string: str) -> IsoResponse:

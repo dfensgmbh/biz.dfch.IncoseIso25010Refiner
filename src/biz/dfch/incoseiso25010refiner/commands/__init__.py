@@ -26,6 +26,9 @@ from .args import InputOpt
 from .args import PromptOpt
 from .args import LanguageOpt
 from .args import HfCacheOpt
+from .args import JiraBaseUriOpt
+from .args import JiraApiTokenOpt
+from .args import JiraProjectKeyOpt
 
 from .checkpoint import checkpoint
 from .replay import replay
@@ -45,6 +48,7 @@ from .summary import summary
 from .translate import translate
 from .validate import validate
 from .vector import vector
+from .jira import jira
 
 __all__ = [
     "Annotated",
@@ -58,6 +62,9 @@ __all__ = [
     "WorkspaceOpt",
     "LanguageOpt",
     "HfCacheOpt",
+    "JiraBaseUriOpt",
+    "JiraApiTokenOpt",
+    "JiraProjectKeyOpt",
     "checkpoint",
     "replay",
     "diff",
@@ -65,6 +72,7 @@ __all__ = [
     "ui",
     "info",
     "init",
+    "jira",
     "list_",
     "query",
     "refine",
