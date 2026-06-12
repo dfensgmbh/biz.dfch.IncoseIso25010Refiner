@@ -15,14 +15,14 @@
 
 from .tui import Tui
 from .message_box import MessageBox
-from .message_box import MessageBoxButtons
+from .message_box_buttons import MessageBoxButtons
 from .message_box_ok import MessageBoxOk
 from .message_box_ok_cancel import MessageBoxOkCancel
 
 __all__ = [
     "Tui",
     "MessageBox",
+    "MessageBoxButtons",
     "MessageBoxOk",
     "MessageBoxOkCancel",
-    "MessageBoxButtons",
 ]

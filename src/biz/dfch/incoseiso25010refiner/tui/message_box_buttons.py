@@ -19,5 +19,6 @@ from enum import StrEnum
 
 
 class MessageBoxButtons(StrEnum):
+    """Buttons for standard message box."""
     OK = "OK"
     CANCEL = "CANCEL"
