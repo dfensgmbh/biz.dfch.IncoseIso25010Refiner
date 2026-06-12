@@ -22,6 +22,7 @@ from pathlib import Path
 import re
 import shutil
 
+from biz.dfch.i18n import LanguageCode
 from biz.dfch.logging import log
 from biz.dfch.diagnostics.clock import Clock
 
@@ -438,7 +439,11 @@ class Session:
 
         return result
 
-    def get_items(self, base_name: str | None = None) -> list[Path]:
+    def get_items(
+        self,
+        base_name: str | None = None,
+        language: LanguageCode | None = None,
+    ) -> list[Path]:
         """
         Return a list of item in this session that start with `base_name`.
 
@@ -462,6 +467,10 @@ class Session:
             ],
             reverse=True,
         )
+
+        if isinstance(language, LanguageCode):
+            base_name = f"{base_name}-{language.name}"
+            result = [i for i in result if i.name.startswith(base_name)]
 
         return result
 
