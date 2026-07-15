@@ -43,6 +43,7 @@ from .refine import refine
 from .resolve import resolve
 from .restore import restore
 from .show import show
+from .stage import stage
 from .stub import stub
 from .summary import summary
 from .translate import translate
@@ -79,6 +80,7 @@ __all__ = [
     "resolve",
     "restore",
     "show",
+    "stage",
     "stub",
     "summary",
     "translate",

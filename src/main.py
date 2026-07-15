@@ -39,6 +39,7 @@ from biz.dfch.incoseiso25010refiner.commands import refine
 from biz.dfch.incoseiso25010refiner.commands import resolve
 from biz.dfch.incoseiso25010refiner.commands import restore
 from biz.dfch.incoseiso25010refiner.commands import show
+from biz.dfch.incoseiso25010refiner.commands import stage
 from biz.dfch.incoseiso25010refiner.commands import stub
 from biz.dfch.incoseiso25010refiner.commands import summary
 from biz.dfch.incoseiso25010refiner.commands import translate
@@ -81,6 +82,7 @@ app.command(epilog=Info.epilog)(refine)
 app.command(epilog=Info.epilog)(resolve)
 app.command(epilog=Info.epilog)(restore)
 app.command(epilog=Info.epilog)(show)
+app.command(epilog=Info.epilog)(stage)
 app.command(epilog=Info.epilog)(stub)
 app.command(epilog=Info.epilog)(summary)
 app.command(epilog=Info.epilog)(translate)

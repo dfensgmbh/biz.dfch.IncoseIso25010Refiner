@@ -13,32 +13,18 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-"""incoseiso25010refiner package."""
+"""Requirement status enum."""
 
-from .models import (
-    Classification,
-    SentenceAnalysis,
-    Question,
-    ScoreSummary,
-    Summary,
-    IsoResponse,
-    parse_iso_response,
-    Section,
-    parse_summary_markdown,
-)
-from .requirement import Requirement
-from .requirement_status import RequirementStatus
+from enum import StrEnum
 
-__all__ = [
-    "Requirement",
-    "RequirementStatus",
-    "Classification",
-    "SentenceAnalysis",
-    "Question",
-    "ScoreSummary",
-    "Summary",
-    "IsoResponse",
-    "parse_iso_response",
-    "Section",
-    "parse_summary_markdown",
-]
+
+class RequirementStatus(StrEnum):
+    """Lifecycle status of a requirement."""
+
+    DRAFT = "DRAFT"
+    PROPOSED = "PROPOSED"
+    APPROVED = "APPROVED"
+    REJECTED = "REJECTED"
+    SUPERSEDED = "SUPERSEDED"
+    DEPRECATED = "DEPRECATED"
+    IMPLEMENTED = "IMPLEMENTED"
