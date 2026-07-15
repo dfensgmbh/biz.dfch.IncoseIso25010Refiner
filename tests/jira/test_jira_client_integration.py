@@ -44,6 +44,10 @@ JIRA_PROJECT_KEY = os.getenv("JIRA_PROJECT_KEY", "DEAD")
 JIRA_API_TOKEN = os.getenv("JIRA_API_TOKEN", "dead-dead-dead-dead")
 
 
+@unittest.skipIf(
+    "true" == os.getenv("GITHUB_ACTIONS"),
+    "Integration tests are excluded from GitHub Actions runners.",
+)
 @unittest.skipUnless(
     JIRA_API_TOKEN,
     "Integration tests require JIRA_API_TOKEN environment variable to be set.",
