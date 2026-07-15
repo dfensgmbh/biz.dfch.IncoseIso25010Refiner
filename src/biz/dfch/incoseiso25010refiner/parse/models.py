@@ -79,7 +79,7 @@ def get_value(d: dict, key: str, return_type: type[T] = str) -> T:
     2. Case-insensitive exact match.
     3. Closest match via difflib (cutoff 0.8).
     Raises KeyError when no sufficiently similar key is found.
-    Raises TypeError when the resolved value is not an instance of 
+    Raises TypeError when the resolved value is not an instance of
         *return_type*.
     """
     if key in d:
