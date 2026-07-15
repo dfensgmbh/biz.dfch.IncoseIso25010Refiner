@@ -14,9 +14,12 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, TypeVar
+import difflib
 import json
 import re
+
+T = TypeVar("T")
 
 
 @dataclass
@@ -68,6 +71,40 @@ class Section:
     description: List[str] = field(default_factory=list)
 
 
+def get_value(d: dict, key: str, return_type: type[T] = str) -> T:
+    """Look up *key* in *d*, tolerating LLM typos in the actual key name.
+
+    Resolution order:
+    1. Exact match.
+    2. Case-insensitive exact match.
+    3. Closest match via difflib (cutoff 0.8).
+    Raises KeyError when no sufficiently similar key is found.
+    Raises TypeError when the resolved value is not an instance of 
+        *return_type*.
+    """
+    if key in d:
+        value = d[key]
+    else:
+        lower_key = key.lower()
+        for k in d:
+            if k.lower() == lower_key:
+                value = d[k]
+                break
+        else:
+            matches = difflib.get_close_matches(key, d.keys(), n=1, cutoff=0.8)
+            if not matches:
+                raise KeyError(key)
+            value = d[matches[0]]
+
+    if not isinstance(value, return_type):
+        raise TypeError(
+            f"Expected '{return_type.__name__}' for key '{key}'. "
+            f"Found '{type(value).__name__}'."
+        )
+
+    return value
+
+
 def parse_summary_markdown(text: str) -> List[Section]:
     """Parse a markdown text into a list of Sections.
 
@@ -100,9 +137,9 @@ def parse_iso_response(json_string: str) -> IsoResponse:
             sentence=item["sentence"],
             classifications=[
                 Classification(
-                    characteristic=c["characteristic"],
-                    confidence=float(c["confidence"]),
-                    rationale=c["rationale"],
+                    characteristic=get_value(c, "characteristic"),
+                    confidence=float(get_value(c, "confidence")),
+                    rationale=get_value(c, "rationale"),
                 )
                 for c in item["classifications"]
             ],
@@ -113,23 +150,24 @@ def parse_iso_response(json_string: str) -> IsoResponse:
     # Parse questions
     questions = [
         Question(
-            characteristic=q["characteristic"],
-            rationale=q["rationale"],
-            question=q["question"],
+            characteristic=get_value(q, "characteristic"),
+            rationale=get_value(q, "rationale"),
+            question=get_value(q, "question"),
         )
         for q in data["questions"]
     ]
 
     # Parse summary
+    summary_data = data["summary"]
     summary = Summary(
-        rationale=data["summary"]["rationale"],
+        rationale=get_value(summary_data, "rationale"),
         scores=[
             ScoreSummary(
-                characteristic=s["characteristic"],
-                score=float(s["score"]),
-                rationale=s["rationale"],
+                characteristic=get_value(s, "characteristic"),
+                score=float(get_value(s, "score")),
+                rationale=get_value(s, "rationale"),
             )
-            for s in data["summary"]["scores"]
+            for s in get_value(summary_data, "scores", list)
         ],
     )
 
