@@ -21,6 +21,10 @@ from dotenv import load_dotenv
 from rich.console import Console
 import typer
 
+from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIChatModel
+from pydantic_ai.providers.openai import OpenAIProvider
+
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
@@ -140,17 +144,23 @@ def refine(
     template_content = template_file.read_text(encoding="utf-8")
 
     # Build and run the agent.
-    agent = LiteLlmAgent(
-        url=uri,
-        api_key=api_token,
-        model=model,
+    pydantic_ai_model = OpenAIChatModel(
+        model,
+        provider=OpenAIProvider(
+            base_url=uri,
+            api_key=api_token,
+        ),
+    )
+    agent = Agent(
+        pydantic_ai_model,
         system_prompt=template_content,
+        retries=3,
     )
 
     log.debug("Query LLM (OpenAI) ...")
     sw = Stopwatch.start_new()
     try:
-        result = agent.run(text, output_type=IsoResponse)
+        result = agent.run_sync(text, output_type=IsoResponse)
         sw.stop()
     except Exception as ex:
         sw.stop()
