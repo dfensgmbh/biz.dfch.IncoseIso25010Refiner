@@ -165,13 +165,6 @@ def refine(
     elapsed = sw.elapsed_seconds
     log.info("Query LLM OK. TotalSeconds: %.3f", elapsed)
 
-    try:
-        log.info(f"result. '{type(result)}'.")
-        log.debug(result)
-    except:  # type: ignore
-        pass  # type: ignore
-
-    session.add_response(str(result))
     iso25010_response: IsoResponse = result.output
 
     # Persist the response as JSON.

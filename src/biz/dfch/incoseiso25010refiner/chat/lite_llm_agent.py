@@ -57,6 +57,7 @@ class LiteLlmAgent:
         api_key: str,
         model: str,
         system_prompt: str | None = None,
+        retries: int = 3,
     ) -> None:
 
         assert isinstance(url, str), type(url)
@@ -65,6 +66,8 @@ class LiteLlmAgent:
         assert model.strip()
         assert isinstance(api_key, str), type(api_key)
         assert api_key.strip()
+        assert isinstance(retries, int), type(retries)
+        assert retries >= 1, retries
 
         self._model = model
         self._url = url
@@ -75,10 +78,12 @@ class LiteLlmAgent:
             self.agent = Agent(
                 self.model,
                 system_prompt=system_prompt,
+                retries=retries,
             )
         else:
             self.agent = Agent(
                 self.model,
+                retries=retries,
             )
 
     def _litellm_bridge(
