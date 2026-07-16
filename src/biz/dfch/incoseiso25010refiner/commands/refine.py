@@ -15,8 +15,6 @@
 
 """'refine' command."""
 
-import json
-from dataclasses import asdict
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -26,16 +24,14 @@ import typer
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
-from ..constant import Constant
-from ..chat.chat_client_factory import ChatClientFactory
 from ..chat.chat_config import ChatConfig
-from ..chat.instructor_with_lite_llm import InstructorWithLiteLlm
+from ..chat.lite_llm_agent import LiteLlmAgent
 from ..chat.providers import Providers
+from ..constant import Constant
 from ..info import Info
 from ..iso25010 import Iso25010
-from ..parse import parse_iso_response
+from ..models import IsoResponse
 from ..session import Session
-from ..text.text_utils import TextUtils
 from ..text.file_utils import FileUtils
 from ..console import RichUtils
 
@@ -50,6 +46,7 @@ from .args import TemperateOpt
 from .args import WorkspaceOpt
 from .args import LanguageCode
 from .args import LanguageOpt
+from .refine_legacy import refine_legacy
 
 load_dotenv()
 
@@ -95,9 +92,6 @@ def refine(
     session = Session(workspace, session_id)
     log.info("Get session '%s' OK.", session_id)
 
-    source_doc = session.source.file
-    text = session.source.contents
-
     data = {
         "workspace": RichUtils.make_link(workspace),
         "session_id": RichUtils.make_link(session.path, session_id),
@@ -109,7 +103,7 @@ def refine(
         "temperature": temperature,
         "characteristics": characteristics,
         "language": language,
-        "input": text,
+        "input": session.source.contents,
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(
@@ -120,32 +114,45 @@ def refine(
     console = Console()
     console.print(table)
 
-    # Prepare map for chat configuration.
-    del data["input"]
-    del data["language"]
-    data["prompt"] = text
-    data["api_token"] = api_token
-    data["output_path"] = ""
-    if -1 == max_tokens:
-        del data["max_tokens"]
-    if -1 == temperature:
-        del data["temperature"]
+    if provider != Providers.OPENAI:
+        refine_legacy(
+            api_token=api_token,
+            session_id=session_id,
+            uri=uri,
+            model=model,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            provider=provider,
+            workspace=workspace,
+            characteristics=characteristics,
+            language=language,
+            session=session,
+            console=console,
+        )
+        return
+
+    # NOTE: This is the new provider
+    text = session.source.contents
+    source_doc = session.source.file
+
     template_file = Constant.PROMPTS_DIR / Constant.PROMPT_REFINE
     assert template_file.exists(), template_file
+    template_content = template_file.read_text(encoding="utf-8")
 
-    data["template_content"] = template_file.read_text(encoding="utf-8")
+    # Build and run the agent.
+    agent = LiteLlmAgent(
+        url=uri,
+        api_key=api_token,
+        model=model,
+        system_prompt=template_content,
+    )
 
-    # Prepare client.
-    chat_config = ChatConfig.from_dict(data)
-    client = ChatClientFactory.create(chat_config)
-
-    # Start query.
-    log.debug("Query LLM ...")
+    log.debug("Query LLM (OpenAI) ...")
     sw = Stopwatch.start_new()
     try:
-        response = client.query()
+        result = agent.run(text, output_type=IsoResponse)
         sw.stop()
-    except TimeoutError as ex:
+    except Exception as ex:
         sw.stop()
         elapsed = sw.elapsed_seconds
         log.error(
@@ -158,68 +165,32 @@ def refine(
     elapsed = sw.elapsed_seconds
     log.info("Query LLM OK. TotalSeconds: %.3f", elapsed)
 
-    # Examine response.
-    text = TextUtils.remove_md_json(response)
-    text = TextUtils.clean_pseudo_json(text)
-    is_json = TextUtils.is_json(text)
-    if not is_json:
-        text = TextUtils.clean_text(text)
-    is_json = TextUtils.is_json(text)
+    try:
+        log.info(f"result. '{type(result)}'.")
+        log.debug(result)
+    except:  # type: ignore
+        pass  # type: ignore
 
-    session.add_response(text)
+    session.add_response(str(result))
+    iso25010_response: IsoResponse = result.output
 
-    # When we do not have valid JSON, show error message and exit.
-    assert is_json, (
-        "Response does not contain valid JSON. Try operation one more time.\n"
-        f"{TextUtils.get_json_parse_exception(text)}"
-    )
-
-    # Parse response.
-    iso25010_response = parse_iso_response(text)
-
-    if LanguageCode.EN != language:
-        count = len(iso25010_response.questions)
-        for i, q in enumerate(iso25010_response.questions):
-            log.debug(
-                "[%s/%s] Translate to '%s': '%s' ...",
-                i,
-                count,
-                language.name,
-                q.question,
-            )
-            translated, _ = InstructorWithLiteLlm(
-                response_model=str,
-                api_key=api_token,
-                base_url=uri,
-                model=model,
-                system_prompt=(
-                    "You are a requirements engineer and "
-                    "professional translator. "
-                    f"Translate the input to {language.value}. "
-                    "Return only the translated text, nothing else."
-                ),
-                user_prompt=q.question,
-            ).complete()
-            log.info(
-                "[%s/%s] Translate to '%s': '%s' OK.",
-                i,
-                count,
-                language.name,
-                q.question,
-            )
-            q.question = translated
+    # Persist the response as JSON.
+    session.add_response(iso25010_response.model_dump_json(indent=2))
 
     # Display results.
-    result = RichUtils.create_analysis_table(iso25010_response.analysis)
-    console.print(result)
+    result_table = RichUtils.create_analysis_table(iso25010_response.analysis)
+    console.print(result_table)
 
-    result = RichUtils.create_scores_table(
-        iso25010_response.summary.scores, iso25010_response.summary.rationale
+    result_table = RichUtils.create_scores_table(
+        iso25010_response.summary.scores,
+        iso25010_response.summary.rationale,
     )
-    console.print(result)
+    console.print(result_table)
 
-    result = RichUtils.create_iso25010_chart(iso25010_response.summary.scores)
-    console.print(result)
+    result_table = RichUtils.create_iso25010_chart(
+        iso25010_response.summary.scores
+    )
+    console.print(result_table)
 
     # Create copy of source document,
     # then change source document and add new questions to it.
@@ -229,8 +200,11 @@ def refine(
     session.source.update(updated, do_add_version=True)
 
     # Save summary.
-    summary_json = json.dumps(asdict(iso25010_response.summary), indent=2)
-    session.add_item("refine-summary", summary_json, Constant.JSON_FILE_EXT)
+    session.add_item(
+        "refine-summary",
+        iso25010_response.summary.model_dump_json(indent=2),
+        Constant.JSON_FILE_EXT,
+    )
 
     log.info(
         "You can now continue your work in: "

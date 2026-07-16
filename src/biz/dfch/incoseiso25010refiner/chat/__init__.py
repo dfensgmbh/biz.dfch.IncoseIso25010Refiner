@@ -21,11 +21,13 @@ from .instructor_with_lite_llm import InstructorWithLiteLlm
 from .zero_cost_map import ZeroCostMap
 from .ollama_chat_client import OllamaChatClient
 from .openai_chat_client import OpenAiChatClient
+from .lite_llm_agent import LiteLlmAgent
 
 __all__ = [
     "AiTokenUsage",
     "AbacusChatClient",
     "InstructorWithLiteLlm",
+    "LiteLlmAgent",
     "OllamaChatClient",
     "OpenAiChatClient",
     "ZeroCostMap",
