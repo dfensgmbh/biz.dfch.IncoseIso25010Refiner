@@ -142,7 +142,7 @@ def get_embedding_string(word: Word) -> list[str]:
 
 
 @app.command()
-def vector(
+def vector(  # noqa: PLR0913, PLR0915
     api_token: ApiTokenOpt,
     text: InputOpt,
     hf_cache: HfCacheOpt,

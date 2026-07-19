@@ -59,7 +59,7 @@ app = typer.Typer(
 
 
 @app.command()
-def stage(
+def stage(  # noqa: PLR0913
     api_token: ApiTokenOpt,
     session_id: SessionIdOpt,
     uri: BaseUriOpt = "",

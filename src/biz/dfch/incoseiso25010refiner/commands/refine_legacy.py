@@ -41,7 +41,7 @@ from ..text.file_utils import FileUtils
 from ..text.text_utils import TextUtils
 
 
-def refine_legacy(
+def refine_legacy(  # noqa: PLR0913, PLR0915
     api_token: str,
     session_id: str,
     uri: str,

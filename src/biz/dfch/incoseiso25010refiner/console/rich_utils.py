@@ -187,10 +187,10 @@ class RichUtils:
 
     @staticmethod
     def _bar_style(score: float) -> str:
-        if score >= 0.7:
+        if score >= 0.7:  # noqa: PLR2004
             return "green"
 
-        if score >= 0.5:
+        if score >= 0.5:  # noqa: PLR2004
             return "yellow"
 
         return "red"

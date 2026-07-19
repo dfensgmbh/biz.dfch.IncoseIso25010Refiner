@@ -40,7 +40,8 @@ SAMPLE_TEXT = """# Zusammenfassung der Anforderungen für ABCD-1234
 - Der Geldautomat muss an einer Betonwand befestigt werden, um die physische Sicherheit des Benutzers bei der Bargeldabhebung zu gewährleisten.
 ## Fragen
 - Definiert 200 CHF das Tagesmaximum, den Mindestbetrag pro Transaktion oder beides?
-- Wie verhalten sich die reine VISA-Unterstützung und die "GiroCard"-Unterstützung zueinander?"""
+- Wie verhalten sich die reine VISA-Unterstützung und die "GiroCard"-Unterstützung zueinander?
+"""  # noqa: E501
 
 
 class TestSection(unittest.TestCase):

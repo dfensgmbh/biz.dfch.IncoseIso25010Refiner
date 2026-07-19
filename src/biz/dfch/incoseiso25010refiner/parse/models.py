@@ -17,9 +17,6 @@ import difflib
 import json
 import re
 from dataclasses import dataclass, field
-from typing import TypeVar
-
-T = TypeVar("T")
 
 
 @dataclass
@@ -71,7 +68,7 @@ class Section:
     description: list[str] = field(default_factory=list)
 
 
-def get_value(d: dict, key: str, return_type: type[T] = str) -> T:
+def get_value[T](d: dict, key: str, return_type: type[T] = str) -> T:
     """Look up *key* in *d*, tolerating LLM typos in the actual key name.
 
     Resolution order:
@@ -86,9 +83,8 @@ def get_value(d: dict, key: str, return_type: type[T] = str) -> T:
         value = d[key]
     else:
         lower_key = key.lower()
-        for k in d:
+        for k, value in d.items():
             if k.lower() == lower_key:
-                value = d[k]
                 break
         else:
             matches = difflib.get_close_matches(key, d.keys(), n=1, cutoff=0.8)
@@ -97,10 +93,7 @@ def get_value(d: dict, key: str, return_type: type[T] = str) -> T:
             value = d[matches[0]]
 
     if not isinstance(value, return_type):
-        raise TypeError(
-            f"Expected '{return_type.__name__}' for key '{key}'. "
-            f"Found '{type(value).__name__}'."
-        )
+        raise TypeError(f"Expected '{return_type.__name__}' for key '{key}'. Found '{type(value).__name__}'.")
 
     return value
 

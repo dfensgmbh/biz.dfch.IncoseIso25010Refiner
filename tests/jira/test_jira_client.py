@@ -42,7 +42,7 @@ ISSUE_KEY = "ABCD-1"
 def make_response(status_code: int, json_data: dict | None = None) -> MagicMock:
     """Return a minimal mock of a requests.Response."""
     response = MagicMock()
-    response.ok = status_code < 400
+    response.ok = status_code < 400  # noqa: PLR2004
     response.status_code = status_code
     response.json.return_value = json_data or {}
     response.text = str(json_data or "")

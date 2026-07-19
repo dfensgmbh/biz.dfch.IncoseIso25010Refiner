@@ -144,7 +144,7 @@ class JiraClient:
         issue_key: str = response.json()["key"]
         return issue_key
 
-    def edit_issue(
+    def edit_issue(  # noqa: PLR0913
         self,
         issue_key: str,
         summary: str | None = None,
@@ -262,7 +262,7 @@ class JiraClient:
 
         return payload
 
-    def _build_edit_payload(
+    def _build_edit_payload(  # noqa: PLR0913
         self,
         summary: str | None,
         description: str | None,

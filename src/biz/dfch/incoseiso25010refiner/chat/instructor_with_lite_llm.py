@@ -45,7 +45,7 @@ class InstructorWithLiteLlm[T]:
     _system_prompt: str
     _user_prompt: str
 
-    def __init__(
+    def __init__(  # noqa: PLR0913
         self,
         response_model: type[T],
         api_key: str,
@@ -70,7 +70,7 @@ class InstructorWithLiteLlm[T]:
         assert user_prompt.strip()
         assert isinstance(system_prompt, str), type(system_prompt)
 
-        from litellm import litellm  # pylint: disable=C0415
+        from litellm import litellm  # pylint: disable=C0415  # noqa: PLC0415
 
         litellm.model_cost = ZeroCostMap(litellm.model_cost)
 
@@ -89,7 +89,7 @@ class InstructorWithLiteLlm[T]:
         (parsed response model, raw LiteLLM response).
         """
 
-        from litellm import completion  # pylint: disable=C0415
+        from litellm import completion  # pylint: disable=C0415  # noqa: PLC0415
 
         client = instructor.from_litellm(
             completion,

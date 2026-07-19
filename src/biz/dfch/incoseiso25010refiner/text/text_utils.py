@@ -48,7 +48,7 @@ class TextUtils:
 
         s = unicodedata.normalize("NFC", s)
         s = _invisible_chars.sub("", s)
-        s = "".join(ch for ch in s if ch in "\t\n\r" or ord(ch) >= 0x20)
+        s = "".join(ch for ch in s if ch in "\t\n\r" or ord(ch) >= 0x20)  # noqa: PLR2004
 
         return s.strip()
 

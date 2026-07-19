@@ -86,7 +86,7 @@ class LiteLlmAgent:
                 retries=retries,
             )
 
-    def _litellm_bridge(
+    def _litellm_bridge(  # noqa: PLR0912, PLR0915
         self, messages: list[ModelMessage], info: AgentInfo
     ) -> ModelResponse:
 

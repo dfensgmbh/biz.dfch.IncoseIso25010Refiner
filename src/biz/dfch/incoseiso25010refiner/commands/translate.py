@@ -68,7 +68,7 @@ app = typer.Typer(
 )
 
 
-def translate(
+def translate(  # noqa: PLR0913
     api_token: ApiTokenOpt,
     session_id: SessionIdOpt,
     text: InputOpt,

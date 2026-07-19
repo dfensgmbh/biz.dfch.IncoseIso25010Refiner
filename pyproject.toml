@@ -98,7 +98,7 @@ Issues = "https://github.com/dfensgmbh/biz.dfch.IncoseIso25010Refiner/issues"
 req = "main:app"
 
 [tool.ruff]
-line-length = 80
+line-length = 120
 
 [tool.ruff.lint]
 # Rules: E/W = pycodestyle, F = pyflakes, I = isort, PL = pylint, UP = pyupgrade

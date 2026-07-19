@@ -26,18 +26,3 @@ def is_notebook() -> bool:
     """
 
     return "ipykernel" in sys.modules
-
-    try:
-        from IPython import get_ipython  # pylint: disable=C0415  # type: ignore
-
-        shell = get_ipython().__class__.__name__
-        print(shell)
-        if shell == "ZMQInteractiveShell":
-            return True
-
-        if shell == "TerminalInteractiveShell":
-            return False
-        else:
-            return False
-    except (NameError, ImportError):
-        return False

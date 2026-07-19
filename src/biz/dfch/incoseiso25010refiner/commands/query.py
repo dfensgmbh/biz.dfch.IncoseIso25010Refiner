@@ -52,7 +52,7 @@ app = typer.Typer(
 
 
 @app.command()
-def query(
+def query(  # noqa: PLR0913, PLR0915
     api_token: ApiTokenOpt,
     text: InputOpt,
     template: PromptOpt = "",

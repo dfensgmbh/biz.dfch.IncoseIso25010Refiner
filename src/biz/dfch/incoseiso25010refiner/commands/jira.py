@@ -53,7 +53,7 @@ app = typer.Typer(
 
 
 @app.command()
-def jira(
+def jira(  # noqa: PLR0913
     uri: JiraBaseUriOpt,
     api_token: JiraApiTokenOpt,
     project: JiraProjectKeyOpt,

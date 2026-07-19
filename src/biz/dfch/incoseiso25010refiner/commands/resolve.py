@@ -56,7 +56,7 @@ app = typer.Typer(
 
 
 @app.command()
-def resolve(
+def resolve(  # noqa: PLR0912, PLR0913, PLR0915
     api_token: ApiTokenOpt,
     session_id: SessionIdOpt,
     uri: BaseUriOpt = "",

@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-# flake8: noqa=E501
+# ruff: noqa: E501
 # pylint: disable=C0103
 # pylint: disable=C0301
 
@@ -73,9 +73,7 @@ class Iso25010InteractionCapability(StrEnum):
     APPROPRIATENESS_RECOGNIZABILITY = "capability of a product to be recognized by users as appropriate for their needs"
     LEARNABILITY = "capability of a product to have specified users learn to use specified product functions within a specified amount of time"
     OPERABILITY = "capability of a product to have functions and attributes that make it easy to operate and control"
-    USER_ERROR_PROTECTION = (
-        "capability of a product to prevent operation errors"
-    )
+    USER_ERROR_PROTECTION = "capability of a product to prevent operation errors"
     USER_ENGAGEMENT = "capability of a product to present functions and information in an inviting and motivating manner encouraging continued interaction"
     INCLUSIVITY = "capability of a product to be utilised by people of various backgrounds"
     USER_ASSISTANCE = "capability of a product to be used by people with the widest range of characteristics and capabilities to achieve specified goals in a specified context of use"
@@ -87,14 +85,18 @@ class Iso25010Reliability(StrEnum):
 
     FAULTLESSNESS = "capability of a product to perform specified functions without fault under normal operation"
     AVAILABILITY = "capability of a product to be operational and accessible when required for use"
-    FAULT_TOLERANCE = "capability of a product to operate as intended despite the presence of hardware or software faults"
+    FAULT_TOLERANCE = (
+        "capability of a product to operate as intended despite the presence of hardware or software faults"
+    )
     RECOVERABILITY = "capability of a product in the event of an interruption or a failure to recover the data directly affected and re-establish the desired state of the system"
 
 
 class Iso25010Security(StrEnum):
     """ISO25010 characteristics and description of 'security'."""
 
-    CONFIDENTIALITY = "capability of a product to ensure that data are accessible only to those authorized to have access"
+    CONFIDENTIALITY = (
+        "capability of a product to ensure that data are accessible only to those authorized to have access"
+    )
     INTEGRITY = "capability of a product to ensure that the state of its system and data are protected from unauthorized modification or deletion either by malicious action or computer error"
     NON_REPUDIATION = "capability of a product to prove that actions or events have taken place, so that the events or actions cannot be repudiated later"
     ACCOUNTABILITY = "capability of a product to enable actions of an entity to be traced uniquely to the entity"
@@ -118,7 +120,9 @@ class Iso25010Flexibility(StrEnum):
     ADAPTABILITY = "capability of a product to be effectively and efficiently adapted for or transferred to different hardware, software or other operational or usage environments"
     SCALABILITY = "capability of a product to handle growing or shrinking workloads or to adapt its capacity to handle variability"
     INSTALLABILITY = "capability of a product to be effectively and efficiently installed successfully and/or uninstalled in a specified environment"
-    REPLACEABILITY = "capability of a product to replace another specified product for the same purpose in the same environment"
+    REPLACEABILITY = (
+        "capability of a product to replace another specified product for the same purpose in the same environment"
+    )
 
 
 class Iso25010Safety(StrEnum):
@@ -128,7 +132,9 @@ class Iso25010Safety(StrEnum):
     RISK_IDENTIFICATION = "capability of a product to identify a course of events or operations that can expose life, property or environment to unacceptable risk"
     FAIL_SAFE = "capability of a product to automatically place itself in a safe operating mode, or to revert to a safe condition in the event of a failure"
     HAZARD_WARNING = "capability of a product to provide warnings of unacceptable risks to operations or internal controls so that they can react in sufficient time to sustain safe operations"
-    SAFE_INTEGRATION = "capability of a product to maintain safety during and after integration with one or more components"
+    SAFE_INTEGRATION = (
+        "capability of a product to maintain safety during and after integration with one or more components"
+    )
 
 
 @dataclass(frozen=True)

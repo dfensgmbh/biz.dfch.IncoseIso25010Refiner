@@ -64,7 +64,7 @@ app = typer.Typer(
 
 
 @app.command()
-def refine(
+def refine(  # noqa: PLR0913
     api_token: ApiTokenOpt,
     session_id: SessionIdOpt,
     uri: BaseUriOpt = "",
