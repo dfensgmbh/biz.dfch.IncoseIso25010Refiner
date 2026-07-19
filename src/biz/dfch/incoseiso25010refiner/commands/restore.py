@@ -15,23 +15,20 @@
 
 """'restore' command."""
 
-from pathlib import Path
 import uuid
+from pathlib import Path
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.prompt import Confirm
-import typer
 
 from biz.dfch.logging import log
 
 from ..console import RichUtils
 from ..info import Info
 from ..session import Session
-
-from .args import WorkspaceOpt
-from .args import SessionIdOpt
-from .args import YesOpt
+from .args import SessionIdOpt, WorkspaceOpt, YesOpt
 
 load_dotenv()
 
@@ -82,7 +79,7 @@ def restore(
     log.info(f"Previous versions:\n{'\n'.join(file_links)}")
 
     file = files[0]
-    message = "Do you want to restore file: " f"'{RichUtils.make_link(file)}'?"
+    message = f"Do you want to restore file: '{RichUtils.make_link(file)}'?"
     if not do_not_confirm and not Confirm.ask(
         message, show_default=True, default=True
     ):

@@ -25,7 +25,7 @@ def is_notebook() -> bool:
     Examine if the caller is inside a Jupyter notebook.
     """
 
-    return 'ipykernel' in sys.modules
+    return "ipykernel" in sys.modules
 
     try:
         from IPython import get_ipython  # pylint: disable=C0415  # type: ignore

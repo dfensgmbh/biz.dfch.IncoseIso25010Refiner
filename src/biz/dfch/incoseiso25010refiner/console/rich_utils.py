@@ -25,8 +25,7 @@ from rich.console import Console
 from rich.progress_bar import ProgressBar
 from rich.table import Table
 
-from ..parse import SentenceAnalysis
-from ..parse import Question
+from ..parse import Question, SentenceAnalysis
 
 
 class RichUtils:

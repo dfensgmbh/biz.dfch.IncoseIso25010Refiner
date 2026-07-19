@@ -96,8 +96,7 @@ class Clock:
         assert isinstance(dt, datetime), type(dt)
 
         return (
-            dt.strftime("%Y-%m-%d %H:%M:%S.")
-            + f"{dt.microsecond // 1000:03d}"
+            dt.strftime("%Y-%m-%d %H:%M:%S.") + f"{dt.microsecond // 1000:03d}"
         )
 
     @classmethod

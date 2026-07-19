@@ -17,9 +17,9 @@
 
 from textual import on
 from textual.app import ComposeResult
+from textual.containers import Horizontal, Vertical
 from textual.screen import ModalScreen
 from textual.widgets import Button, Label
-from textual.containers import Horizontal, Vertical
 
 from .message_box_result import MessageBoxResult
 
@@ -55,9 +55,9 @@ class MessageBox(ModalScreen[int]):
         assert isinstance(text, str), type(text)
         assert text.strip()
         assert isinstance(buttons, list), type(buttons)
-        assert (
-            0 <= default_button < len(buttons)
-        ), f"default_button {default_button} out of range."
+        assert 0 <= default_button < len(buttons), (
+            f"default_button {default_button} out of range."
+        )
 
         self._text = text
         self._buttons = list(buttons)

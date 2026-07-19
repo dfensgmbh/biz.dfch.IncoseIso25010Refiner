@@ -15,22 +15,18 @@
 
 """'init' command."""
 
-from pathlib import Path
 import uuid
+from pathlib import Path
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
-import typer
 
+from ..console import RichUtils
 from ..info import Info
 from ..iso25010 import Iso25010
 from ..session import Session
-from ..console import RichUtils
-
-from .args import WorkspaceOpt
-from .args import SessionIdOpt
-from .args import CharacteristicsOpt
-from .args import InputOpt
+from .args import CharacteristicsOpt, InputOpt, SessionIdOpt, WorkspaceOpt
 
 load_dotenv()
 

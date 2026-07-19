@@ -16,6 +16,7 @@
 """Constant class."""
 
 from __future__ import annotations
+
 from dataclasses import dataclass
 
 from .text.file_utils import FileUtils

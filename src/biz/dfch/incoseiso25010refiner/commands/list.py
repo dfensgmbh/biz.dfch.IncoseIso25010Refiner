@@ -17,16 +17,13 @@
 
 from pathlib import Path
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
-import typer
 
-
-from ..session import Session
-
-from ..info import Info
 from ..console import RichUtils
-
+from ..info import Info
+from ..session import Session
 from .args import WorkspaceOpt
 
 load_dotenv()
@@ -55,7 +52,7 @@ def list_(
     sessions = {}
     for path in paths:
         is_valid = Session.is_valid(workspace, path.name)
-        value = f"{RichUtils.make_link(path.resolve())} " f"[{is_valid}]"
+        value = f"{RichUtils.make_link(path.resolve())} [{is_valid}]"
         sessions[path.name] = value
 
     console = Console()

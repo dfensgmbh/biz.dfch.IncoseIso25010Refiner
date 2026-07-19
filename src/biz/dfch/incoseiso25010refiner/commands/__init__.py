@@ -15,31 +15,32 @@
 
 """Shared command options."""
 
-from .args import Annotated
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import ModelOpt
-from .args import SessionIdOpt
-from .args import WorkspaceOpt
-from .args import FileOpt
-from .args import InputOpt
-from .args import PromptOpt
-from .args import LanguageOpt
-from .args import HfCacheOpt
-from .args import JiraBaseUriOpt
-from .args import JiraApiTokenOpt
-from .args import JiraProjectKeyOpt
-
+from .args import (
+    Annotated,
+    ApiTokenOpt,
+    BaseUriOpt,
+    FileOpt,
+    HfCacheOpt,
+    InputOpt,
+    JiraApiTokenOpt,
+    JiraBaseUriOpt,
+    JiraProjectKeyOpt,
+    LanguageOpt,
+    ModelOpt,
+    PromptOpt,
+    SessionIdOpt,
+    WorkspaceOpt,
+)
 from .checkpoint import checkpoint
-from .replay import replay
 from .diff import diff
 from .erase import erase
-from .ui import ui
 from .info import info
 from .init import init
+from .jira import jira
 from .list import list_
 from .query import query
 from .refine import refine
+from .replay import replay
 from .resolve import resolve
 from .restore import restore
 from .show import show
@@ -47,9 +48,9 @@ from .stage import stage
 from .stub import stub
 from .summary import summary
 from .translate import translate
+from .ui import ui
 from .validate import validate
 from .vector import vector
-from .jira import jira
 
 __all__ = [
     "Annotated",

@@ -18,11 +18,11 @@
 """LiteLlmAgent: pydantic-ai Agent backed by LiteLLM."""
 
 import json
-from typing import Any, Callable, List, Type
+from collections.abc import Callable
+from typing import Any
 
 import litellm
 from litellm import Message
-
 from pydantic_ai import (
     Agent,
     ModelMessage,
@@ -103,7 +103,6 @@ class LiteLlmAgent:
             log.debug(f"[PYD {c}] '{msg}'")
 
             if isinstance(msg, ModelResponse):
-
                 tool_calls = []
                 content = ""
                 for part in msg.parts:
@@ -137,15 +136,13 @@ class LiteLlmAgent:
                 continue
 
             if isinstance(msg, ModelRequest):
-
                 # Use a distinct loop variable name to avoid mypy carrying
                 # forward the narrower union type from the ModelResponse
                 # branch's `for part in msg.parts` loop above.
                 for req_part in msg.parts:
                     if isinstance(req_part, SystemPromptPart):
                         log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] "
-                            f"{req_part}"
+                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
                         )
                         m = Message(
                             content=str(req_part.content),
@@ -155,8 +152,7 @@ class LiteLlmAgent:
                         continue
                     if isinstance(req_part, UserPromptPart):
                         log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] "
-                            f"{req_part}"
+                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
                         )
                         m = Message(
                             content=str(req_part.content),
@@ -166,8 +162,7 @@ class LiteLlmAgent:
                         continue
                     if isinstance(req_part, ToolReturnPart):
                         log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] "
-                            f"{req_part}"
+                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
                         )
                         converted.append(
                             {  # type: ignore
@@ -180,8 +175,7 @@ class LiteLlmAgent:
                         continue
                     if isinstance(req_part, RetryPromptPart):
                         log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] "
-                            f"{req_part}"
+                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
                         )
                         converted.append(
                             {  # type: ignore
@@ -197,9 +191,9 @@ class LiteLlmAgent:
                     log.debug(
                         f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
                     )
-                    assert (
-                        False
-                    ), f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
+                    assert False, (
+                        f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
+                    )
 
         def _convert_tool(tool: ToolDefinition) -> dict:
             return {
@@ -272,7 +266,7 @@ class LiteLlmAgent:
         )
         return ModelResponse(parts=parts, run_id=str(response.id), usage=usage)
 
-    def add_tools(self, tool_funcs: List[Callable]) -> None:
+    def add_tools(self, tool_funcs: list[Callable]) -> None:
         """Register tools that the LLM can call during a run."""
         for func in tool_funcs:
             self.agent.tool(func)
@@ -282,7 +276,7 @@ class LiteLlmAgent:
         prompt: str,
         *,
         deps: Any | None = None,
-        output_type: Type[Any] | None = None,
+        output_type: type[Any] | None = None,
     ):
         """Run the agent synchronously with an optional structured output type."""
         return self.agent.run_sync(prompt, deps=deps, output_type=output_type)

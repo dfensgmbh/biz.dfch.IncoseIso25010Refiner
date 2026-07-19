@@ -15,13 +15,13 @@
 
 """'query' command."""
 
-from pathlib import Path
 import uuid
+from pathlib import Path
 
+import typer
 from rich.console import Console
 from rich.json import JSON
 from rich.markdown import Markdown
-import typer
 
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
@@ -29,18 +29,19 @@ from biz.dfch.logging import log
 from ..chat.chat_client_factory import ChatClientFactory
 from ..chat.chat_config import ChatConfig
 from ..chat.providers import Providers
+from ..console import RichUtils
 from ..info import Info
 from ..text.text_utils import TextUtils
-from ..console import RichUtils
-
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import InputOpt
-from .args import PromptOpt
-from .args import MaxTokensOpt
-from .args import ModelOpt
-from .args import ProviderOpt
-from .args import TemperateOpt
+from .args import (
+    ApiTokenOpt,
+    BaseUriOpt,
+    InputOpt,
+    MaxTokensOpt,
+    ModelOpt,
+    PromptOpt,
+    ProviderOpt,
+    TemperateOpt,
+)
 
 app = typer.Typer(
     name=Info.name,

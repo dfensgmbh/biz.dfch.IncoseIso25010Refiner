@@ -23,9 +23,10 @@
 """Module i18n."""
 
 from __future__ import annotations
+
 import os
-from pathlib import Path
 import sys
+from pathlib import Path
 from threading import Lock
 from typing import ClassVar
 

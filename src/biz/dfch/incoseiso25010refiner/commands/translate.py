@@ -17,34 +17,35 @@
 
 from pathlib import Path
 
-from pydantic import BaseModel, Field
-from rich.console import Console
 import typer
 from dotenv import load_dotenv
+from pydantic import BaseModel, Field
+from rich.console import Console
 
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.i18n import LanguageCode
 from biz.dfch.logging import log
 
 from ..chat.ai_token_usage import AiTokenUsage
+from ..chat.chat_config import ChatConfig
 from ..chat.instructor_with_lite_llm import InstructorWithLiteLlm
 from ..chat.providers import Providers
-from ..chat.chat_config import ChatConfig
+from ..console import RichUtils
 from ..info import Info
 from ..session import Session
-from ..console import RichUtils
-
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import InputOpt
-from .args import CharacteristicsOpt
-from .args import MaxTokensOpt
-from .args import ModelOpt
-from .args import ProviderOpt
-from .args import SessionIdOpt
-from .args import TemperateOpt
-from .args import WorkspaceOpt
-from .args import LanguageOpt
+from .args import (
+    ApiTokenOpt,
+    BaseUriOpt,
+    CharacteristicsOpt,
+    InputOpt,
+    LanguageOpt,
+    MaxTokensOpt,
+    ModelOpt,
+    ProviderOpt,
+    SessionIdOpt,
+    TemperateOpt,
+    WorkspaceOpt,
+)
 
 
 class TranslationResponse(BaseModel):
@@ -166,8 +167,7 @@ def translate(
         )
 
         log.info(
-            "You can now continue your work in: "
-            f"'{RichUtils.make_link(file)}'"
+            f"You can now continue your work in: '{RichUtils.make_link(file)}'"
         )
 
     except TimeoutError as ex:

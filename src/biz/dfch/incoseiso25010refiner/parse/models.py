@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-from dataclasses import dataclass, field
-from typing import List, TypeVar
 import difflib
 import json
 import re
+from dataclasses import dataclass, field
+from typing import TypeVar
 
 T = TypeVar("T")
 
@@ -34,7 +34,7 @@ class SentenceAnalysis:
     sentence_id: int
     line_number: int
     sentence: str
-    classifications: List[Classification]
+    classifications: list[Classification]
 
 
 @dataclass
@@ -54,21 +54,21 @@ class ScoreSummary:
 @dataclass
 class Summary:
     rationale: str
-    scores: List[ScoreSummary]
+    scores: list[ScoreSummary]
 
 
 @dataclass
 class IsoResponse:
     phrase: str
-    analysis: List[SentenceAnalysis]
-    questions: List[Question]
+    analysis: list[SentenceAnalysis]
+    questions: list[Question]
     summary: Summary
 
 
 @dataclass
 class Section:
     title: str
-    description: List[str] = field(default_factory=list)
+    description: list[str] = field(default_factory=list)
 
 
 def get_value(d: dict, key: str, return_type: type[T] = str) -> T:
@@ -105,13 +105,13 @@ def get_value(d: dict, key: str, return_type: type[T] = str) -> T:
     return value
 
 
-def parse_summary_markdown(text: str) -> List[Section]:
+def parse_summary_markdown(text: str) -> list[Section]:
     """Parse a markdown text into a list of Sections.
 
     Each Section has a 'title' (from a ## heading) and a 'description'
     (list of bullet point texts under that heading).
     """
-    sections: List[Section] = []
+    sections: list[Section] = []
     current: Section | None = None
 
     for line in text.splitlines():

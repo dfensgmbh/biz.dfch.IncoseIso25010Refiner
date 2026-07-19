@@ -17,13 +17,13 @@
 
 from .models import (
     Classification,
-    SentenceAnalysis,
+    IsoResponse,
     Question,
     ScoreSummary,
-    Summary,
-    IsoResponse,
-    parse_iso_response,
     Section,
+    SentenceAnalysis,
+    Summary,
+    parse_iso_response,
     parse_summary_markdown,
 )
 from .requirement import Requirement

@@ -17,11 +17,11 @@
 
 from .iso_response import (
     Classification,
-    SentenceAnalysis,
+    IsoResponse,
     Question,
     ScoreSummary,
+    SentenceAnalysis,
     Summary,
-    IsoResponse,
 )
 
 __all__ = [

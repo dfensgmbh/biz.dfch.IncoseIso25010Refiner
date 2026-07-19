@@ -20,8 +20,9 @@
 """ISO25010 characteristics."""
 
 from __future__ import annotations
-from enum import StrEnum
+
 from dataclasses import dataclass
+from enum import StrEnum
 
 
 class Iso25010(StrEnum):
@@ -72,7 +73,9 @@ class Iso25010InteractionCapability(StrEnum):
     APPROPRIATENESS_RECOGNIZABILITY = "capability of a product to be recognized by users as appropriate for their needs"
     LEARNABILITY = "capability of a product to have specified users learn to use specified product functions within a specified amount of time"
     OPERABILITY = "capability of a product to have functions and attributes that make it easy to operate and control"
-    USER_ERROR_PROTECTION = "capability of a product to prevent operation errors"
+    USER_ERROR_PROTECTION = (
+        "capability of a product to prevent operation errors"
+    )
     USER_ENGAGEMENT = "capability of a product to present functions and information in an inviting and motivating manner encouraging continued interaction"
     INCLUSIVITY = "capability of a product to be utilised by people of various backgrounds"
     USER_ASSISTANCE = "capability of a product to be used by people with the widest range of characteristics and capabilities to achieve specified goals in a specified context of use"

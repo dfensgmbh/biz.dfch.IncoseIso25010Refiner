@@ -16,31 +16,31 @@
 """'jira' command."""
 
 from pathlib import Path
-
 from urllib.parse import quote
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
-import typer
 
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.i18n import LanguageCode
 from biz.dfch.logging import log
 
+from ..console import RichUtils
 from ..info import Info
 from ..iso25010 import Iso25010
-from ..session import Session
-from ..console import RichUtils
-from ..parse import parse_summary_markdown
 from ..jira.jira_client import JiraClient, JiraRequirementFields
-
-from .args import CharacteristicsOpt
-from .args import SessionIdOpt
-from .args import WorkspaceOpt
-from .args import JiraBaseUriOpt
-from .args import JiraApiTokenOpt
-from .args import JiraProjectKeyOpt
-from .args import LanguageOpt
+from ..parse import parse_summary_markdown
+from ..session import Session
+from .args import (
+    CharacteristicsOpt,
+    JiraApiTokenOpt,
+    JiraBaseUriOpt,
+    JiraProjectKeyOpt,
+    LanguageOpt,
+    SessionIdOpt,
+    WorkspaceOpt,
+)
 
 load_dotenv()
 

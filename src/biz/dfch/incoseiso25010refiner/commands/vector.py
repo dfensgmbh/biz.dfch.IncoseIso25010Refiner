@@ -15,22 +15,18 @@
 
 """'vector' command."""
 
+import uuid
 from dataclasses import asdict
 from pathlib import Path
-import uuid
 
+import typer
+from biz.dfch.asdste100vocab import Vocab, Word, WordNote, WordStatus
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, PointStruct, VectorParams
 from rich.console import Console
 from rich.json import JSON
 from rich.markdown import Markdown
 from sentence_transformers import SentenceTransformer
-import typer
-from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
-
-from biz.dfch.asdste100vocab import Vocab
-from biz.dfch.asdste100vocab import Word
-from biz.dfch.asdste100vocab import WordNote
-from biz.dfch.asdste100vocab import WordStatus
 
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
@@ -38,19 +34,20 @@ from biz.dfch.logging import log
 from ..chat.chat_client_factory import ChatClientFactory
 from ..chat.chat_config import ChatConfig
 from ..chat.providers import Providers
+from ..console import RichUtils
 from ..info import Info
 from ..text.text_utils import TextUtils
-from ..console import RichUtils
-
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import InputOpt
-from .args import PromptOpt
-from .args import MaxTokensOpt
-from .args import ModelOpt
-from .args import ProviderOpt
-from .args import TemperateOpt
-from .args import HfCacheOpt
+from .args import (
+    ApiTokenOpt,
+    BaseUriOpt,
+    HfCacheOpt,
+    InputOpt,
+    MaxTokensOpt,
+    ModelOpt,
+    PromptOpt,
+    ProviderOpt,
+    TemperateOpt,
+)
 
 app = typer.Typer(
     name=Info.name,
@@ -61,8 +58,7 @@ app = typer.Typer(
 
 
 def index_vocabulary(
-    words: list[Word],
-    model: SentenceTransformer
+    words: list[Word], model: SentenceTransformer
 ) -> list[PointStruct]:
     result = []
 
@@ -81,7 +77,7 @@ def index_vocabulary(
                 # Store the whole Word object as a dict in the payload
                 # Use word.model_dump() if using Pydantic v2
                 # payload=str(word),
-                payload=asdict(word)
+                payload=asdict(word),
             )
         )
 

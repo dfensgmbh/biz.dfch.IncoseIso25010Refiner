@@ -16,21 +16,21 @@
 """Session class."""
 
 from __future__ import annotations
+
+import re
+import shutil
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-import re
-import shutil
 
+from biz.dfch.diagnostics.clock import Clock
 from biz.dfch.i18n import LanguageCode
 from biz.dfch.logging import log
-from biz.dfch.diagnostics.clock import Clock
 
+from .console.rich_utils import RichUtils
 from .constant import Constant
 from .iso25010 import Iso25010
-
 from .text.text_utils import TextUtils
-from .console.rich_utils import RichUtils
 
 
 @dataclass
@@ -348,9 +348,9 @@ class Session:
         assert path.is_dir(), f"Path must be a path: '{path}'."
 
         source_doc = Path(Path(path) / Constant.SOURCE_DOCUMENT).resolve()
-        assert (
-            source_doc.exists()
-        ), f"Source document must exist: '{source_doc}'."
+        assert source_doc.exists(), (
+            f"Source document must exist: '{source_doc}'."
+        )
         assert source_doc.is_file(), f"Source must be a file: '{source_doc}'."
 
         self._checkpoint = self.set_checkpoint()
@@ -552,7 +552,6 @@ class Session:
         shutil.rmtree(path, ignore_errors=False)
         log.info("Erase path '%s' OK.", path)
 
-        return
 
     @staticmethod
     def create(
@@ -584,9 +583,9 @@ class Session:
         log.info("Create path '%s' OK.", path)
 
         source_doc = Path(path) / Constant.SOURCE_DOCUMENT
-        assert (
-            not source_doc.exists()
-        ), f"Source document must not exist: '{source_doc}'."
+        assert not source_doc.exists(), (
+            f"Source document must not exist: '{source_doc}'."
+        )
 
         template = f"""// This is the text for the requirement set '{name}'.
 // Title: {title}

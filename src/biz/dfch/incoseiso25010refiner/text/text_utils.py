@@ -15,9 +15,9 @@
 
 """TextUtils class."""
 
+import json
 import re
 import unicodedata
-import json
 
 
 class TextUtils:

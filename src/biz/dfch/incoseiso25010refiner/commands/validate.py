@@ -24,7 +24,6 @@ from biz.dfch.logging import log
 
 from ..info import Info
 from ..text.text_utils import TextUtils
-
 from .args import FileOpt
 
 load_dotenv()

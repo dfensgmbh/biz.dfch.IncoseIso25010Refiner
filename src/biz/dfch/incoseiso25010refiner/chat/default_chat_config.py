@@ -25,5 +25,6 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class DefaultChatConfig:
     """Default attributes of chat client configurations."""
+
     base_url: str
     model: str

@@ -17,11 +17,9 @@
 
 from __future__ import annotations
 
-from .chat_config import ChatConfig
-from .chat_config import Providers
-
 from .abacus_chat_client import AbacusChatClient
 from .chat_client_base import ChatClientBase
+from .chat_config import ChatConfig, Providers
 from .ollama_chat_client import OllamaChatClient
 
 

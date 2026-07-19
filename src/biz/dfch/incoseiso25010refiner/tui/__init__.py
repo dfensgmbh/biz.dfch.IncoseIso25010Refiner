@@ -13,11 +13,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-from .tui import Tui
 from .message_box import MessageBox
 from .message_box_buttons import MessageBoxButtons
 from .message_box_ok import MessageBoxOk
 from .message_box_ok_cancel import MessageBoxOkCancel
+from .tui import Tui
 
 __all__ = [
     "Tui",

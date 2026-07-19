@@ -18,7 +18,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional
 
 import requests
 
@@ -31,16 +30,16 @@ class JiraRequirementFields:
 
     project_key: str
     summary: str
-    description: Optional[str] = None
+    description: str | None = None
     labels: list[str] = field(default_factory=list)
     # 'category' is mapped to the Jira custom field 'customfield_category'.
     # Adjust the field name to match your on-prem Jira configuration.
-    category: Optional[str] = None
+    category: str | None = None
     # Required custom fields for this Jira instance.
-    source: Optional[str] = None  # customfield_14601
-    characteristic: Optional[str] = None  # customfield_14602
-    level: Optional[str] = None  # customfield_14600
-    assignee: Optional[str] = (
+    source: str | None = None  # customfield_14601
+    characteristic: str | None = None  # customfield_14602
+    level: str | None = None  # customfield_14600
+    assignee: str | None = (
         None  # name (on-prem Jira uses name, not accountId)
     )
 
@@ -150,14 +149,14 @@ class JiraClient:
     def edit_issue(
         self,
         issue_key: str,
-        summary: Optional[str] = None,
-        description: Optional[str] = None,
-        labels: Optional[list[str]] = None,
-        category: Optional[str] = None,
-        source: Optional[str] = None,
-        charakteristik: Optional[str] = None,
-        level: Optional[str] = None,
-        assignee: Optional[str] = None,
+        summary: str | None = None,
+        description: str | None = None,
+        labels: list[str] | None = None,
+        category: str | None = None,
+        source: str | None = None,
+        charakteristik: str | None = None,
+        level: str | None = None,
+        assignee: str | None = None,
     ) -> None:
         """
         Edit an existing 'Requirement' issue identified by *issue_key*.
@@ -177,9 +176,9 @@ class JiraClient:
             RuntimeError: If the Jira API returns a non-success status code.
         """
 
-        assert (
-            isinstance(issue_key, str) and issue_key.strip()
-        ), "issue_key must be a non-empty string."
+        assert isinstance(issue_key, str) and issue_key.strip(), (
+            "issue_key must be a non-empty string."
+        )
 
         payload = self._build_edit_payload(
             summary=summary,
@@ -211,9 +210,9 @@ class JiraClient:
             RuntimeError: If the Jira API returns a non-success status code.
         """
 
-        assert (
-            isinstance(issue_key, str) and issue_key.strip()
-        ), "issue_key must be a non-empty string."
+        assert isinstance(issue_key, str) and issue_key.strip(), (
+            "issue_key must be a non-empty string."
+        )
 
         url = self._api_url(f"issue/{issue_key}")
         response = self._session.delete(url)
@@ -267,14 +266,14 @@ class JiraClient:
 
     def _build_edit_payload(
         self,
-        summary: Optional[str],
-        description: Optional[str],
-        labels: Optional[list[str]],
-        category: Optional[str],
-        source: Optional[str] = None,
-        charakteristik: Optional[str] = None,
-        level: Optional[str] = None,
-        assignee: Optional[str] = None,
+        summary: str | None,
+        description: str | None,
+        labels: list[str] | None,
+        category: str | None,
+        source: str | None = None,
+        charakteristik: str | None = None,
+        level: str | None = None,
+        assignee: str | None = None,
     ) -> dict:
         """Assemble the JSON payload for issue updates (only changed fields)."""
 

@@ -20,8 +20,8 @@ ChatConfig
 from __future__ import annotations
 
 import argparse
-from dataclasses import dataclass
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar
 
@@ -54,7 +54,7 @@ class ChatConfig:
     template_content: str = ""
 
     @staticmethod
-    def from_dict(data: dict) -> "ChatConfig":
+    def from_dict(data: dict) -> ChatConfig:
         """Converts CLI arguments to data structure."""
         return dacite.from_dict(
             data_class=ChatConfig,

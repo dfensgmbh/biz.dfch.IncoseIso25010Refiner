@@ -17,18 +17,16 @@
 
 from pathlib import Path
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
-import typer
 
 from biz.dfch.logging import log
 
+from ..console import RichUtils
 from ..info import Info
 from ..session import Session
-from ..console import RichUtils
-
-from .args import SessionIdOpt
-from .args import WorkspaceOpt
+from .args import SessionIdOpt, WorkspaceOpt
 
 load_dotenv()
 

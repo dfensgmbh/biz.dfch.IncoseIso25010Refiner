@@ -22,19 +22,23 @@ from pathlib import Path
 from rich.console import Console
 
 from biz.dfch.diagnostics import Stopwatch
-from biz.dfch.logging import log
 from biz.dfch.i18n import LanguageCode
+from biz.dfch.logging import log
 
-from ..constant import Constant
-from ..chat.chat_client_factory import ChatClientFactory as ChatClientFactoryLegacy
+from ..chat.chat_client_factory import (
+    ChatClientFactory as ChatClientFactoryLegacy,
+)
 from ..chat.chat_config import ChatConfig as ChatConfigLegacy
-from ..chat.instructor_with_lite_llm import InstructorWithLiteLlm as InstructorWithLiteLlmLegacy
+from ..chat.instructor_with_lite_llm import (
+    InstructorWithLiteLlm as InstructorWithLiteLlmLegacy,
+)
+from ..console import RichUtils
+from ..constant import Constant
+from ..iso25010 import Iso25010
 from ..parse import parse_iso_response as parse_iso_response_legacy
 from ..session import Session
-from ..text.text_utils import TextUtils
 from ..text.file_utils import FileUtils
-from ..console import RichUtils
-from ..iso25010 import Iso25010
+from ..text.text_utils import TextUtils
 
 
 def refine_legacy(

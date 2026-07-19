@@ -17,18 +17,15 @@
 
 from pathlib import Path
 
+import typer
 from dotenv import load_dotenv
 from rich.prompt import Confirm
-import typer
 
 from biz.dfch.logging import log
 
 from ..info import Info
 from ..session import Session
-
-from .args import SessionIdOpt
-from .args import WorkspaceOpt
-from .args import YesOpt
+from .args import SessionIdOpt, WorkspaceOpt, YesOpt
 
 load_dotenv()
 
@@ -62,14 +59,10 @@ def erase(
         log.error("Stop erase.")
         return
 
-    log.debug(
-        "Erase session id '%s' in '%s' ...", session_id, workspace
-    )
+    log.debug("Erase session id '%s' in '%s' ...", session_id, workspace)
     try:
         Session.erase(workspace, session_id)
-        log.info(
-            "Erase session id '%s' in '%s' OK.", session_id, workspace
-        )
+        log.info("Erase session id '%s' in '%s' OK.", session_id, workspace)
     except Exception as ex:  # pylint: disable=W0718
         log.error(
             "Erase session id '%s' in '%s' FAILED.",

@@ -30,7 +30,15 @@ class MessageBoxOkCancel(MessageBox):
         **kwargs,
     ):
         """Initialise with OK and Cancel buttons."""
-        buttons: list[str] = [MessageBoxButtons.OK.value, MessageBoxButtons.CANCEL.value]
+        buttons: list[str] = [
+            MessageBoxButtons.OK.value,
+            MessageBoxButtons.CANCEL.value,
+        ]
         super().__init__(
-            *args, text=text, buttons=buttons, title=title, default_button=1, **kwargs
+            *args,
+            text=text,
+            buttons=buttons,
+            title=title,
+            default_button=1,
+            **kwargs,
         )

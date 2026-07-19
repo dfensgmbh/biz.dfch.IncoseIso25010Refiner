@@ -41,7 +41,6 @@ try:
     log = logging.getLogger(_LOGGER_NAME)  # type: ignore
 
 except Exception as ex:
-
     print(
         f"{_LOGGER_NAME}: An error occurred while trying to load "
         f"'{_LOGGER_FILE}': '{ex}'"

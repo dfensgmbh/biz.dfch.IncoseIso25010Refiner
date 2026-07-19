@@ -18,34 +18,35 @@
 # pylint: disable=C0413
 # flake8: noqa: E402
 
-from dotenv import load_dotenv
 import typer
+from dotenv import load_dotenv
 
 from biz.dfch.i18n import I18n
 
 I18n.Factory.create("biz/dfch/incoseiso25010refiner")
 
-from biz.dfch.incoseiso25010refiner.commands import checkpoint
-from biz.dfch.incoseiso25010refiner.commands import replay
-from biz.dfch.incoseiso25010refiner.commands import diff
-from biz.dfch.incoseiso25010refiner.commands import ui
-from biz.dfch.incoseiso25010refiner.commands import info
-from biz.dfch.incoseiso25010refiner.commands import init
-from biz.dfch.incoseiso25010refiner.commands import jira
-from biz.dfch.incoseiso25010refiner.commands import erase
-from biz.dfch.incoseiso25010refiner.commands import list_
-from biz.dfch.incoseiso25010refiner.commands import query
-from biz.dfch.incoseiso25010refiner.commands import refine
-from biz.dfch.incoseiso25010refiner.commands import resolve
-from biz.dfch.incoseiso25010refiner.commands import restore
-from biz.dfch.incoseiso25010refiner.commands import show
-from biz.dfch.incoseiso25010refiner.commands import stage
-from biz.dfch.incoseiso25010refiner.commands import stub
-from biz.dfch.incoseiso25010refiner.commands import summary
-from biz.dfch.incoseiso25010refiner.commands import translate
-from biz.dfch.incoseiso25010refiner.commands import validate
-from biz.dfch.incoseiso25010refiner.commands import vector
-
+from biz.dfch.incoseiso25010refiner.commands import (
+    checkpoint,
+    diff,
+    erase,
+    info,
+    init,
+    jira,
+    list_,
+    query,
+    refine,
+    replay,
+    resolve,
+    restore,
+    show,
+    stage,
+    stub,
+    summary,
+    translate,
+    ui,
+    validate,
+    vector,
+)
 from biz.dfch.incoseiso25010refiner.info import Info
 
 load_dotenv()
@@ -65,7 +66,6 @@ def _callback(ctx: typer.Context):
 
     _ = ctx
 
-    return
 
 
 app.command(name="list", epilog=Info.epilog)(list_)

@@ -22,31 +22,31 @@
 import json
 from pathlib import Path
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
-import typer
 
 from biz.dfch.logging import log
 
+from ..chat.providers import Providers
 from ..console import RichUtils
 from ..constant import Constant
-from ..chat.providers import Providers
 from ..info import Info
 from ..iso25010 import Iso25010
-from ..parse import Requirement
-from ..parse import RequirementStatus
+from ..parse import Requirement, RequirementStatus
 from ..parse.models import parse_iso_response
 from ..session import Session
-
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import CharacteristicsOpt
-from .args import MaxTokensOpt
-from .args import ModelOpt
-from .args import ProviderOpt
-from .args import SessionIdOpt
-from .args import TemperateOpt
-from .args import WorkspaceOpt
+from .args import (
+    ApiTokenOpt,
+    BaseUriOpt,
+    CharacteristicsOpt,
+    MaxTokensOpt,
+    ModelOpt,
+    ProviderOpt,
+    SessionIdOpt,
+    TemperateOpt,
+    WorkspaceOpt,
+)
 
 load_dotenv()
 

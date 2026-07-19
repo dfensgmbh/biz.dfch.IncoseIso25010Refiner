@@ -15,8 +15,8 @@
 
 """FileUtils class."""
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 from biz.dfch.diagnostics import Clock
 
@@ -80,7 +80,7 @@ class FileUtils:
 
         Args:
             file: Path to an existing, readable text file.
-            questions: List of 
+            questions: List of
                 :class:`~biz.dfch.incoseiso25010refiner.parse.models.Question`
                 objects whose ``characteristic`` and ``question`` attributes
                 are used for matching and insertion.

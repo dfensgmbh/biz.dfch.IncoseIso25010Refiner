@@ -17,31 +17,32 @@
 
 from pathlib import Path
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
-import typer
 
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
-from ..constant import Constant
 from ..chat.chat_client_factory import ChatClientFactory
 from ..chat.chat_config import ChatConfig
 from ..chat.providers import Providers
+from ..console import RichUtils
+from ..constant import Constant
 from ..info import Info
 from ..iso25010 import Iso25010
 from ..session import Session
-from ..console import RichUtils
-
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import CharacteristicsOpt
-from .args import MaxTokensOpt
-from .args import ModelOpt
-from .args import ProviderOpt
-from .args import SessionIdOpt
-from .args import TemperateOpt
-from .args import WorkspaceOpt
+from .args import (
+    ApiTokenOpt,
+    BaseUriOpt,
+    CharacteristicsOpt,
+    MaxTokensOpt,
+    ModelOpt,
+    ProviderOpt,
+    SessionIdOpt,
+    TemperateOpt,
+    WorkspaceOpt,
+)
 
 load_dotenv()
 

@@ -18,31 +18,32 @@
 from pathlib import Path
 from typing import Annotated
 
+import typer
 from dotenv import load_dotenv
 from rich.console import Console
-import typer
 
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
-from ..constant import Constant
 from ..chat.chat_client_factory import ChatClientFactory
 from ..chat.chat_config import ChatConfig
 from ..chat.providers import Providers
+from ..console import RichUtils
+from ..constant import Constant
 from ..info import Info
 from ..iso25010 import Iso25010
 from ..session import Session
-from ..console import RichUtils
-
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import CharacteristicsOpt
-from .args import MaxTokensOpt
-from .args import ModelOpt
-from .args import ProviderOpt
-from .args import SessionIdOpt
-from .args import TemperateOpt
-from .args import WorkspaceOpt
+from .args import (
+    ApiTokenOpt,
+    BaseUriOpt,
+    CharacteristicsOpt,
+    MaxTokensOpt,
+    ModelOpt,
+    ProviderOpt,
+    SessionIdOpt,
+    TemperateOpt,
+    WorkspaceOpt,
+)
 
 load_dotenv()
 
@@ -115,7 +116,7 @@ def resolve(
         "characteristics": characteristics,
         "keep": keep_questions_without_answer,
         "questions": "\n".join(
-            [f"[{q.idx+1}] {q.question}" for q in questions_with_answer]
+            [f"[{q.idx + 1}] {q.question}" for q in questions_with_answer]
         ),
     }
     log.debug("Parameters: [%s]", data)
@@ -185,7 +186,6 @@ def resolve(
     last = len(lines) - 1
     decrement = -1
     for i in range(last, first, decrement):
-
         if not keep_questions_without_answer:
             qr = next(
                 (q for q in questions if q.idx == i and not q.has_answer()),
@@ -200,9 +200,9 @@ def resolve(
             continue
 
         question = next((q for q in questions if q.idx == i), None)
-        assert (
-            question is not None
-        ), f"Logic error. Question index not valid: {i}."
+        assert question is not None, (
+            f"Logic error. Question index not valid: {i}."
+        )
 
         log.debug(
             "Merge question and answer [%s] ...",

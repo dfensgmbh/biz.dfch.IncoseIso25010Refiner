@@ -59,7 +59,9 @@ class TestSection(unittest.TestCase):
     def test_description_is_set(self):
         section = Section(
             title="Systemumfang",
-            description=["Der Geldautomat muss Bargeldabhebungen unterstützen."],
+            description=[
+                "Der Geldautomat muss Bargeldabhebungen unterstützen."
+            ],
         )
 
         self.assertEqual(

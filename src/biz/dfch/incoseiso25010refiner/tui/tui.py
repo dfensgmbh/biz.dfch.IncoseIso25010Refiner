@@ -19,21 +19,21 @@ import contextlib
 import io
 from pathlib import Path
 
-from textual.app import App, ComposeResult, SystemCommand
 from textual import on
+from textual.app import App, ComposeResult, SystemCommand
 from textual.binding import Binding
+from textual.containers import Horizontal, Vertical
 from textual.widgets import (
+    Button,
     Footer,
     Header,
     Label,
-    Button,
+    Link,
+    ListItem,
+    ListView,
     Log,
     Static,
-    Link,
-    ListView,
-    ListItem,
 )
-from textual.containers import Horizontal, Vertical
 
 from biz.dfch.i18n.language_code import LanguageCode
 
@@ -44,12 +44,12 @@ from ..commands.restore import app as restore_app
 from ..info import Info
 from ..session import Session
 from .input_box import InputBox
-from .message_box_ok import MessageBoxOk
-from .message_box_ok_cancel import MessageBoxOkCancel
 from .message_box import (
     MessageBox,
     MessageBoxResult,
 )
+from .message_box_ok import MessageBoxOk
+from .message_box_ok_cancel import MessageBoxOkCancel
 
 
 class Container(Static):
@@ -315,7 +315,7 @@ class Tui(App):
         session_id: str,
         language: LanguageCode,
         *args,
-        **kwargs
+        **kwargs,
     ):
         """Initialise the TUI with the given workspace path and session ID."""
         super().__init__(*args, **kwargs)

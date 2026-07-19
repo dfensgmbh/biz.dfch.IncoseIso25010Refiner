@@ -60,7 +60,7 @@ class OpenAiChatClient(ChatClientBase):
                 "Authorization": f"Bearer {self._config.api_token}",
                 "Content-Type": "application/json",
                 "User-Agent": (
-                    "Mozilla/5.0 (compatible; " "IncoseIso25010Refiner/1.0)"
+                    "Mozilla/5.0 (compatible; IncoseIso25010Refiner/1.0)"
                 ),
             },
             method="POST",

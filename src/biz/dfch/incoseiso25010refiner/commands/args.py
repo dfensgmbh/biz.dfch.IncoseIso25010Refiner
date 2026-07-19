@@ -84,7 +84,7 @@ WorkspaceOpt = Annotated[
         "-ws",
         exists=True,
         envvar="REQ_WORKSPACE",
-        help="The workspace base path. " "This contains the session folder.",
+        help="The workspace base path. This contains the session folder.",
         file_okay=False,
         dir_okay=True,
         resolve_path=True,
@@ -176,7 +176,7 @@ InputOpt = Annotated[
     typer.Option(
         "--input",
         "-i",
-        help="Input text. " "You can also specify a path to an existing file.",
+        help="Input text. You can also specify a path to an existing file.",
     ),
 ]
 
@@ -185,7 +185,7 @@ PromptOpt = Annotated[
     typer.Option(
         "--prompt",
         "-t",
-        help="Prompt text. " "You can also specify a path to an existing file.",
+        help="Prompt text. You can also specify a path to an existing file.",
     ),
 ]
 
