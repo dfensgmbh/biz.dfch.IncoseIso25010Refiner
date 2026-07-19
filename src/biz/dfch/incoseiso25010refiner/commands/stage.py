@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-# flake8: noqa=E501
+# flake8: noqa: E501
 # pylint: disable=C0103
 # pylint: disable=C0301
 
