@@ -53,9 +53,7 @@ class TranslationResponse(BaseModel):
 
     original_text: str = Field(description="The original text provided")
     translated_text: str = Field(description="The translated text")
-    detected_language: str = Field(
-        description="ISO 639-1 language code of original text"
-    )
+    detected_language: str = Field(description="ISO 639-1 language code of original text")
 
 
 load_dotenv()
@@ -137,9 +135,7 @@ def translate(  # noqa: PLR0913
             base_url=uri,
             model=model_name,
             system_prompt=(
-                "You are a requirements engineer and "
-                "professional translator. "
-                f"Translate the input to {language.value}."
+                f"You are a requirements engineer and professional translator. Translate the input to {language.value}."
             ),
             user_prompt=text,
         ).complete()
@@ -162,13 +158,9 @@ def translate(  # noqa: PLR0913
             elapsed,
         )
 
-        file = session.add_item(
-            f"summary-{language.name}", response.translated_text, ".md"
-        )
+        file = session.add_item(f"summary-{language.name}", response.translated_text, ".md")
 
-        log.info(
-            f"You can now continue your work in: '{RichUtils.make_link(file)}'"
-        )
+        log.info(f"You can now continue your work in: '{RichUtils.make_link(file)}'")
 
     except TimeoutError as ex:
         sw.stop()

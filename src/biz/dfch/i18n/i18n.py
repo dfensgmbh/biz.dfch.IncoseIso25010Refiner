@@ -140,9 +140,7 @@ class I18n:
         path = (Path(base_path) / relative_path).resolve()
         return str(path)
 
-    def get_resource_path(
-        self, item: str, code: LanguageCode | None = None
-    ) -> str:
+    def get_resource_path(self, item: str, code: LanguageCode | None = None) -> str:
         """Returns the normalised resource path for an item.
 
         Args:

@@ -81,10 +81,7 @@ class Clock:
             "1927-03-27 08:15:42.123"
         """
         current = cls._current()
-        return (
-            current.strftime("%Y-%m-%d %H:%M:%S.")
-            + f"{current.microsecond // 1000:03d}"
-        )
+        return current.strftime("%Y-%m-%d %H:%M:%S.") + f"{current.microsecond // 1000:03d}"
 
     @classmethod
     def format_isodate(cls, dt: datetime) -> str:
@@ -95,9 +92,7 @@ class Clock:
         """
         assert isinstance(dt, datetime), type(dt)
 
-        return (
-            dt.strftime("%Y-%m-%d %H:%M:%S.") + f"{dt.microsecond // 1000:03d}"
-        )
+        return dt.strftime("%Y-%m-%d %H:%M:%S.") + f"{dt.microsecond // 1000:03d}"
 
     @classmethod
     def now_file(cls) -> str:

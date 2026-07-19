@@ -77,14 +77,9 @@ class ChatConfig:
         if provider not in Providers:
             raise ValueError(f"Incorrect chat provider: '{provider}'.")
 
-        api_token = getattr(args, "api_token", "") or os.environ.get(
-            "CHAT_API_TOKEN"
-        )
+        api_token = getattr(args, "api_token", "") or os.environ.get("CHAT_API_TOKEN")
         if not api_token and Providers.OLLAMA == provider:
-            raise ValueError(
-                "API token must be provided via --api-token or "
-                "CHAT_API_TOKEN environment variable."
-            )
+            raise ValueError("API token must be provided via --api-token or CHAT_API_TOKEN environment variable.")
 
         template = getattr(args, "template", None)
         template_text = ""
@@ -95,15 +90,11 @@ class ChatConfig:
 
             template_text = Path(template_file).read_text(encoding="utf-8")
 
-        base_url = getattr(
-            args, "base_url", ChatConfig.default_values[provider].base_url
-        )
+        base_url = getattr(args, "base_url", ChatConfig.default_values[provider].base_url)
         if not base_url.strip():
             base_url = ChatConfig.default_values[provider].base_url
 
-        model = getattr(
-            args, "model", ChatConfig.default_values[provider].model
-        )
+        model = getattr(args, "model", ChatConfig.default_values[provider].model)
         if not model.strip():
             model = ChatConfig.default_values[provider].model
 

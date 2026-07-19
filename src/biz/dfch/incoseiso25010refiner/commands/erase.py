@@ -49,13 +49,8 @@ def erase(
 
     _ = ctx
 
-    message = (
-        f"Do you want to erase the session with id '{session_id}' "
-        f"in '{workspace}'?"
-    )
-    if not do_not_confirm and not Confirm.ask(
-        message, show_default=True, default=True
-    ):
+    message = f"Do you want to erase the session with id '{session_id}' in '{workspace}'?"
+    if not do_not_confirm and not Confirm.ask(message, show_default=True, default=True):
         log.error("Stop erase.")
         return
 

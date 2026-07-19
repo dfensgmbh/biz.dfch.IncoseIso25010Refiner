@@ -47,34 +47,24 @@ ModelOpt = Annotated[
     ),
 ]
 
-ApiTokenOpt = Annotated[
-    str, typer.Option(envvar="CHAT_API_TOKEN", help="API Token")
-]
+ApiTokenOpt = Annotated[str, typer.Option(envvar="CHAT_API_TOKEN", help="API Token")]
 
 BaseUriOpt = Annotated[
     str,
-    typer.Option(
-        "--base-url", "-u", "-uri", envvar="CHAT_BASE_URL", help="Base URL"
-    ),
+    typer.Option("--base-url", "-u", "-uri", envvar="CHAT_BASE_URL", help="Base URL"),
 ]
 
 JiraBaseUriOpt = Annotated[
     str,
-    typer.Option(
-        "--jira-base-url", envvar="JIRA_BASE_URL", help="Jira Base URL"
-    ),
+    typer.Option("--jira-base-url", envvar="JIRA_BASE_URL", help="Jira Base URL"),
 ]
 
 JiraProjectKeyOpt = Annotated[
     str,
-    typer.Option(
-        "--jira-project-key", envvar="JIRA_PROJECT_KEY", help="Jira Project Key"
-    ),
+    typer.Option("--jira-project-key", envvar="JIRA_PROJECT_KEY", help="Jira Project Key"),
 ]
 
-JiraApiTokenOpt = Annotated[
-    str, typer.Option(envvar="JIRA_API_TOKEN", help="Jira API Token")
-]
+JiraApiTokenOpt = Annotated[str, typer.Option(envvar="JIRA_API_TOKEN", help="Jira API Token")]
 
 WorkspaceOpt = Annotated[
     Path,
@@ -133,24 +123,17 @@ class CharacteristicsType(click.ParamType):
                 return member
 
         # 2) Partial match by name (case-insensitive).
-        matches = [
-            member
-            for member in Iso25010
-            if member.name.lower().startswith(value.lower())
-        ]
+        matches = [member for member in Iso25010 if member.name.lower().startswith(value.lower())]
 
         if len(matches) == 1:
             return matches[0]
 
         if len(matches) > 1:
             matched_names = ", ".join(m.name for m in matches)
-            self.fail(
-                f"'{value}' is ambiguous. Matches: {matched_names}", param, ctx
-            )
+            self.fail(f"'{value}' is ambiguous. Matches: {matched_names}", param, ctx)
 
         self.fail(
-            f"'{value}' is not a valid choice. Choose from: "
-            f"{', '.join(m.name for m in Iso25010)}",
+            f"'{value}' is not a valid choice. Choose from: {', '.join(m.name for m in Iso25010)}",
             param,
             ctx,
         )
@@ -201,8 +184,7 @@ TemperateOpt = Annotated[
     int,
     typer.Option(
         "--temperature",
-        help="Define the temperature of the model. "
-        "Valid values are between 0 and 1.",
+        help="Define the temperature of the model. Valid values are between 0 and 1.",
     ),
 ]
 
@@ -256,24 +238,17 @@ class LanguageCodeType(click.ParamType):
                 return member
 
         # 2) Partial match by name (case-insensitive).
-        matches = [
-            member
-            for member in LanguageCode
-            if member.name.lower().startswith(value.lower())
-        ]
+        matches = [member for member in LanguageCode if member.name.lower().startswith(value.lower())]
 
         if len(matches) == 1:
             return matches[0]
 
         if len(matches) > 1:
             matched_names = ", ".join(m.name for m in matches)
-            self.fail(
-                f"'{value}' is ambiguous. Matches: {matched_names}", param, ctx
-            )
+            self.fail(f"'{value}' is ambiguous. Matches: {matched_names}", param, ctx)
 
         self.fail(
-            f"'{value}' is not a valid choice. Choose from: "
-            f"{', '.join(m.name for m in LanguageCode)}",
+            f"'{value}' is not a valid choice. Choose from: {', '.join(m.name for m in LanguageCode)}",
             param,
             ctx,
         )

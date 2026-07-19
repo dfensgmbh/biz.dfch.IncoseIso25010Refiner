@@ -63,14 +63,10 @@ class AiTokenUsage:
             "input_tokens": q(r(usage, "input_tokens")),
             "output_tokens": q(r(usage, "output_tokens")),
             "raw_input_tokens": q(r(usage, "raw_input_tokens")),
-            "accepted_prediction_tokens": q(
-                r(ctd, "accepted_prediction_tokens")
-            ),
+            "accepted_prediction_tokens": q(r(ctd, "accepted_prediction_tokens")),
             "completion_audio_tokens": q(r(ctd, "audio_tokens")),
             "reasoning_tokens": q(r(ctd, "reasoning_tokens")),
-            "rejected_prediction_tokens": q(
-                r(ctd, "rejected_prediction_tokens")
-            ),
+            "rejected_prediction_tokens": q(r(ctd, "rejected_prediction_tokens")),
             "prompt_audio_tokens": q(r(ptd, "audio_tokens")),
             "cached_tokens": q(r(ptd, "cached_tokens")),
         }

@@ -141,9 +141,7 @@ class LiteLlmAgent:
                 # branch's `for part in msg.parts` loop above.
                 for req_part in msg.parts:
                     if isinstance(req_part, SystemPromptPart):
-                        log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
-                        )
+                        log.debug(f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}")
                         m = Message(
                             content=str(req_part.content),
                             role="system",
@@ -151,9 +149,7 @@ class LiteLlmAgent:
                         converted.append(m)
                         continue
                     if isinstance(req_part, UserPromptPart):
-                        log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
-                        )
+                        log.debug(f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}")
                         m = Message(
                             content=str(req_part.content),
                             role="user",
@@ -161,9 +157,7 @@ class LiteLlmAgent:
                         converted.append(m)
                         continue
                     if isinstance(req_part, ToolReturnPart):
-                        log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
-                        )
+                        log.debug(f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}")
                         converted.append(
                             {  # type: ignore
                                 "role": "tool",
@@ -174,9 +168,7 @@ class LiteLlmAgent:
                         )
                         continue
                     if isinstance(req_part, RetryPromptPart):
-                        log.debug(
-                            f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
-                        )
+                        log.debug(f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}")
                         converted.append(
                             {  # type: ignore
                                 "role": "tool",
@@ -188,12 +180,8 @@ class LiteLlmAgent:
                         continue
 
                     # Catch all other parts.
-                    log.debug(
-                        f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
-                    )
-                    assert False, (
-                        f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
-                    )
+                    log.debug(f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}")
+                    assert False, f"[PYD {c}:{type(req_part).__name__}>>>] {req_part}"
 
         def _convert_tool(tool: ToolDefinition) -> dict:
             return {

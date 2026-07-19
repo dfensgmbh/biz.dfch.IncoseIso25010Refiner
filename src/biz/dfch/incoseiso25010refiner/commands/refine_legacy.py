@@ -162,9 +162,7 @@ def refine_legacy(  # noqa: PLR0913, PLR0915
     result = RichUtils.create_analysis_table(iso25010_response.analysis)
     console.print(result)
 
-    result = RichUtils.create_scores_table(
-        iso25010_response.summary.scores, iso25010_response.summary.rationale
-    )
+    result = RichUtils.create_scores_table(iso25010_response.summary.scores, iso25010_response.summary.rationale)
     console.print(result)
 
     result = RichUtils.create_iso25010_chart(iso25010_response.summary.scores)
@@ -172,16 +170,11 @@ def refine_legacy(  # noqa: PLR0913, PLR0915
 
     # Create copy of source document,
     # then change source document and add new questions to it.
-    updated = FileUtils.update_source_doc(
-        source_doc, iso25010_response.questions
-    )
+    updated = FileUtils.update_source_doc(source_doc, iso25010_response.questions)
     session.source.update(updated, do_add_version=True)
 
     # Save summary.
     summary_json = json.dumps(asdict(iso25010_response.summary), indent=2)
     session.add_item("refine-summary", summary_json, Constant.JSON_FILE_EXT)
 
-    log.info(
-        "You can now continue your work in: "
-        f"'{RichUtils.make_link(session.source.file)}'"
-    )
+    log.info(f"You can now continue your work in: '{RichUtils.make_link(session.source.file)}'")

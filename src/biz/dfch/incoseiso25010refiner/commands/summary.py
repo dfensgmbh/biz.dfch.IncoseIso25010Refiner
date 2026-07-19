@@ -145,7 +145,4 @@ def summary(  # noqa: PLR0913
 
     summary_doc = session.add_item("summary", response, suffix=".md")
 
-    log.info(
-        "You can now continue your work in: "
-        f"'{RichUtils.make_link(summary_doc)}'"
-    )
+    log.info(f"You can now continue your work in: '{RichUtils.make_link(summary_doc)}'")

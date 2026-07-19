@@ -121,13 +121,7 @@ class TestCopyright(unittest.TestCase):
             text=True,
             check=True,
         )
-        file_names = sorted(
-            {
-                e.strip()
-                for e in git_result.stdout.splitlines()
-                if e.strip().lower().endswith(".py")
-            }
-        )
+        file_names = sorted({e.strip() for e in git_result.stdout.splitlines() if e.strip().lower().endswith(".py")})
         for file_name in file_names:
             full_name = path / file_name
             if not Path.exists(full_name):

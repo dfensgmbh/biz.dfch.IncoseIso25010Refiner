@@ -196,16 +196,12 @@ def refine(  # noqa: PLR0913
     )
     console.print(result_table)
 
-    result_table = RichUtils.create_iso25010_chart(
-        iso25010_response.summary.scores
-    )
+    result_table = RichUtils.create_iso25010_chart(iso25010_response.summary.scores)
     console.print(result_table)
 
     # Create copy of source document,
     # then change source document and add new questions to it.
-    updated = FileUtils.update_source_doc(
-        source_doc, iso25010_response.questions
-    )
+    updated = FileUtils.update_source_doc(source_doc, iso25010_response.questions)
     session.source.update(updated, do_add_version=True)
 
     # Save summary.
@@ -215,7 +211,4 @@ def refine(  # noqa: PLR0913
         Constant.JSON_FILE_EXT,
     )
 
-    log.info(
-        "You can now continue your work in: "
-        f"'{RichUtils.make_link(session.source.file)}'"
-    )
+    log.info(f"You can now continue your work in: '{RichUtils.make_link(session.source.file)}'")

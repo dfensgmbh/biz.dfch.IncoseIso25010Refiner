@@ -107,8 +107,7 @@ def stage(  # noqa: PLR0913
     log.debug("Loading last response item from session '%s' ...", session_id)
     response_items = session.get_items(response_base)
     assert len(response_items) > 0, (
-        f"No response files found in session '{session_id}'. "
-        "Run the 'refine' command first."
+        f"No response files found in session '{session_id}'. Run the 'refine' command first."
     )
     last_response_file = response_items[0]
     log.info(
@@ -137,10 +136,7 @@ def stage(  # noqa: PLR0913
                 chars.append(Iso25010(cls.characteristic))
 
         # Build a combined rationale from all classifications.
-        combined_rationale = " | ".join(
-            f"{cls.characteristic}: {cls.rationale}"
-            for cls in item.classifications
-        )
+        combined_rationale = " | ".join(f"{cls.characteristic}: {cls.rationale}" for cls in item.classifications)
 
         req = Requirement(
             name=item.sentence,

@@ -55,9 +55,7 @@ class MessageBox(ModalScreen[int]):
         assert isinstance(text, str), type(text)
         assert text.strip()
         assert isinstance(buttons, list), type(buttons)
-        assert 0 <= default_button < len(buttons), (
-            f"default_button {default_button} out of range."
-        )
+        assert 0 <= default_button < len(buttons), f"default_button {default_button} out of range."
 
         self._text = text
         self._buttons = list(buttons)
@@ -72,9 +70,7 @@ class MessageBox(ModalScreen[int]):
             yield Label(self._text, id="id_messagebox_text")
             with Horizontal(id="id_messagebox_buttons"):
                 for i, label in enumerate(self._buttons):
-                    variant = (
-                        "primary" if i == self._default_button else "default"
-                    )
+                    variant = "primary" if i == self._default_button else "default"
                     yield Button(
                         str(label),
                         variant=variant,

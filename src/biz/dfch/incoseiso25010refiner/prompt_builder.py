@@ -53,17 +53,13 @@ def get_prompt(
 
     assert isinstance(template, str), type(template)
     assert template.strip(), "template must not be empty."
-    assert characteristics is None or isinstance(characteristics, list), type(
-        characteristics
-    )
+    assert characteristics is None or isinstance(characteristics, list), type(characteristics)
     assert isinstance(language, LanguageCode), type(language)
     assert isinstance(questions, int), type(questions)
     assert 0 < questions, questions
 
     template_file = Constant.PROMPTS_DIR / template
-    assert template_file.exists(), (
-        f"Prompt template must exist: '{template_file}'."
-    )
+    assert template_file.exists(), f"Prompt template must exist: '{template_file}'."
 
     prompt = template_file.read_text(encoding="utf-8").replace(
         "{num_questions}",

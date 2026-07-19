@@ -63,9 +63,7 @@ class TestJiraClientIntegration(unittest.TestCase):
     _created_issue_key: str | None
 
     def setUp(self):
-        self.client = JiraClient(
-            base_url=JIRA_BASE_URL, api_token=JIRA_API_TOKEN
-        )
+        self.client = JiraClient(base_url=JIRA_BASE_URL, api_token=JIRA_API_TOKEN)
         self._created_issue_key = None
 
     def tearDown(self):
@@ -89,8 +87,7 @@ class TestJiraClientIntegration(unittest.TestCase):
 
         self.assertTrue(
             self._created_issue_key.startswith(f"{JIRA_PROJECT_KEY}-"),
-            f"Expected key starting with '{JIRA_PROJECT_KEY}-', "
-            f"got '{self._created_issue_key}'",
+            f"Expected key starting with '{JIRA_PROJECT_KEY}-', got '{self._created_issue_key}'",
         )
 
     def test_create_issue_with_all_fields(self):

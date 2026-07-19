@@ -114,9 +114,7 @@ class RichUtils:
         )
 
         table.add_column("#", style="bold white", justify="center", min_width=4)
-        table.add_column(
-            "Id", style="bold white", justify="center", min_width=4
-        )
+        table.add_column("Id", style="bold white", justify="center", min_width=4)
         table.add_column("Classifications", style="bold yellow", min_width=22)
         table.add_column("Text", style="white", ratio=1)
 
@@ -144,10 +142,7 @@ class RichUtils:
         table.add_column("Content", ratio=1)
 
         for i, question in enumerate(questions):
-            table.add_row(
-                f"[bold yellow]{question.characteristic}:[/bold yellow] "
-                f"[dim]{question.rationale}[/dim]"
-            )
+            table.add_row(f"[bold yellow]{question.characteristic}:[/bold yellow] [dim]{question.rationale}[/dim]")
             table.add_row(f"[white]{question.question}[/white]")
 
             if i < len(questions) - 1:
@@ -216,8 +211,6 @@ class RichUtils:
                 style="grey35",
                 complete_style=RichUtils._bar_style(score.score),
             )
-            table.add_row(
-                score.characteristic, progress_bar, f"{score.score:.2f}"
-            )
+            table.add_row(score.characteristic, progress_bar, f"{score.score:.2f}")
 
         return table

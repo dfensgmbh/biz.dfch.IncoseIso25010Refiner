@@ -69,9 +69,7 @@ class InputBox(ModalScreen[str | None]):
             )
             with Horizontal(id="id_inputbox_buttons"):
                 yield Button("OK", variant="primary", id="id_inputbox_ok")
-                yield Button(
-                    "Cancel", variant="default", id="id_inputbox_cancel"
-                )
+                yield Button("Cancel", variant="default", id="id_inputbox_cancel")
 
     def on_mount(self) -> None:
         """Focus the input field when the dialog opens."""

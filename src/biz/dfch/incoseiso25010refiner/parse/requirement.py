@@ -69,10 +69,6 @@ class Requirement:
             description=data.get("description", ""),
             rationale=data.get("rationale", ""),
             consequences=data.get("consequences", ""),
-            characteristics=[
-                Iso25010(c) for c in data.get("characteristics", [])
-            ],
-            status=RequirementStatus(
-                data.get("status", RequirementStatus.DRAFT)
-            ),
+            characteristics=[Iso25010(c) for c in data.get("characteristics", [])],
+            status=RequirementStatus(data.get("status", RequirementStatus.DRAFT)),
         )

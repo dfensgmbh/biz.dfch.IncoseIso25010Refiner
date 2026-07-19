@@ -83,9 +83,7 @@ def resolve(  # noqa: PLR0912, PLR0913, PLR0915
     path = Path(workspace / session_id).resolve()
     assert path.exists(), f"Path must exist: '{path}'."
 
-    assert isinstance(keep_questions_without_answer, bool), type(
-        keep_questions_without_answer
-    )
+    assert isinstance(keep_questions_without_answer, bool), type(keep_questions_without_answer)
 
     if characteristics is None:
         characteristics = Iso25010.all()
@@ -115,9 +113,7 @@ def resolve(  # noqa: PLR0912, PLR0913, PLR0915
         "temperature": temperature,
         "characteristics": characteristics,
         "keep": keep_questions_without_answer,
-        "questions": "\n".join(
-            [f"[{q.idx + 1}] {q.question}" for q in questions_with_answer]
-        ),
+        "questions": "\n".join([f"[{q.idx + 1}] {q.question}" for q in questions_with_answer]),
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(
@@ -177,9 +173,7 @@ def resolve(  # noqa: PLR0912, PLR0913, PLR0915
             )
 
         elapsed = sw.elapsed_seconds
-        log.info(
-            "Resolve question [%s] OK. TotalSeconds: %.3f", line_number, elapsed
-        )
+        log.info("Resolve question [%s] OK. TotalSeconds: %.3f", line_number, elapsed)
 
     # Now replace the original question and answers with the merged responses.
     first = -1
@@ -200,9 +194,7 @@ def resolve(  # noqa: PLR0912, PLR0913, PLR0915
             continue
 
         question = next((q for q in questions if q.idx == i), None)
-        assert question is not None, (
-            f"Logic error. Question index not valid: {i}."
-        )
+        assert question is not None, f"Logic error. Question index not valid: {i}."
 
         log.debug(
             "Merge question and answer [%s] ...",
@@ -234,11 +226,7 @@ def resolve(  # noqa: PLR0912, PLR0913, PLR0915
         # Examine if there is a question within the two consecutive previous
         # lines.
         # Then, insert one empty line.
-        if (
-            i > 1
-            and lines[i - 1].strip() == ""
-            and lines[i - 2].startswith(">")
-        ):
+        if i > 1 and lines[i - 1].strip() == "" and lines[i - 2].startswith(">"):
             lines.insert(i, "")
             log.debug("[%s] Insert single line padding.", i)
             continue
@@ -246,7 +234,4 @@ def resolve(  # noqa: PLR0912, PLR0913, PLR0915
     contents = "\n".join(lines)
     session.source.update(contents, do_add_version=True)
 
-    log.info(
-        "You can now continue your work in: "
-        f"'{RichUtils.make_link(session.source.file)}'"
-    )
+    log.info(f"You can now continue your work in: '{RichUtils.make_link(session.source.file)}'")

@@ -68,9 +68,7 @@ def replay(
         assert full_name.is_file(), f"File is not a file: '{full_name}'."
         files = [full_name]
     else:
-        pattern = (
-            f"{Constant.RESPONSE_FILE_PREFIX}*{Constant.RESPONSE_FILE_EXT}"
-        )
+        pattern = f"{Constant.RESPONSE_FILE_PREFIX}*{Constant.RESPONSE_FILE_EXT}"
         files = sorted(path.glob(pattern), reverse=True)
 
     if characteristics is None:
@@ -106,15 +104,10 @@ def replay(
 
         # Create copy of source document,
         # then change source document and add new questions to it.
-        updated = FileUtils.update_source_doc(
-            source_doc, iso25010_response.questions
-        )
+        updated = FileUtils.update_source_doc(source_doc, iso25010_response.questions)
         session.source.update(updated, do_add_version=True)
         source_doc.write_text(updated, encoding="utf-8")
 
-        log.info(
-            "You can now continue your work in: "
-            f"'{RichUtils.make_link(session.source.file)}'"
-        )
+        log.info(f"You can now continue your work in: '{RichUtils.make_link(session.source.file)}'")
 
         break

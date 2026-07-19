@@ -174,9 +174,7 @@ class JiraClient:
             RuntimeError: If the Jira API returns a non-success status code.
         """
 
-        assert isinstance(issue_key, str) and issue_key.strip(), (
-            "issue_key must be a non-empty string."
-        )
+        assert isinstance(issue_key, str) and issue_key.strip(), "issue_key must be a non-empty string."
 
         payload = self._build_edit_payload(
             summary=summary,
@@ -208,9 +206,7 @@ class JiraClient:
             RuntimeError: If the Jira API returns a non-success status code.
         """
 
-        assert isinstance(issue_key, str) and issue_key.strip(), (
-            "issue_key must be a non-empty string."
-        )
+        assert isinstance(issue_key, str) and issue_key.strip(), "issue_key must be a non-empty string."
 
         url = self._api_url(f"issue/{issue_key}")
         response = self._session.delete(url)
@@ -253,9 +249,7 @@ class JiraClient:
             payload["fields"]["customfield_14601"] = fields.source
 
         if fields.characteristic is not None:
-            payload["fields"]["customfield_14602"] = {
-                "value": fields.characteristic
-            }
+            payload["fields"]["customfield_14602"] = {"value": fields.characteristic}
 
         if fields.level is not None:
             payload["fields"]["customfield_14600"] = {"value": fields.level}
@@ -312,7 +306,4 @@ class JiraClient:
         if response.ok:
             return
 
-        raise RuntimeError(
-            f"Jira API error during '{operation}': "
-            f"HTTP {response.status_code} – {response.text}"
-        )
+        raise RuntimeError(f"Jira API error during '{operation}': HTTP {response.status_code} – {response.text}")

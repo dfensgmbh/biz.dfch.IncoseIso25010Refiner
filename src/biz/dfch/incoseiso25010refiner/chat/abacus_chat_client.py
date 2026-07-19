@@ -59,9 +59,7 @@ class AbacusChatClient(ChatClientBase):
             headers={
                 "Authorization": f"Bearer {self._config.api_token}",
                 "Content-Type": "application/json",
-                "User-Agent": (
-                    "Mozilla/5.0 (compatible; IncoseIso25010Refiner/1.0)"
-                ),
+                "User-Agent": ("Mozilla/5.0 (compatible; IncoseIso25010Refiner/1.0)"),
             },
             method="POST",
         )
@@ -71,9 +69,7 @@ class AbacusChatClient(ChatClientBase):
                 data = json.loads(response.read().decode(self._encoding))
         except urllib.error.HTTPError as e:
             body = e.read().decode(self._encoding, errors="replace")
-            raise RuntimeError(
-                f"Abacus API request failed: HTTP {e.code} {e.reason} — {body}"
-            ) from e
+            raise RuntimeError(f"Abacus API request failed: HTTP {e.code} {e.reason} — {body}") from e
         except urllib.error.URLError as e:
             raise RuntimeError(f"Abacus API request failed: {e.reason}") from e
 

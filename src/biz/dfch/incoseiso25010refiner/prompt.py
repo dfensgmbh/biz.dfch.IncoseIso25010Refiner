@@ -40,10 +40,7 @@ class Prompt:
             return path
         root = os.environ.get(self.ROOT_PATH_VAR)
         if not root:
-            raise OSError(
-                f"Prompt path '{rel_or_abs}' is relative but "
-                f"env var '{self.ROOT_PATH_VAR}' is not set."
-            )
+            raise OSError(f"Prompt path '{rel_or_abs}' is relative but env var '{self.ROOT_PATH_VAR}' is not set.")
         return Path(root) / path
 
     @cache  # pylint: disable=W1518

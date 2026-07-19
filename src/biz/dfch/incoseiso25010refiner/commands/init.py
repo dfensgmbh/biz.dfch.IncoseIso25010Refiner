@@ -77,11 +77,6 @@ def init(
     console = Console()
     console.print(table)
 
-    session = Session.create(
-        workspace, name=session_id, characteristics=characteristics, title=text
-    )
+    session = Session.create(workspace, name=session_id, characteristics=characteristics, title=text)
 
-    console.print(
-        "You can now start your work in: "
-        f"'{RichUtils.make_link(session.source.file)}'."
-    )
+    console.print(f"You can now start your work in: '{RichUtils.make_link(session.source.file)}'.")

@@ -171,9 +171,7 @@ class TestJiraClientCreateIssue(unittest.TestCase):
             self.client.create_issue(fields)
 
         sent_payload = mock_post.call_args[1]["json"]
-        self.assertEqual(
-            sent_payload["fields"]["issuetype"]["name"], ISSUE_TYPE_REQUIREMENT
-        )
+        self.assertEqual(sent_payload["fields"]["issuetype"]["name"], ISSUE_TYPE_REQUIREMENT)
 
     def test_sends_project_key(self):
         fields = JiraRequirementFields(project_key=PROJECT_KEY, summary="S")
@@ -222,9 +220,7 @@ class TestJiraClientCreateIssue(unittest.TestCase):
             self.client.create_issue(fields)
 
         sent_payload = mock_post.call_args[1]["json"]
-        self.assertEqual(
-            sent_payload["fields"]["description"], "Detailed description."
-        )
+        self.assertEqual(sent_payload["fields"]["description"], "Detailed description.")
 
     def test_omits_description_when_not_provided(self):
         fields = JiraRequirementFields(project_key=PROJECT_KEY, summary="S")
@@ -254,9 +250,7 @@ class TestJiraClientCreateIssue(unittest.TestCase):
             self.client.create_issue(fields)
 
         sent_payload = mock_post.call_args[1]["json"]
-        self.assertEqual(
-            sent_payload["fields"]["labels"], ["functional", "high-priority"]
-        )
+        self.assertEqual(sent_payload["fields"]["labels"], ["functional", "high-priority"])
 
     def test_omits_labels_when_empty(self):
         fields = JiraRequirementFields(project_key=PROJECT_KEY, summary="S")
@@ -286,9 +280,7 @@ class TestJiraClientCreateIssue(unittest.TestCase):
             self.client.create_issue(fields)
 
         sent_payload = mock_post.call_args[1]["json"]
-        self.assertEqual(
-            sent_payload["fields"]["customfield_category"], "Performance"
-        )
+        self.assertEqual(sent_payload["fields"]["customfield_category"], "Performance")
 
     def test_omits_category_when_not_provided(self):
         fields = JiraRequirementFields(project_key=PROJECT_KEY, summary="S")
@@ -322,9 +314,7 @@ class TestJiraClientCreateIssue(unittest.TestCase):
         with patch.object(
             self.client._session,
             "post",
-            return_value=make_response(
-                401, {"errorMessages": ["Unauthorized"]}
-            ),
+            return_value=make_response(401, {"errorMessages": ["Unauthorized"]}),
         ):
             with self.assertRaises(RuntimeError) as ctx:
                 self.client.create_issue(fields)
@@ -383,13 +373,9 @@ class TestJiraClientEditIssue(unittest.TestCase):
 
         sent_payload = mock_put.call_args[1]["json"]
         self.assertEqual(sent_payload["fields"]["summary"], "New title")
-        self.assertEqual(
-            sent_payload["fields"]["description"], "New description"
-        )
+        self.assertEqual(sent_payload["fields"]["description"], "New description")
         self.assertEqual(sent_payload["fields"]["labels"], ["updated"])
-        self.assertEqual(
-            sent_payload["fields"]["customfield_category"], "Reliability"
-        )
+        self.assertEqual(sent_payload["fields"]["customfield_category"], "Reliability")
 
     def test_does_not_call_api_when_no_fields_provided(self):
         with patch.object(self.client._session, "put") as mock_put:

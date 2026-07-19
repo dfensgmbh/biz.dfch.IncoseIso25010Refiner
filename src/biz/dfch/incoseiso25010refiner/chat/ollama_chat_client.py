@@ -64,19 +64,13 @@ class OllamaChatClient(ChatClientBase):
         )
 
         try:
-            with urllib.request.urlopen(
-                request, timeout=self.REQUEST_TIMEOUT
-            ) as response:
+            with urllib.request.urlopen(request, timeout=self.REQUEST_TIMEOUT) as response:
                 data = json.loads(response.read().decode(self._encoding))
 
                 choices = data.get("choices", [])
                 usage = data.get("usage", {})
                 usage_map = {
-                    "finish_reason": (
-                        choices[0].get("finish_reason", "unknown")
-                        if choices
-                        else "unknown"
-                    ),
+                    "finish_reason": (choices[0].get("finish_reason", "unknown") if choices else "unknown"),
                     "prompt_tokens": usage.get("prompt_tokens", "?"),
                     "completion_tokens": usage.get("completion_tokens", "?"),
                     "total_tokens": usage.get("total_tokens", "?"),
@@ -85,9 +79,7 @@ class OllamaChatClient(ChatClientBase):
 
         except urllib.error.HTTPError as e:
             body = e.read().decode(self._encoding, errors="replace")
-            raise RuntimeError(
-                f"Ollama API request failed: HTTP {e.code} {e.reason} — {body}"
-            ) from e
+            raise RuntimeError(f"Ollama API request failed: HTTP {e.code} {e.reason} — {body}") from e
         except urllib.error.URLError as e:
             raise RuntimeError(f"Ollama API request failed: {e.reason}") from e
 

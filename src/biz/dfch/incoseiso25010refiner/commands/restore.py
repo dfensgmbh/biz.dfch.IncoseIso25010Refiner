@@ -80,15 +80,10 @@ def restore(
 
     file = files[0]
     message = f"Do you want to restore file: '{RichUtils.make_link(file)}'?"
-    if not do_not_confirm and not Confirm.ask(
-        message, show_default=True, default=True
-    ):
+    if not do_not_confirm and not Confirm.ask(message, show_default=True, default=True):
         log.error("Stop restore.")
         return
 
     session.source.restore_previous_version()
 
-    log.info(
-        "You can now continue your work in: "
-        f"'{RichUtils.make_link(session.source.file)}'."
-    )
+    log.info(f"You can now continue your work in: '{RichUtils.make_link(session.source.file)}'.")

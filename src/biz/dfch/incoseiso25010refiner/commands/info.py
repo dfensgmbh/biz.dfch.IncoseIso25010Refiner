@@ -56,9 +56,7 @@ def info(
     def get_links(items: list[Path]) -> list[str]:
         assert isinstance(items, list), type(items)
 
-        return [
-            RichUtils.make_link(i.resolve(), i.resolve().name) for i in items
-        ]
+        return [RichUtils.make_link(i.resolve(), i.resolve().name) for i in items]
 
     source_stem = session.source.file.stem
     data = {
@@ -66,15 +64,7 @@ def info(
         "session_id": RichUtils.make_link(session.path, session_id),
         "source": RichUtils.make_link(session.source.file),
         "versions": "\n".join(get_links(session.source.get_versions())),
-        "items": "\n".join(
-            get_links(
-                [
-                    i
-                    for i in session.get_items()
-                    if not i.stem.startswith(source_stem)
-                ]
-            )
-        ),
+        "items": "\n".join(get_links([i for i in session.get_items() if not i.stem.startswith(source_stem)])),
     }
     log.debug("Parameters: [%s]", data)
     table = RichUtils.make_table(

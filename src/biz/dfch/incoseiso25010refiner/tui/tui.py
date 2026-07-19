@@ -116,25 +116,17 @@ class Container(Static):
                             self._callback(line)
                     return len(text)
 
-            writer = LogWriter(
-                lambda line: self.app.call_from_thread(log.write_line, line)
-            )
+            writer = LogWriter(lambda line: self.app.call_from_thread(log.write_line, line))
             try:
                 with (
                     contextlib.redirect_stdout(writer),
                     contextlib.redirect_stderr(writer),
                 ):
                     app(args, standalone_mode=False)
-                self.app.call_from_thread(
-                    self.app.run_worker, self.refresh_session, thread=False
-                )
+                self.app.call_from_thread(self.app.run_worker, self.refresh_session, thread=False)
             except Exception as ex:  # pylint: disable=W0718
                 _ex = ex
-                self.app.call_from_thread(
-                    lambda: self.notify(
-                        str(_ex), title="Command FAILED.", severity="error"
-                    )
-                )
+                self.app.call_from_thread(lambda: self.notify(str(_ex), title="Command FAILED.", severity="error"))
 
         self.run_worker(stream, thread=True)
 
@@ -218,11 +210,7 @@ class Container(Static):
             return
 
         item_id = highlighted.id
-        matched = [
-            item
-            for item in self._session.get_items()
-            if f"item_{item.stem}" == item_id
-        ]
+        matched = [item for item in self._session.get_items() if f"item_{item.stem}" == item_id]
         if not matched:
             return
 
@@ -427,11 +415,7 @@ class Tui(App):
                 return
 
             try:
-                self.call_after_refresh(
-                    lambda: self.notify(
-                        f"Load new session: '{value}' ...", title=title
-                    )
-                )
+                self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' ...", title=title))
                 self._session = Session(self._session.workspace, value)
             except Exception as ex:  # pylint: disable=W0718
                 error = "Cannot get session"
@@ -445,11 +429,7 @@ class Tui(App):
                 )
                 return
 
-            self.call_after_refresh(
-                lambda: self.notify(
-                    f"Load new session: '{value}' OK.", title=title
-                )
-            )
+            self.call_after_refresh(lambda: self.notify(f"Load new session: '{value}' OK.", title=title))
             container = self.query_one(Container)
             container._session = self._session
             self.run_worker(container.refresh_session, thread=False)
@@ -492,17 +472,12 @@ class Tui(App):
 
         title = "Select Language"
 
-        languages = [
-            lang for lang in LanguageCode if lang != LanguageCode.DEFAULT
-        ]
+        languages = [lang for lang in LanguageCode if lang != LanguageCode.DEFAULT]
 
         def on_result(index: int) -> None:
-            if languages[index] == self._language or (
-                index < 0 or index >= len(languages)
-            ):
+            if languages[index] == self._language or (index < 0 or index >= len(languages)):
                 self.notify(
-                    "Language not changed. Active language: "
-                    f"'{self._language.value}'.",
+                    f"Language not changed. Active language: '{self._language.value}'.",
                     title=title,
                     severity="warning",
                 )

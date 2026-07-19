@@ -30,6 +30,4 @@ class MessageBoxOk(MessageBox):
     ):
         """Initialise with a single OK button."""
         buttons: list[str] = ["OK"]
-        super().__init__(
-            *args, text=text, buttons=buttons, title=title, **kwargs
-        )
+        super().__init__(*args, text=text, buttons=buttons, title=title, **kwargs)

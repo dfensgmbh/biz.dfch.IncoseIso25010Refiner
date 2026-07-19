@@ -78,9 +78,7 @@ class Session:
         _name: str
         _file: Path
 
-        def __init__(
-            self, session: Session, name: str = Constant.SOURCE_DOCUMENT
-        ) -> None:
+        def __init__(self, session: Session, name: str = Constant.SOURCE_DOCUMENT) -> None:
             """
             Make a `Source` object in the specified `Session`.
 
@@ -189,18 +187,10 @@ class Session:
             """
 
             checkpoint = self._session.get_checkpoint()
-            assert isinstance(checkpoint, datetime), (
-                "You must create a checkpoint before you can start this "
-                "function."
-            )
+            assert isinstance(checkpoint, datetime), "You must create a checkpoint before you can start this function."
 
             result = Path(
-                self._session.path
-                / (
-                    f"{self.file.stem}---"
-                    f"{Clock.format_file(checkpoint)}"
-                    f"{self.file.suffix}"
-                )
+                self._session.path / (f"{self.file.stem}---{Clock.format_file(checkpoint)}{self.file.suffix}")
             ).resolve()
 
             # Create copy of source document.
@@ -299,11 +289,7 @@ class Session:
                     if Question.is_terminator(line):
                         break
                     # Examine if there a 2 consecutive blank lines.
-                    if (
-                        line.strip() == ""
-                        and i + 1 < n
-                        and lines[i + 1].strip() == ""
-                    ):
+                    if line.strip() == "" and i + 1 < n and lines[i + 1].strip() == "":
                         break
 
                     answer = line.strip()
@@ -323,9 +309,7 @@ class Session:
         def __str__(self):
             return repr(self)
 
-    CHECKPOINT_PATTERN = re.compile(
-        r"---\d{4}-\d{2}-\d{2}---\d{2}-\d{2}-\d{2}$"
-    )
+    CHECKPOINT_PATTERN = re.compile(r"---\d{4}-\d{2}-\d{2}---\d{2}-\d{2}-\d{2}$")
 
     _source: Source
     _checkpoint: datetime
@@ -348,9 +332,7 @@ class Session:
         assert path.is_dir(), f"Path must be a path: '{path}'."
 
         source_doc = Path(Path(path) / Constant.SOURCE_DOCUMENT).resolve()
-        assert source_doc.exists(), (
-            f"Source document must exist: '{source_doc}'."
-        )
+        assert source_doc.exists(), f"Source document must exist: '{source_doc}'."
         assert source_doc.is_file(), f"Source must be a file: '{source_doc}'."
 
         self._checkpoint = self.set_checkpoint()
@@ -428,9 +410,7 @@ class Session:
             extension = Constant.DEFAULT_FILE_EXT
 
         timestamp = Clock.format_file(self._checkpoint)
-        result = (
-            self.path / f"{Constant.RESPONSE_FILE_PREFIX}{timestamp}{extension}"
-        ).resolve()
+        result = (self.path / f"{Constant.RESPONSE_FILE_PREFIX}{timestamp}{extension}").resolve()
 
         log.debug("Writing response: '%s' ...", result)
         assert not result.exists(), result
@@ -582,9 +562,7 @@ class Session:
         log.info("Create path '%s' OK.", path)
 
         source_doc = Path(path) / Constant.SOURCE_DOCUMENT
-        assert not source_doc.exists(), (
-            f"Source document must not exist: '{source_doc}'."
-        )
+        assert not source_doc.exists(), f"Source document must not exist: '{source_doc}'."
 
         template = f"""// This is the text for the requirement set '{name}'.
 // Title: {title}

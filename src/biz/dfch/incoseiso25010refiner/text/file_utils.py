@@ -60,9 +60,7 @@ class FileUtils:
         for parent in [current, *current.parents]:
             if (parent / marker).exists():
                 return parent
-        raise FileNotFoundError(
-            f"Could not find project root (looking for '{marker}')"
-        )
+        raise FileNotFoundError(f"Could not find project root (looking for '{marker}')")
 
     @staticmethod
     def update_source_doc(file: Path, questions: list[Question]) -> str:
@@ -107,11 +105,7 @@ class FileUtils:
             for characteristic in Iso25010:
                 if line.startswith(f"# {characteristic}"):
                     new_lines = [""]
-                    for q in [
-                        q.question
-                        for q in questions
-                        if q.characteristic == characteristic
-                    ]:
+                    for q in [q.question for q in questions if q.characteristic == characteristic]:
                         # new_lines.append(f"// {characteristic}")
                         new_lines.append(f"> {q}")
                         new_lines.append("")

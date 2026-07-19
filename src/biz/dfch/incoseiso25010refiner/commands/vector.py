@@ -57,9 +57,7 @@ app = typer.Typer(
 )
 
 
-def index_vocabulary(
-    words: list[Word], model: SentenceTransformer
-) -> list[PointStruct]:
+def index_vocabulary(words: list[Word], model: SentenceTransformer) -> list[PointStruct]:
     result = []
 
     for idx, word in enumerate(words):
@@ -103,12 +101,7 @@ def get_embedding_string(word: Word) -> list[str]:
         assert 0 < len(word.meanings)
 
         for m in word.meanings:
-            embedding = (
-                f"{nomic_prefix} "
-                f"Word '{word.name.lower()}' | "
-                f"Meaning '{m.value}' | "
-                f"Type '{word.type_.name}'"
-            )
+            embedding = f"{nomic_prefix} Word '{word.name.lower()}' | Meaning '{m.value}' | Type '{word.type_.name}'"
             result.append(embedding)
         return result
 
@@ -120,10 +113,7 @@ def get_embedding_string(word: Word) -> list[str]:
             assert isinstance(word.note.value, str), type(word.note.value)
             assert word.note.value.strip()
             embedding = (
-                f"{nomic_prefix} "
-                f"Word '{word.name.lower()} | "
-                f"Note '{word.note.value}' | "
-                f"Type '{word.type_.name}'"
+                f"{nomic_prefix} Word '{word.name.lower()} | Note '{word.note.value}' | Type '{word.type_.name}'"
             )
             result.append(embedding)
             return result

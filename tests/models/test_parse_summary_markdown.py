@@ -60,9 +60,7 @@ class TestSection(unittest.TestCase):
     def test_description_is_set(self):
         section = Section(
             title="Systemumfang",
-            description=[
-                "Der Geldautomat muss Bargeldabhebungen unterstützen."
-            ],
+            description=["Der Geldautomat muss Bargeldabhebungen unterstützen."],
         )
 
         self.assertEqual(
@@ -176,9 +174,7 @@ class TestParseSummaryMarkdown(unittest.TestCase):
         result = parse_summary_markdown(SAMPLE_TEXT)
 
         titles = [s.title for s in result]
-        self.assertNotIn(
-            "Zusammenfassung der Anforderungen für ABCD-1234", titles
-        )
+        self.assertNotIn("Zusammenfassung der Anforderungen für ABCD-1234", titles)
 
     def test_empty_string_returns_empty_list(self):
         result = parse_summary_markdown("")
