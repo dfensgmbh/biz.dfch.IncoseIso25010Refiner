@@ -1,4 +1,4 @@
-name: Pylint and unittest
+name: Ruff and unittest
 
 on: [push, pull_request]
 
@@ -23,9 +23,12 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync --frozen --python "${{ matrix.python-version }}" --extra dev --extra build
-    - name: Analyzing the code with pylint
+    - name: Lint with ruff
       run: |
-        uv run pylint $(git ls-files '*.py') || true
+        uv run ruff check .
+    - name: Check formatting with ruff
+      run: |
+        uv run ruff format --check .
     - name: Run unit tests
       run: |
         uv run python -m unittest discover -v -s tests -t . -p "test_*.py"
