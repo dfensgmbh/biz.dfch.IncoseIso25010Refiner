@@ -114,8 +114,8 @@ def parse_summary_markdown(text: str) -> list[Section]:
     sections: list[Section] = []
     current: Section | None = None
 
-    for line in text.splitlines():
-        line = line.strip()
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
         if re.match(r"^##\s+", line):
             current = Section(title=re.sub(r"^##\s+", "", line))
             sections.append(current)

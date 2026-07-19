@@ -39,9 +39,7 @@ class JiraRequirementFields:
     source: str | None = None  # customfield_14601
     characteristic: str | None = None  # customfield_14602
     level: str | None = None  # customfield_14600
-    assignee: str | None = (
-        None  # name (on-prem Jira uses name, not accountId)
-    )
+    assignee: str | None = None  # name (on-prem Jira uses name, not accountId)
 
 
 class JiraClient:

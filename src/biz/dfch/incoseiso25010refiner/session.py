@@ -552,7 +552,6 @@ class Session:
         shutil.rmtree(path, ignore_errors=False)
         log.info("Erase path '%s' OK.", path)
 
-
     @staticmethod
     def create(
         workspace: Path,

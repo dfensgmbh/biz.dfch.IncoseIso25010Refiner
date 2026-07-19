@@ -67,7 +67,6 @@ def _callback(ctx: typer.Context):
     _ = ctx
 
 
-
 app.command(name="list", epilog=Info.epilog)(list_)
 app.command(epilog=Info.epilog)(checkpoint)
 app.command(epilog=Info.epilog)(replay)
