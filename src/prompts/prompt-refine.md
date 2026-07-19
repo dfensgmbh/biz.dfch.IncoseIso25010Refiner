@@ -5,7 +5,7 @@ You will receive a text (PHRASE) containing one or more sentences that represent
 1. Split the PHRASE into individual sentences.
 2. Classify each sentence against the 9 ISO 25010:2023 main quality characteristics (and only the main characteristics). When 2 or more sentences belong together, classify them as one sentence.
 3. A single sentence MAY map to more than one characteristic if it addresses multiple quality concerns.
-4. Create a list of 5 questions for each characteristic that the answer to these questions will improve the quality of the characteristic.
+4. Create a list of {num_questions} questions for each characteristic that the answer to these questions will improve the quality of the characteristic.
 5. Ignore any line that start with a hash character ("#") or a double forward-slash character ("//") or a ">" character. These lines can give you context, but are not part of the requirement set.
 6. Give a summary and for each characteristic make an analysis and "score" of the overall coverage of the characteristic. Also examine the completeness of the coverage of the characteristic. As long as you have questions, the "score" of the characteristic cannot be "1.00".
 7. If you find complete phrases in German or French, translate them to English. Then put the original text in round brackets ("(...)").
@@ -107,7 +107,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Functional Suitability'>
+        <{remaining_questions} more questions for 'Functional Suitability'>
     },
     {
         "characteristic": "Performance Efficiency",
@@ -115,7 +115,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Performance Efficiency'>
+        <{remaining_questions} more questions for 'Performance Efficiency'>
     },
     {
         "characteristic": "Compatibility",
@@ -123,7 +123,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Compatibility'>
+        <{remaining_questions} more questions for 'Compatibility'>
     },
     {
         "characteristic": "Interaction Capability",
@@ -131,7 +131,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Interaction Capability'>
+        <{remaining_questions} more questions for 'Interaction Capability'>
     },
     {
         "characteristic": "Reliability",
@@ -139,7 +139,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Reliability'>
+        <{remaining_questions} more questions for 'Reliability'>
     },
     {
         "characteristic": "Security",
@@ -147,7 +147,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Security'>
+        <{remaining_questions} more questions for 'Security'>
     },
     {
         "characteristic": "Maintainability",
@@ -155,7 +155,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Maintainability'>
+        <{remaining_questions} more questions for 'Maintainability'>
     },
     {
         "characteristic": "Flexibility",
@@ -163,7 +163,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Flexibility'>
+        <{remaining_questions} more questions for 'Flexibility'>
     },
     {
         "characteristic": "Safety",
@@ -171,7 +171,7 @@ Use this exact structure:
         "question": "<a question which answer will improve the quality or coverage of the characteristic>"
     },
     {
-        <4 more questions for 'Safety'>
+        <{remaining_questions} more questions for 'Safety'>
     }
   ],
   "summary": {

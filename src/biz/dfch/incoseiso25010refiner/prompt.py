@@ -16,9 +16,9 @@
 """prompt package."""
 
 import os
-from functools import lru_cache
+from functools import cache
 from pathlib import Path
-from string import Template
+
 import yaml
 
 from .constant import Constant
@@ -40,13 +40,13 @@ class Prompt:
             return path
         root = os.environ.get(self.ROOT_PATH_VAR)
         if not root:
-            raise EnvironmentError(
+            raise OSError(
                 f"Prompt path '{rel_or_abs}' is relative but "
                 f"env var '{self.ROOT_PATH_VAR}' is not set."
             )
         return Path(root) / path
 
-    @lru_cache(maxsize=None)  # pylint: disable=W1518
+    @cache  # pylint: disable=W1518
     def _load_template(self, path: str) -> str:
         return Path(path).read_text(encoding="utf-8")
 

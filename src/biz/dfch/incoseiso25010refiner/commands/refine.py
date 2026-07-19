@@ -17,39 +17,40 @@
 
 from pathlib import Path
 
-from dotenv import load_dotenv
-from rich.console import Console
 import typer
-
+from dotenv import load_dotenv
 from pydantic_ai import Agent
 from pydantic_ai.models.openai import OpenAIChatModel
 from pydantic_ai.providers.openai import OpenAIProvider
+from rich.console import Console
 
 from biz.dfch.diagnostics import Stopwatch
 from biz.dfch.logging import log
 
 from ..chat.chat_config import ChatConfig
-from ..chat.lite_llm_agent import LiteLlmAgent
 from ..chat.providers import Providers
+from ..console import RichUtils
 from ..constant import Constant
 from ..info import Info
 from ..iso25010 import Iso25010
 from ..models import IsoResponse
+from ..prompt_builder import get_prompt
 from ..session import Session
 from ..text.file_utils import FileUtils
-from ..console import RichUtils
-
-from .args import ApiTokenOpt
-from .args import BaseUriOpt
-from .args import CharacteristicsOpt
-from .args import MaxTokensOpt
-from .args import ModelOpt
-from .args import ProviderOpt
-from .args import SessionIdOpt
-from .args import TemperateOpt
-from .args import WorkspaceOpt
-from .args import LanguageCode
-from .args import LanguageOpt
+from .args import (
+    ApiTokenOpt,
+    BaseUriOpt,
+    CharacteristicsOpt,
+    LanguageCode,
+    LanguageOpt,
+    MaxTokensOpt,
+    ModelOpt,
+    ProviderOpt,
+    QuestionsOpt,
+    SessionIdOpt,
+    TemperateOpt,
+    WorkspaceOpt,
+)
 from .refine_legacy import refine_legacy
 
 load_dotenv()
@@ -74,6 +75,7 @@ def refine(
     workspace: WorkspaceOpt = Path("."),
     characteristics: CharacteristicsOpt = None,
     language: LanguageOpt = LanguageCode.DE,
+    questions: QuestionsOpt = 5,
 ):
     """
     Query the LLM and add questions for refinement.
@@ -135,13 +137,16 @@ def refine(
         )
         return
 
-    # NOTE: This is the new provider
+    # NOTE: This is the new "openai" provider implementation.
     text = session.source.contents
     source_doc = session.source.file
 
-    template_file = Constant.PROMPTS_DIR / Constant.PROMPT_REFINE
-    assert template_file.exists(), template_file
-    template_content = template_file.read_text(encoding="utf-8")
+    template_content = get_prompt(
+        template=Constant.PROMPT_REFINE,
+        characteristics=characteristics,
+        language=language,
+        questions=questions,
+    )
 
     # Build and run the agent.
     pydantic_ai_model = OpenAIChatModel(
@@ -157,7 +162,7 @@ def refine(
         retries=3,
     )
 
-    log.debug("Query LLM (OpenAI) ...")
+    log.debug("Query LLM ...")
     sw = Stopwatch.start_new()
     try:
         result = agent.run_sync(text, output_type=IsoResponse)
@@ -176,6 +181,7 @@ def refine(
     log.info("Query LLM OK. TotalSeconds: %.3f", elapsed)
 
     iso25010_response: IsoResponse = result.output
+    assert isinstance(iso25010_response, IsoResponse), type(iso25010_response)
 
     # Persist the response as JSON.
     session.add_response(iso25010_response.model_dump_json(indent=2))

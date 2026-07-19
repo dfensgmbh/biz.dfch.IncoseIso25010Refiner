@@ -229,6 +229,16 @@ YesOpt = Annotated[
     ),
 ]
 
+QuestionsOpt = Annotated[
+    int,
+    typer.Option(
+        "--questions",
+        "-q",
+        min=1,
+        help="Number of questions to generate per ISO 25010 characteristic.",
+    ),
+]
+
 
 class LanguageCodeType(click.ParamType):
     """LanguageCodeType"""
