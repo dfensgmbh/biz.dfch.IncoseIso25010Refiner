@@ -80,7 +80,7 @@ def refine_legacy(  # noqa: PLR0913, PLR0915
     if -1 != temperature:
         data["temperature"] = temperature
 
-    template_file = Constant.PROMPTS_DIR / Constant.PROMPT_REFINE
+    template_file = Constant.PROMPTS_DIR / Constant.PROMPT_REFINE_LEGACY
     assert template_file.exists(), template_file
     data["template_content"] = template_file.read_text(encoding="utf-8")
 

@@ -44,5 +44,6 @@ class Constant:
     PROMPTS_DIR = (SRC_DIR / "prompts").resolve()
 
     PROMPT_REFINE = "prompt-refine.md"
+    PROMPT_REFINE_LEGACY = "prompt-refine-legacy.md"
     PROMPT_RESOLVE = "prompt-resolve.md"
     PROMPT_SUMMARY = "prompt-summary.md"
