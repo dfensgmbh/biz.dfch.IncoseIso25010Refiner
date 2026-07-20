@@ -1,6 +1,6 @@
 # MIT License
 
-# Copyright (c) 2024, 2025 d-fens GmbH, http://d-fens.ch
+# Copyright (c) 2024 - 2026 d-fens GmbH, http://d-fens.ch
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,20 +24,64 @@
 # pylint: disable=E0401
 # pylint: disable=E0611
 
-"""Module log"""
+"""
+Module log
+
+Consider to set these environment variables to avoid UTF-8 logging errors:
+
+PYTHONIOENCODING=utf-8
+PYTHONUTF8=1
+"""
 
 import logging
 import logging.config
+import sys
+from pathlib import Path
 
-from biz.dfch.i18n import I18n
+_LOGGER_NAME = "biz.dfch.IncoseIso25010Refiner"
 
-_LOGGER_NAME = "biz.dfch.asdste100lookup"
 # Note: When using `pyinstaller --onefile` make sure this file is available.
 _LOGGER_FILE = "logging.conf"
 
 
+def get_project_root(marker: str = "pyproject.toml") -> Path:
+    """
+    Get the project root directory.
+
+    We walk up the directory tree from this file, until we find the file marker.
+    """
+
+    current = Path(__file__).resolve()
+    for parent in [current, *current.parents]:
+        if (parent / marker).exists():
+            return parent
+    raise FileNotFoundError(f"Could not find project root (looking for '{marker}')")
+
+
+def get_project_src() -> Path:
+    """Get the project source directory.
+
+    Returns:
+        result (str): The runtime project source path. That depends on the
+            environment (frozen or source).
+    """
+
+    root = get_project_root()
+    result = Path(root / "src").resolve()
+
+    return result
+
+
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding="utf-8", errors="replace")  # type: ignore
+    except (AttributeError, ValueError):
+        # Streams may be redirected (e.g. pytest capture, pyinstaller)
+        # and not support reconfigure(); ignore in that case.
+        pass
+
 try:
-    logging.config.fileConfig(I18n.Factory.get().get_runtime_path(_LOGGER_FILE))
+    logging.config.fileConfig(get_project_src() / _LOGGER_FILE)
     log = logging.getLogger(_LOGGER_NAME)  # type: ignore
 
 except Exception as ex:

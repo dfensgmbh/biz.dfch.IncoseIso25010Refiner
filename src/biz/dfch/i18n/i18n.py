@@ -38,11 +38,13 @@ class I18n:
 
     _RES_PATH = "res"
 
+    _PRIVATE_TOKEN: ClassVar[object] = object()
+
     _path: str
 
-    def __init__(self, value: str):
+    def __init__(self, token: object, value: str):
 
-        if not I18n.Factory._sync_root.locked():
+        if token is not I18n._PRIVATE_TOKEN:
             raise RuntimeError("Private ctor. Use Factory instead.")
 
         assert value is not None and isinstance(value, str)
@@ -65,47 +67,52 @@ class I18n:
                 value = ""
 
             with I18n.Factory._sync_root:
-                I18n._path = value  # pylint: disable=W0212
+                I18n.Factory.__instance._path = value  # pylint: disable=W0212
 
         @staticmethod
         def create(value: str | None = None) -> I18n:
-            """Creates the `I18n` singleton instance.
+            """Creates or reconfigures the `I18n` singleton instance.
+
+            If the instance has already been created (e.g. by `get()` via a
+            tool or test), the path is updated to the given value. Otherwise
+            a new instance is created.
 
             Args:
                 value (str | None): A relative path, "" or None. Default is
                     `None`.
 
             Returns:
-                I18: An instance of the object.
-
-            Raises:
-                AssertionError: If the instance has already been created.
+                I18n: The singleton instance.
             """
-
-            assert not I18n.Factory.__instance
 
             if not value:
                 value = ""
 
             with I18n.Factory._sync_root:
-                assert not I18n.Factory.__instance
+                if I18n.Factory.__instance is not None:
+                    I18n.Factory.__instance._path = value  # pylint: disable=W0212
+                    return I18n.Factory.__instance
 
-                I18n.Factory.__instance = I18n(value)
+                I18n.Factory.__instance = I18n(I18n._PRIVATE_TOKEN, value)
 
             return I18n.Factory.__instance
 
         @staticmethod
         def get() -> I18n:
-            """Returns the `I18n` singleton instance.
+            """Returns the `I18n` singleton instance, creating it with default
+            settings if it has not been explicitly initialised yet.
+
+            This allows tools (e.g. Crosshair, Hypothesis) and tests to call
+            `get()` without going through the application entry point.
 
             Returns:
-                I18: An instance of the object.
-
-            Raises:
-                AssertionError: If the instance has not been created.
+                I18n: The singleton instance.
             """
 
-            assert I18n.Factory.__instance
+            if I18n.Factory.__instance is None:
+                with I18n.Factory._sync_root:
+                    if I18n.Factory.__instance is None:
+                        I18n.Factory.__instance = I18n(I18n._PRIVATE_TOKEN, "")
 
             return I18n.Factory.__instance
 
